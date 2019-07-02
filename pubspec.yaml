@@ -1,0 +1,7 @@
+name: tflite_native
+version: 0.0.0-alpha
+author: Dart Team <misc@dartlang.org>
+description: A Dart interface to TensorFlow Lite (tflite) through FFI
+homepage: https://github.com/dart-lang/tflite_native
+environment:
+  sdk: "<3.0.0"
