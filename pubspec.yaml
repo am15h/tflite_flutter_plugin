@@ -4,4 +4,6 @@ author: Dart Team <misc@dartlang.org>
 description: A Dart interface to TensorFlow Lite (tflite) through FFI
 homepage: https://github.com/dart-lang/tflite_native
 environment:
-  sdk: "<3.0.0"
+  sdk: '<3.0.0'
+dev_dependencies:
+  test: ^1.6.4
