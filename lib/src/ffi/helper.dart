@@ -3,8 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
-import 'dart:isolate' show Isolate;
-import 'dart:cli' as cli;
 
 /// Forces casting a [Pointer] to a different type.
 ///

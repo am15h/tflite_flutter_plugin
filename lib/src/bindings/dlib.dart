@@ -6,7 +6,6 @@ import 'dart:cli' as cli;
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate' show Isolate;
-import 'package:path/path.dart' as path;
 
 String _getPlatformSpecificName() {
   if (Platform.isLinux) {
@@ -20,7 +19,7 @@ String _getPlatformSpecificName() {
 DynamicLibrary tflitelib = () {
   final rootLibrary = 'package:tflite_native/tflite.dart';
   final blobs = cli
-    .waitFor(Isolate.resolvePackageUri(Uri.parse('package:tflite_native/tflite.dart')))
+    .waitFor(Isolate.resolvePackageUri(Uri.parse(rootLibrary)))
     .resolve('src/blobs/');
   return DynamicLibrary.open(blobs.resolve(_getPlatformSpecificName()).toFilePath());
 }();

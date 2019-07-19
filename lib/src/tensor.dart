@@ -15,7 +15,6 @@ export 'bindings/types.dart' show TFL_Type;
 /// TensorFlowLite tensor.
 class Tensor {
   final Pointer<TFL_Tensor> _tensor;
-  bool _deleted = false;
 
   Tensor(this._tensor) {
     checkNotNull(_tensor);
