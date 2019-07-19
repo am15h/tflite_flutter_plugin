@@ -6,4 +6,11 @@
 
 # Fast fail the script on failures.
 set -e
-dart test/all.dart
+
+# Analyze the codebase.
+dartanalyzer --fatal-warnings --fatal-infos \
+  lib/ \
+  test/
+
+# Run the unit tests.
+pub run test
