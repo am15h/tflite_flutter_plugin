@@ -19,7 +19,8 @@ String _getPlatformSpecificName() {
 DynamicLibrary tflitelib = () {
   final rootLibrary = 'package:tflite_native/tflite.dart';
   final blobs = cli
-    .waitFor(Isolate.resolvePackageUri(Uri.parse(rootLibrary)))
-    .resolve('src/blobs/');
-  return DynamicLibrary.open(blobs.resolve(_getPlatformSpecificName()).toFilePath());
+      .waitFor(Isolate.resolvePackageUri(Uri.parse(rootLibrary)))
+      .resolve('src/blobs/');
+  return DynamicLibrary.open(
+      blobs.resolve(_getPlatformSpecificName()).toFilePath());
 }();
