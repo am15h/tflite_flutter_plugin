@@ -7,12 +7,30 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate' show Isolate;
 
-String _getPlatformSpecificName() {
+const Set<String> _supported = {'linux64'};
+
+/// Computes the shared object filename for this os and architecture.
+///
+/// Throws an exception if invoked on an unsupported platform.
+String _getObjectFilename() {
+  final architecture = sizeOf<IntPtr>() == 4 ? '32' : '64';
+  var os;
   if (Platform.isLinux) {
-    return 'libtensorflowlite_c-linux.so';
+    os = 'linux';
+  } else if (Platform.isMacOS) {
+    os = 'mac';
+  } else if (Platform.isWindows) {
+    os = 'windows';
+  } else {
+    throw new Exception('Unsupported platform!');
   }
 
-  throw new Exception('Unsupported platform!');
+  final result = os + architecture;
+  if (!_supported.contains(result)) {
+    throw new Exception('Unsupported platform: $result!');
+  }
+
+  return 'libtensorflowlite_c-$result.so';
 }
 
 /// TensorFlowLite C library.
@@ -22,5 +40,5 @@ DynamicLibrary tflitelib = () {
       .waitFor(Isolate.resolvePackageUri(Uri.parse(rootLibrary)))
       .resolve('src/blobs/');
   return DynamicLibrary.open(
-      blobs.resolve(_getPlatformSpecificName()).toFilePath());
+      blobs.resolve(_getObjectFilename()).toFilePath());
 }();
