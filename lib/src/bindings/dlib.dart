@@ -7,20 +7,23 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate' show Isolate;
 
-const Set<String> _supported = {'linux64', 'mac64'};
+const Set<String> _supported = {'linux64', 'mac64', 'win64'};
 
 /// Computes the shared object filename for this os and architecture.
 ///
 /// Throws an exception if invoked on an unsupported platform.
 String _getObjectFilename() {
   final architecture = sizeOf<IntPtr>() == 4 ? '32' : '64';
-  var os;
+  var os, extension;
   if (Platform.isLinux) {
     os = 'linux';
+    extension = 'so';
   } else if (Platform.isMacOS) {
     os = 'mac';
+    extension = 'so';
   } else if (Platform.isWindows) {
-    os = 'windows';
+    os = 'win';
+    extension = 'dll';
   } else {
     throw new Exception('Unsupported platform!');
   }
@@ -30,7 +33,7 @@ String _getObjectFilename() {
     throw new Exception('Unsupported platform: $result!');
   }
 
-  return 'libtensorflowlite_c-$result.so';
+  return 'libtensorflowlite_c-$result.$extension';
 }
 
 /// TensorFlowLite C library.
