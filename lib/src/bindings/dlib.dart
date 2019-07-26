@@ -7,7 +7,7 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate' show Isolate;
 
-const Set<String> _supported = {'linux64', 'mac64', 'win64'};
+const Set<String> _supported = {'linux64', 'mac64'};
 
 /// Computes the shared object filename for this os and architecture.
 ///
