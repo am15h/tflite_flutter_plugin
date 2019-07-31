@@ -25,12 +25,12 @@ String _getObjectFilename() {
     os = 'win';
     extension = 'dll';
   } else {
-    throw new Exception('Unsupported platform!');
+    throw Exception('Unsupported platform!');
   }
 
   final result = os + architecture;
   if (!_supported.contains(result)) {
-    throw new Exception('Unsupported platform: $result!');
+    throw Exception('Unsupported platform: $result!');
   }
 
   return 'libtensorflowlite_c-$result.$extension';
@@ -42,6 +42,5 @@ DynamicLibrary tflitelib = () {
   final blobs = cli
       .waitFor(Isolate.resolvePackageUri(Uri.parse(rootLibrary)))
       .resolve('src/blobs/');
-  return DynamicLibrary.open(
-      blobs.resolve(_getObjectFilename()).toFilePath());
+  return DynamicLibrary.open(blobs.resolve(_getObjectFilename()).toFilePath());
 }();
