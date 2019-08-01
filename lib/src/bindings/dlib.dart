@@ -38,9 +38,19 @@ String _getObjectFilename() {
 
 /// TensorFlowLite C library.
 DynamicLibrary tflitelib = () {
-  final rootLibrary = 'package:tflite_native/tflite.dart';
-  final blobs = cli
-      .waitFor(Isolate.resolvePackageUri(Uri.parse(rootLibrary)))
-      .resolve('src/blobs/');
-  return DynamicLibrary.open(blobs.resolve(_getObjectFilename()).toFilePath());
+  var objectFile;
+  if (Platform.script.path.endsWith('.snapshot')) {
+    // If we're running from snapshot, assume that the shared object
+    // file is a sibling.
+    objectFile =
+        File.fromUri(Platform.script).parent.path + '/' + _getObjectFilename();
+  } else {
+    final rootLibrary = 'package:tflite_native/tflite.dart';
+    final blobs = cli
+        .waitFor(Isolate.resolvePackageUri(Uri.parse(rootLibrary)))
+        .resolve('src/blobs/');
+    objectFile = blobs.resolve(_getObjectFilename()).toFilePath();
+  }
+
+  return DynamicLibrary.open(objectFile);
 }();

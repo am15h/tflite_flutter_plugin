@@ -1,3 +1,7 @@
+# 0.2.0
+
+* Load shared object as sibling when running from snapshot
+
 # 0.1.0
 
 * Apply fixes from `dartfmt`
