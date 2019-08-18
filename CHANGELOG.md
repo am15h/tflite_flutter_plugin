@@ -1,3 +1,8 @@
+# 0.2.1
+
+* Rebuild tflite shared libraries to include
+  [tensorflow/tensorflow@4735b9b#diff-4e94df4d2961961ba5f69bbd666e0552](https://github.com/tensorflow/tensorflow/commit/4735b9bc02d35864eaba6ab48d73b73b333390e2#diff-4e94df4d2961961ba5f69bbd666e0552)
+
 # 0.2.0
 
 * Load shared object as sibling when running from snapshot
