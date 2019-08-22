@@ -1,3 +1,7 @@
+# 0.2.2
+
+* Use `Pointer.asExternalTypedData` for reading output tensor
+
 # 0.2.1
 
 * Rebuild tflite shared libraries to include
