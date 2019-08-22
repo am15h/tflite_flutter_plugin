@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
+import 'dart:typed_data';
 import 'package:quiver/check.dart';
 
 import 'bindings/tensor.dart';
@@ -34,9 +35,8 @@ class Tensor {
   List<int> get data {
     final data = cast<Uint8>(TFL_TensorData(_tensor));
     checkState(isNotNull(data), message: 'Tensor data is null.');
-    return List.generate(
-        TFL_TensorByteSize(_tensor), (i) => data.elementAt(i).load<int>(),
-        growable: false);
+    return UnmodifiableUint8ListView(
+        data.asExternalTypedData(count: TFL_TensorByteSize(_tensor)));
   }
 
   /// Updates the underlying data buffer with new bytes.
