@@ -1,3 +1,7 @@
+# 0.2.3
+
+* Specify `>=2.5.0` in `pubspec.yaml`
+
 # 0.2.2
 
 * Use `Pointer.asExternalTypedData` for reading output tensor
