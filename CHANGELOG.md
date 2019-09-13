@@ -1,3 +1,7 @@
+# 0.3.0
+
+* Update to new tflite C API
+
 # 0.2.3
 
 * Specify `>=2.5.0` in `pubspec.yaml`
