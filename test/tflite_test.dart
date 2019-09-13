@@ -122,7 +122,7 @@ void main() {
       });
 
       test('type', () {
-        expect(tensors[0].type, tfl.TFL_Type.uint8);
+        expect(tensors[0].type, tfl.TfLiteType.uint8);
       });
 
       test('shape', () {

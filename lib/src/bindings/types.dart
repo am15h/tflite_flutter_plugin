@@ -5,25 +5,25 @@
 import 'dart:ffi';
 
 /// Wraps a model interpreter.
-class TFL_Interpreter extends Struct<TFL_Interpreter> {}
+class TfLiteInterpreter extends Struct<TfLiteInterpreter> {}
 
 /// Wraps customized interpreter configuration options.
-class TFL_InterpreterOptions extends Struct<TFL_InterpreterOptions> {}
+class TfLiteInterpreterOptions extends Struct<TfLiteInterpreterOptions> {}
 
 /// Wraps a loaded TensorFlowLite model.
-class TFL_Model extends Struct<TFL_Model> {}
+class TfLiteModel extends Struct<TfLiteModel> {}
 
 /// Wraps data associated with a graph tensor.
-class TFL_Tensor extends Struct<TFL_Tensor> {}
+class TfLiteTensor extends Struct<TfLiteTensor> {}
 
 /// Status of a TensorFlowLite function call.
-class TFL_Status {
+class TfLiteStatus {
   static const ok = 0;
   static const error = 1;
 }
 
 /// Types supported by tensor.
-enum TFL_Type {
+enum TfLiteType {
   none,
   float32,
   int32,

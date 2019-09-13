@@ -7,8 +7,8 @@ import 'utf8.dart';
 import 'dlib.dart';
 
 /// Version information for the TensorFlowLite library.
-Pointer<Utf8> Function() TFL_Version = tflitelib
-    .lookup<NativeFunction<_TFL_Version_native_t>>('TFL_Version')
+Pointer<Utf8> Function() TfLiteVersion = tflitelib
+    .lookup<NativeFunction<_TfLiteVersion_native_t>>('TfLiteVersion')
     .asFunction();
 
-typedef _TFL_Version_native_t = Pointer<Utf8> Function();
+typedef _TfLiteVersion_native_t = Pointer<Utf8> Function();

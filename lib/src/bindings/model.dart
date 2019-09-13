@@ -9,23 +9,23 @@ import 'dlib.dart';
 import 'types.dart';
 
 /// Returns a model from the provided buffer, or null on failure.
-Pointer<TFL_Model> Function(Pointer<Void> data, int size) TFL_NewModel =
+Pointer<TfLiteModel> Function(Pointer<Void> data, int size) TfLiteNewModel =
     tflitelib
-        .lookup<NativeFunction<_TFL_NewModel_native_t>>('TFL_NewModel')
+        .lookup<NativeFunction<_TfLiteNewModel_native_t>>('TfLiteNewModel')
         .asFunction();
-typedef _TFL_NewModel_native_t = Pointer<TFL_Model> Function(
+typedef _TfLiteNewModel_native_t = Pointer<TfLiteModel> Function(
     Pointer<Void> data, Int32 size);
 
 /// Returns a model from the provided file, or null on failure.
-Pointer<TFL_Model> Function(Pointer<Utf8> path) TFL_NewModelFromFile = tflitelib
-    .lookup<NativeFunction<_TFL_NewModelFromFile_native_t>>(
-        'TFL_NewModelFromFile')
+Pointer<TfLiteModel> Function(Pointer<Utf8> path) TfLiteModelCreateFromFile = tflitelib
+    .lookup<NativeFunction<_TfLiteModelCreateFromFile_native_t>>(
+        'TfLiteModelCreateFromFile')
     .asFunction();
-typedef _TFL_NewModelFromFile_native_t = Pointer<TFL_Model> Function(
+typedef _TfLiteModelCreateFromFile_native_t = Pointer<TfLiteModel> Function(
     Pointer<Utf8> path);
 
 /// Destroys the model instance.
-void Function(Pointer<TFL_Model>) TFL_DeleteModel = tflitelib
-    .lookup<NativeFunction<_TFL_DeleteModel_native_t>>('TFL_DeleteModel')
+void Function(Pointer<TfLiteModel>) TfLiteModelDelete = tflitelib
+    .lookup<NativeFunction<_TfLiteModelDelete_native_t>>('TfLiteModelDelete')
     .asFunction();
-typedef _TFL_DeleteModel_native_t = Void Function(Pointer<TFL_Model>);
+typedef _TfLiteModelDelete_native_t = Void Function(Pointer<TfLiteModel>);

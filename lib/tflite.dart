@@ -13,4 +13,4 @@ export 'src/interpreter_options.dart';
 export 'src/tensor.dart';
 
 /// tflite version information.
-String get version => Utf8.fromUtf8(TFL_Version());
+String get version => Utf8.fromUtf8(TfLiteVersion());

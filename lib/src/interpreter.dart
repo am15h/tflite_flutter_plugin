@@ -14,7 +14,7 @@ import 'tensor.dart';
 
 /// TensorFlowLite interpreter for running inference on a model.
 class Interpreter {
-  final Pointer<TFL_Interpreter> _interpreter;
+  final Pointer<TfLiteInterpreter> _interpreter;
   bool _deleted = false;
   bool _allocated = false;
 
@@ -22,8 +22,8 @@ class Interpreter {
 
   /// Creates interpreter from model or throws if unsuccessful.
   factory Interpreter(Model model, {InterpreterOptions options}) {
-    final interpreter = TFL_NewInterpreter(
-        model.base, options?.base ?? cast<TFL_InterpreterOptions>(nullptr));
+    final interpreter = TfLiteInterpreterCreate(
+        model.base, options?.base ?? cast<TfLiteInterpreterOptions>(nullptr));
     checkArgument(isNotNull(interpreter),
         message: 'Unable to create interpreter.');
     return Interpreter._(interpreter);
@@ -40,35 +40,35 @@ class Interpreter {
   /// Destroys the model instance.
   void delete() {
     checkState(!_deleted, message: 'Interpreter already deleted.');
-    TFL_DeleteInterpreter(_interpreter);
+    TfLiteInterpreterDelete(_interpreter);
     _deleted = true;
   }
 
   /// Updates allocations for all tensors.
   void allocateTensors() {
     checkState(!_allocated, message: 'Interpreter already allocated.');
-    checkState(TFL_InterpreterAllocateTensors(_interpreter) == TFL_Status.ok);
+    checkState(TfLiteInterpreterAllocateTensors(_interpreter) == TfLiteStatus.ok);
     _allocated = true;
   }
 
   /// Runs inference for the loaded graph.
   void invoke() {
     checkState(_allocated, message: 'Interpreter not allocated.');
-    checkState(TFL_InterpreterInvoke(_interpreter) == TFL_Status.ok);
+    checkState(TfLiteInterpreterInvoke(_interpreter) == TfLiteStatus.ok);
   }
 
   /// Gets all input tensors associated with the model.
   List<Tensor> getInputTensors() => List.generate(
-      TFL_InterpreterGetInputTensorCount(_interpreter),
-      (i) => Tensor(TFL_InterpreterGetInputTensor(_interpreter, i)),
+      TfLiteInterpreterGetInputTensorCount(_interpreter),
+      (i) => Tensor(TfLiteInterpreterGetInputTensor(_interpreter, i)),
       growable: false);
 
   /// Gets all output tensors associated with the model.
   List<Tensor> getOutputTensors() => List.generate(
-      TFL_InterpreterGetOutputTensorCount(_interpreter),
-      (i) => Tensor(TFL_InterpreterGetOutputTensor(_interpreter, i)),
+      TfLiteInterpreterGetOutputTensorCount(_interpreter),
+      (i) => Tensor(TfLiteInterpreterGetOutputTensor(_interpreter, i)),
       growable: false);
 
   // Unimplemented:
-  // TFL_InterpreterResizeInputTensor
+  // TfLiteInterpreterResizeInputTensor
 }
