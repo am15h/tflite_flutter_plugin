@@ -141,7 +141,8 @@ void main() {
         });
 
         test('set throws if not allocated', () {
-          expect(() => tensors[0].data = Uint8List.fromList(const [0, 0, 0, 0]), throwsA(isStateError));
+          expect(() => tensors[0].data = Uint8List.fromList(const [0, 0, 0, 0]),
+              throwsA(isStateError));
         });
 
         test('set', () {
@@ -159,7 +160,8 @@ void main() {
 
         test('copyFrom throws if not allocated', () {
           expect(
-              () => tensors[0].copyFrom(Uint8List.fromList(const [0, 0, 0, 0])), throwsA(isStateError));
+              () => tensors[0].copyFrom(Uint8List.fromList(const [0, 0, 0, 0])),
+              throwsA(isStateError));
         }, skip: 'segmentation fault!');
         // TODO(shanehop): Prevent data access for unallocated tensors.
 

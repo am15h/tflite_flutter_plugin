@@ -3,11 +3,12 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
+
 import 'package:quiver/check.dart';
 
-import 'bindings/utf8.dart';
 import 'bindings/model.dart';
 import 'bindings/types.dart';
+import 'bindings/utf8.dart';
 import 'ffi/helper.dart';
 
 /// TensorFlowLite model.

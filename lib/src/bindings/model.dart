@@ -4,9 +4,9 @@
 
 import 'dart:ffi';
 
-import 'utf8.dart';
 import 'dlib.dart';
 import 'types.dart';
+import 'utf8.dart';
 
 /// Returns a model from the provided buffer, or null on failure.
 Pointer<TfLiteModel> Function(Pointer<Void> data, int size) TfLiteNewModel =
@@ -17,10 +17,11 @@ typedef _TfLiteNewModel_native_t = Pointer<TfLiteModel> Function(
     Pointer<Void> data, Int32 size);
 
 /// Returns a model from the provided file, or null on failure.
-Pointer<TfLiteModel> Function(Pointer<Utf8> path) TfLiteModelCreateFromFile = tflitelib
-    .lookup<NativeFunction<_TfLiteModelCreateFromFile_native_t>>(
-        'TfLiteModelCreateFromFile')
-    .asFunction();
+Pointer<TfLiteModel> Function(Pointer<Utf8> path) TfLiteModelCreateFromFile =
+    tflitelib
+        .lookup<NativeFunction<_TfLiteModelCreateFromFile_native_t>>(
+            'TfLiteModelCreateFromFile')
+        .asFunction();
 typedef _TfLiteModelCreateFromFile_native_t = Pointer<TfLiteModel> Function(
     Pointer<Utf8> path);
 

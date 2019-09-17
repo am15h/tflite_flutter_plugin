@@ -7,9 +7,10 @@ library tflite;
 
 import 'src/bindings/bindings.dart';
 import 'src/bindings/utf8.dart';
-export 'src/model.dart';
+
 export 'src/interpreter.dart';
 export 'src/interpreter_options.dart';
+export 'src/model.dart';
 export 'src/tensor.dart';
 
 /// tflite version information.

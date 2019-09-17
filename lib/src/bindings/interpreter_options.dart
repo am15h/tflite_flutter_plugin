@@ -4,33 +4,39 @@
 
 import 'dart:ffi';
 
-import 'utf8.dart';
 import 'dlib.dart';
 import 'types.dart';
+import 'utf8.dart';
 
 /// Returns a new interpreter options instances.
-Pointer<TfLiteInterpreterOptions> Function() TfLiteInterpreterOptionsCreate = tflitelib
-    .lookup<NativeFunction<_TfLiteInterpreterOptionsCreate_native_t>>(
-        'TfLiteInterpreterOptionsCreate')
-    .asFunction();
-typedef _TfLiteInterpreterOptionsCreate_native_t = Pointer<TfLiteInterpreterOptions>
-    Function();
+Pointer<TfLiteInterpreterOptions> Function() TfLiteInterpreterOptionsCreate =
+    tflitelib
+        .lookup<NativeFunction<_TfLiteInterpreterOptionsCreate_native_t>>(
+            'TfLiteInterpreterOptionsCreate')
+        .asFunction();
+
+typedef _TfLiteInterpreterOptionsCreate_native_t
+    = Pointer<TfLiteInterpreterOptions> Function();
 
 /// Destroys the interpreter options instance.
-void Function(Pointer<TfLiteInterpreterOptions>) TfLiteInterpreterOptionsDelete =
-    tflitelib
+void Function(Pointer<TfLiteInterpreterOptions>)
+    TfLiteInterpreterOptionsDelete = tflitelib
         .lookup<NativeFunction<_TfLiteInterpreterOptionsDelete_native_t>>(
             'TfLiteInterpreterOptionsDelete')
         .asFunction();
+
 typedef _TfLiteInterpreterOptionsDelete_native_t = Void Function(
     Pointer<TfLiteInterpreterOptions>);
 
 /// Sets the number of CPU threads to use for the interpreter.
-void Function(Pointer<TfLiteInterpreterOptions> options, int threads)
-    TfLiteInterpreterOptionsSetNumThreads = tflitelib
-        .lookup<NativeFunction<_TfLiteInterpreterOptionsSetNumThreads_native_t>>(
-            'TfLiteInterpreterOptionsSetNumThreads')
-        .asFunction();
+void Function(
+    Pointer<TfLiteInterpreterOptions> options,
+    int
+        threads) TfLiteInterpreterOptionsSetNumThreads = tflitelib
+    .lookup<NativeFunction<_TfLiteInterpreterOptionsSetNumThreads_native_t>>(
+        'TfLiteInterpreterOptionsSetNumThreads')
+    .asFunction();
+
 typedef _TfLiteInterpreterOptionsSetNumThreads_native_t = Void Function(
     Pointer<TfLiteInterpreterOptions> options, Int32 threads);
 
@@ -48,6 +54,7 @@ void Function(
     .lookup<NativeFunction<_TfLiteInterpreterOptionsSetErrorReporter_native_t>>(
         'TfLiteInterpreterOptionsSetErrorReporter')
     .asFunction();
+
 typedef _TfLiteInterpreterOptionsSetErrorReporter_native_t = Void Function(
   Pointer<TfLiteInterpreterOptions> options,
   Pointer<NativeFunction<Reporter>> reporter,

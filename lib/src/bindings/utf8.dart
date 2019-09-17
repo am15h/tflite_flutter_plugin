@@ -13,7 +13,7 @@ class Utf8 extends Struct<Utf8> {
   /// Allocates and stores the given Dart [String] as a [Pointer<Utf8>].
   static Pointer<Utf8> toUtf8(String str) {
     final ptr = Pointer<Utf8>.allocate(count: str.length + 1);
-    final units = Utf8Encoder().convert(str);
+    final units = const Utf8Encoder().convert(str);
     units
         .asMap()
         .forEach((i, unit) => ptr.elementAt(i).load<Utf8>().char = unit);
@@ -25,13 +25,13 @@ class Utf8 extends Struct<Utf8> {
   static String fromUtf8(Pointer<Utf8> ptr) {
     final units = <int>[];
     var len = 0;
-    while (true) {
+    for (;;) {
       final char = ptr.elementAt(len++).load<Utf8>().char;
       if (char == 0) {
         break;
       }
       units.add(char);
     }
-    return Utf8Decoder().convert(units);
+    return const Utf8Decoder().convert(units);
   }
 }

@@ -4,9 +4,9 @@
 
 import 'dart:ffi';
 
-import 'utf8.dart';
 import 'dlib.dart';
 import 'types.dart';
+import 'utf8.dart';
 
 /// Returns the type of a tensor element.
 TfLiteType TfLiteTensorType(Pointer<TfLiteTensor> t) =>
@@ -19,7 +19,8 @@ typedef _TfLiteTensorType_native_t = /*TfLiteType*/ Int32 Function(
 
 /// Returns the number of dimensions that the tensor has.
 int Function(Pointer<TfLiteTensor>) TfLiteTensorNumDims = tflitelib
-    .lookup<NativeFunction<_TfLiteTensorNumDims_native_t>>('TfLiteTensorNumDims')
+    .lookup<NativeFunction<_TfLiteTensorNumDims_native_t>>(
+        'TfLiteTensorNumDims')
     .asFunction();
 typedef _TfLiteTensorNumDims_native_t = Int32 Function(Pointer<TfLiteTensor>);
 
@@ -35,7 +36,8 @@ typedef _TfLiteTensorDim_native_t = Int32 Function(
 
 /// Returns the size of the underlying data in bytes.
 int Function(Pointer<TfLiteTensor>) TfLiteTensorByteSize = tflitelib
-    .lookup<NativeFunction<_TfLiteTensorByteSize_native_t>>('TfLiteTensorByteSize')
+    .lookup<NativeFunction<_TfLiteTensorByteSize_native_t>>(
+        'TfLiteTensorByteSize')
     .asFunction();
 typedef _TfLiteTensorByteSize_native_t = Int32 Function(Pointer<TfLiteTensor>);
 
@@ -48,13 +50,15 @@ typedef _TfLiteTensorByteSize_native_t = Int32 Function(Pointer<TfLiteTensor>);
 Pointer<Void> Function(Pointer<TfLiteTensor>) TfLiteTensorData = tflitelib
     .lookup<NativeFunction<_TfLiteTensorData_native_t>>('TfLiteTensorData')
     .asFunction();
-typedef _TfLiteTensorData_native_t = Pointer<Void> Function(Pointer<TfLiteTensor>);
+typedef _TfLiteTensorData_native_t = Pointer<Void> Function(
+    Pointer<TfLiteTensor>);
 
 /// Returns the (null-terminated) name of the tensor.
 Pointer<Utf8> Function(Pointer<TfLiteTensor>) TfLiteTensorName = tflitelib
     .lookup<NativeFunction<_TfLiteTensorName_native_t>>('TfLiteTensorName')
     .asFunction();
-typedef _TfLiteTensorName_native_t = Pointer<Utf8> Function(Pointer<TfLiteTensor>);
+typedef _TfLiteTensorName_native_t = Pointer<Utf8> Function(
+    Pointer<TfLiteTensor>);
 
 /// Copies from the provided input buffer into the tensor's buffer.
 ///

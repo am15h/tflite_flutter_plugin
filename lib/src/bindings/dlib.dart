@@ -14,7 +14,7 @@ const Set<String> _supported = {'linux64', 'mac64', 'win64'};
 /// Throws an exception if invoked on an unsupported platform.
 String _getObjectFilename() {
   final architecture = sizeOf<IntPtr>() == 4 ? '32' : '64';
-  var os, extension;
+  String os, extension;
   if (Platform.isLinux) {
     os = 'linux';
     extension = 'so';
@@ -38,7 +38,7 @@ String _getObjectFilename() {
 
 /// TensorFlowLite C library.
 DynamicLibrary tflitelib = () {
-  var objectFile;
+  String objectFile;
   if (Platform.script.path.endsWith('.snapshot')) {
     // If we're running from snapshot, assume that the shared object
     // file is a sibling.
