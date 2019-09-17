@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import 'package:tflite_native/tflite.dart' as tfl;
@@ -140,14 +141,14 @@ void main() {
         });
 
         test('set throws if not allocated', () {
-          expect(() => tensors[0].data = [0, 0, 0, 0], throwsA(isStateError));
+          expect(() => tensors[0].data = Uint8List.fromList(const [0, 0, 0, 0]), throwsA(isStateError));
         });
 
         test('set', () {
           interpreter.allocateTensors();
-          tensors[0].data = [0, 0, 0, 0];
+          tensors[0].data = Uint8List.fromList(const [0, 0, 0, 0]);
           expect(tensors[0].data, [0, 0, 0, 0]);
-          tensors[0].data = [0, 1, 10, 100];
+          tensors[0].data = Uint8List.fromList(const [0, 1, 10, 100]);
           expect(tensors[0].data, [0, 1, 10, 100]);
         });
 
@@ -158,15 +159,15 @@ void main() {
 
         test('copyFrom throws if not allocated', () {
           expect(
-              () => tensors[0].copyFrom([0, 0, 0, 0]), throwsA(isStateError));
+              () => tensors[0].copyFrom(Uint8List.fromList(const [0, 0, 0, 0])), throwsA(isStateError));
         }, skip: 'segmentation fault!');
         // TODO(shanehop): Prevent data access for unallocated tensors.
 
         test('copyFrom', () {
           interpreter.allocateTensors();
-          tensors[0].copyFrom([0, 0, 0, 0]);
+          tensors[0].copyFrom(Uint8List.fromList(const [0, 0, 0, 0]));
           expect(tensors[0].data, [0, 0, 0, 0]);
-          tensors[0].copyFrom([0, 1, 10, 100]);
+          tensors[0].copyFrom(Uint8List.fromList(const [0, 1, 10, 100]));
           expect(tensors[0].data, [0, 1, 10, 100]);
         });
       });
