@@ -5,11 +5,11 @@
 import 'dart:ffi';
 import 'dart:typed_data';
 
+import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
 
 import 'bindings/tensor.dart';
 import 'bindings/types.dart';
-import 'bindings/utf8.dart';
 import 'ffi/helper.dart';
 
 export 'bindings/types.dart' show TfLiteType;
@@ -57,25 +57,26 @@ class Tensor {
   // TODO(shanehop): Prevent access if unallocated.
   void copyFrom(Uint8List bytes) {
     var size = bytes.length;
-    final ptr = Pointer<Uint8>.allocate(count: size);
+    final ptr = allocate<Uint8>(count: size);
     final externalTypedData = ptr.asExternalTypedData(count: size) as Uint8List;
     externalTypedData.setRange(0, bytes.length, bytes);
     checkState(TfLiteTensorCopyFromBuffer(_tensor, ptr.cast(), bytes.length) ==
         TfLiteStatus.ok);
-    ptr.free();
+    free(ptr);
   }
 
   /// Returns a copy of the underlying data buffer.
   // TODO(shanehop): Prevent access if unallocated.
   Uint8List copyTo() {
     var size = TfLiteTensorByteSize(_tensor);
-    final ptr = Pointer<Uint8>.allocate(count: size);
+    final ptr = allocate<Uint8>(count: size);
     final externalTypedData = ptr.asExternalTypedData(count: size) as Uint8List;
     checkState(
         TfLiteTensorCopyToBuffer(_tensor, ptr.cast(), 4) == TfLiteStatus.ok);
-    // clone the data, because once `ptr.free()`, `externalTypedData` will be volatile
+    // Clone the data, because once `free(ptr)`, `externalTypedData` will be
+    // volatile
     final bytes = externalTypedData.sublist(0);
-    ptr.free();
+    free(ptr);
     return bytes;
   }
 

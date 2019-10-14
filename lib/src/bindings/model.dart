@@ -4,9 +4,10 @@
 
 import 'dart:ffi';
 
+import 'package:ffi/ffi.dart';
+
 import 'dlib.dart';
 import 'types.dart';
-import 'utf8.dart';
 
 /// Returns a model from the provided buffer, or null on failure.
 Pointer<TfLiteModel> Function(Pointer<Void> data, int size) TfLiteNewModel =

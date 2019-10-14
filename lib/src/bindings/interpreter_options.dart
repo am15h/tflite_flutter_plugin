@@ -4,9 +4,10 @@
 
 import 'dart:ffi';
 
+import 'package:ffi/ffi.dart';
+
 import 'dlib.dart';
 import 'types.dart';
-import 'utf8.dart';
 
 /// Returns a new interpreter options instances.
 Pointer<TfLiteInterpreterOptions> Function() TfLiteInterpreterOptionsCreate =

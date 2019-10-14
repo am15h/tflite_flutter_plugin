@@ -4,9 +4,10 @@
 
 import 'dart:ffi';
 
+import 'package:ffi/ffi.dart';
+
 import 'dlib.dart';
 import 'types.dart';
-import 'utf8.dart';
 
 /// Returns the type of a tensor element.
 TfLiteType TfLiteTensorType(Pointer<TfLiteTensor> t) =>

@@ -4,11 +4,11 @@
 
 import 'dart:ffi';
 
+import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
 
 import 'bindings/model.dart';
 import 'bindings/types.dart';
-import 'bindings/utf8.dart';
 import 'ffi/helper.dart';
 
 /// TensorFlowLite model.
@@ -24,7 +24,7 @@ class Model {
   factory Model.fromFile(String path) {
     final cpath = Utf8.toUtf8(path);
     final model = TfLiteModelCreateFromFile(cpath);
-    cpath.free();
+    free(cpath);
     checkArgument(isNotNull(model), message: 'Unable to create model.');
     return Model._(model);
   }

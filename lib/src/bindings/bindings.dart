@@ -4,8 +4,9 @@
 
 import 'dart:ffi';
 
+import 'package:ffi/ffi.dart';
+
 import 'dlib.dart';
-import 'utf8.dart';
 
 /// Version information for the TensorFlowLite library.
 Pointer<Utf8> Function() TfLiteVersion = tflitelib
