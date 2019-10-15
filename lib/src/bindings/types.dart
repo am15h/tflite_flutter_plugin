@@ -5,16 +5,16 @@
 import 'dart:ffi';
 
 /// Wraps a model interpreter.
-class TfLiteInterpreter extends Struct<TfLiteInterpreter> {}
+class TfLiteInterpreter extends Struct {}
 
 /// Wraps customized interpreter configuration options.
-class TfLiteInterpreterOptions extends Struct<TfLiteInterpreterOptions> {}
+class TfLiteInterpreterOptions extends Struct {}
 
 /// Wraps a loaded TensorFlowLite model.
-class TfLiteModel extends Struct<TfLiteModel> {}
+class TfLiteModel extends Struct {}
 
 /// Wraps data associated with a graph tensor.
-class TfLiteTensor extends Struct<TfLiteTensor> {}
+class TfLiteTensor extends Struct {}
 
 /// Status of a TensorFlowLite function call.
 class TfLiteStatus {
