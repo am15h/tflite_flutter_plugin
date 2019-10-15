@@ -97,6 +97,12 @@ void main() {
       expect(() => interpreter.invoke(), throwsA(isStateError));
     });
 
+    test('invoke throws if not allocated after resized', () {
+      interpreter.allocateTensors();
+      interpreter.resizeInputTensor(0, [1, 2, 4]);
+      expect(() => interpreter.invoke(), throwsA(isStateError));
+    });
+
     test('invoke succeeds if allocated', () {
       interpreter.allocateTensors();
       interpreter.invoke();
@@ -112,6 +118,11 @@ void main() {
 
     test('get output tensors', () {
       expect(interpreter.getOutputTensors(), hasLength(1));
+    });
+
+    test('resize input tensor', () {
+      interpreter.resizeInputTensor(0, [2, 3, 5]);
+      expect(interpreter.getInputTensors().single.shape, [2, 3, 5]);
     });
 
     group('tensors', () {
