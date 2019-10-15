@@ -36,8 +36,8 @@ class Tensor {
   Uint8List get data {
     final data = cast<Uint8>(TfLiteTensorData(_tensor));
     checkState(isNotNull(data), message: 'Tensor data is null.');
-    return UnmodifiableUint8ListView(data.asExternalTypedData(
-        count: TfLiteTensorByteSize(_tensor)) as Uint8List);
+    return UnmodifiableUint8ListView(
+        data.asTypedList(TfLiteTensorByteSize(_tensor)));
   }
 
   /// Updates the underlying data buffer with new bytes.
@@ -48,8 +48,7 @@ class Tensor {
     checkArgument(tensorByteSize == bytes.length);
     final data = cast<Uint8>(TfLiteTensorData(_tensor));
     checkState(isNotNull(data), message: 'Tensor data is null.');
-    final externalTypedData =
-        data.asExternalTypedData(count: tensorByteSize) as Uint8List;
+    final externalTypedData = data.asTypedList(tensorByteSize);
     externalTypedData.setRange(0, tensorByteSize, bytes);
   }
 
@@ -58,7 +57,7 @@ class Tensor {
   void copyFrom(Uint8List bytes) {
     var size = bytes.length;
     final ptr = allocate<Uint8>(count: size);
-    final externalTypedData = ptr.asExternalTypedData(count: size) as Uint8List;
+    final externalTypedData = ptr.asTypedList(size);
     externalTypedData.setRange(0, bytes.length, bytes);
     checkState(TfLiteTensorCopyFromBuffer(_tensor, ptr.cast(), bytes.length) ==
         TfLiteStatus.ok);
@@ -70,7 +69,7 @@ class Tensor {
   Uint8List copyTo() {
     var size = TfLiteTensorByteSize(_tensor);
     final ptr = allocate<Uint8>(count: size);
-    final externalTypedData = ptr.asExternalTypedData(count: size) as Uint8List;
+    final externalTypedData = ptr.asTypedList(size);
     checkState(
         TfLiteTensorCopyToBuffer(_tensor, ptr.cast(), 4) == TfLiteStatus.ok);
     // Clone the data, because once `free(ptr)`, `externalTypedData` will be
