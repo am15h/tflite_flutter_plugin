@@ -4,6 +4,8 @@
 
 import 'dart:ffi';
 import 'dart:typed_data';
+
+import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
 
 import 'bindings/interpreter.dart';
@@ -74,11 +76,12 @@ class Interpreter {
   /// Resize input tensor for the given tensor index. `allocateTensors` must be called again afterward.
   void resizeInputTensor(int tensorIndex, List<int> shape) {
     final dimensionSize = shape.length;
-    final dimensions = Pointer<Int32>.allocate(count: dimensionSize);
-    final externalTypedData = dimensions.asExternalTypedData(count: dimensionSize) as Int32List;
+    final dimensions = allocate<Int32>(count: dimensionSize);
+    final externalTypedData = dimensions.asTypedList(dimensionSize);
     externalTypedData.setRange(0, dimensionSize, shape);
-    final status = TfLiteInterpreterResizeInputTensor(_interpreter, tensorIndex, dimensions, dimensionSize);
-    dimensions.free();
+    final status = TfLiteInterpreterResizeInputTensor(
+        _interpreter, tensorIndex, dimensions, dimensionSize);
+    free(dimensions);
     checkState(status == TfLiteStatus.ok);
     _allocated = false;
   }
