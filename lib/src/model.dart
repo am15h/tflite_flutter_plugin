@@ -36,6 +36,6 @@ class Model {
     _deleted = true;
   }
 
-  // Unimplemented:
-  // Model.fromBuffer => TfLiteNewModel
+// Unimplemented:
+// Model.fromBuffer => TfLiteNewModel
 }

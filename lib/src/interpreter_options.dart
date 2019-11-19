@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
+
 import 'package:quiver/check.dart';
 
 import 'bindings/interpreter_options.dart';
@@ -32,6 +33,6 @@ class InterpreterOptions {
   set threads(int threads) =>
       TfLiteInterpreterOptionsSetNumThreads(_options, threads);
 
-  // Unimplemented:
-  // TfLiteInterpreterOptionsSetErrorReporter
+// Unimplemented:
+// TfLiteInterpreterOptionsSetErrorReporter
 }

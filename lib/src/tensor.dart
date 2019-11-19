@@ -79,6 +79,6 @@ class Tensor {
     return bytes;
   }
 
-  // Unimplemented:
-  // TfLiteTensorQuantizationParams
+// Unimplemented:
+// TfLiteTensorQuantizationParams
 }

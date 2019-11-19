@@ -14,6 +14,7 @@ Pointer<TfLiteModel> Function(Pointer<Void> data, int size) TfLiteNewModel =
     tflitelib
         .lookup<NativeFunction<_TfLiteNewModel_native_t>>('TfLiteNewModel')
         .asFunction();
+
 typedef _TfLiteNewModel_native_t = Pointer<TfLiteModel> Function(
     Pointer<Void> data, Int32 size);
 
@@ -23,6 +24,7 @@ Pointer<TfLiteModel> Function(Pointer<Utf8> path) TfLiteModelCreateFromFile =
         .lookup<NativeFunction<_TfLiteModelCreateFromFile_native_t>>(
             'TfLiteModelCreateFromFile')
         .asFunction();
+
 typedef _TfLiteModelCreateFromFile_native_t = Pointer<TfLiteModel> Function(
     Pointer<Utf8> path);
 
@@ -30,4 +32,5 @@ typedef _TfLiteModelCreateFromFile_native_t = Pointer<TfLiteModel> Function(
 void Function(Pointer<TfLiteModel>) TfLiteModelDelete = tflitelib
     .lookup<NativeFunction<_TfLiteModelDelete_native_t>>('TfLiteModelDelete')
     .asFunction();
+
 typedef _TfLiteModelDelete_native_t = Void Function(Pointer<TfLiteModel>);

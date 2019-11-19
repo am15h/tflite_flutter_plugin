@@ -24,6 +24,7 @@ Pointer<TfLiteInterpreter> Function(Pointer<TfLiteModel> model,
         .lookup<NativeFunction<_TfLiteInterpreterCreate_native_t>>(
             'TfLiteInterpreterCreate')
         .asFunction();
+
 typedef _TfLiteInterpreterCreate_native_t = Pointer<TfLiteInterpreter> Function(
     Pointer<TfLiteModel> model,
     Pointer<TfLiteInterpreterOptions> optional_options);
@@ -33,6 +34,7 @@ void Function(Pointer<TfLiteInterpreter>) TfLiteInterpreterDelete = tflitelib
     .lookup<NativeFunction<_TfLiteInterpreterDelete_native_t>>(
         'TfLiteInterpreterDelete')
     .asFunction();
+
 typedef _TfLiteInterpreterDelete_native_t = Void Function(
     Pointer<TfLiteInterpreter>);
 
@@ -42,6 +44,7 @@ int Function(Pointer<TfLiteInterpreter>) TfLiteInterpreterGetInputTensorCount =
         .lookup<NativeFunction<_TfLiteInterpreterGetInputTensorCount_native_t>>(
             'TfLiteInterpreterGetInputTensorCount')
         .asFunction();
+
 typedef _TfLiteInterpreterGetInputTensorCount_native_t = Int32 Function(
     Pointer<TfLiteInterpreter>);
 
@@ -54,6 +57,7 @@ Pointer<TfLiteTensor> Function(
         .lookup<NativeFunction<_TfLiteInterpreterGetInputTensor_native_t>>(
             'TfLiteInterpreterGetInputTensor')
         .asFunction();
+
 typedef _TfLiteInterpreterGetInputTensor_native_t = Pointer<TfLiteTensor>
     Function(Pointer<TfLiteInterpreter> interpreter, Int32 input_index);
 
@@ -62,12 +66,14 @@ typedef _TfLiteInterpreterGetInputTensor_native_t = Pointer<TfLiteTensor>
 /// NOTE: After a resize, the client *must* explicitly allocate tensors before
 /// attempting to access the resized tensor data or invoke the interpreter.
 /// REQUIRES: 0 <= input_index < TfLiteInterpreterGetInputTensorCount(tensor)
-/*TfLiteStatus*/ int Function(Pointer<TfLiteInterpreter> interpreter,
-        int input_index, Pointer<Int32> input_dims, int input_dims_size)
+/*TfLiteStatus*/
+int Function(Pointer<TfLiteInterpreter> interpreter, int input_index,
+        Pointer<Int32> input_dims, int input_dims_size)
     TfLiteInterpreterResizeInputTensor = tflitelib
         .lookup<NativeFunction<_TfLiteInterpreterResizeInputTensor_native_t>>(
             'TfLiteInterpreterResizeInputTensor')
         .asFunction();
+
 typedef _TfLiteInterpreterResizeInputTensor_native_t
     = /*TfLiteStatus*/ Int32 Function(Pointer<TfLiteInterpreter> interpreter,
         Int32 input_index, Pointer<Int32> input_dims, Int32 input_dims_size);
@@ -77,11 +83,13 @@ typedef _TfLiteInterpreterResizeInputTensor_native_t
 ///
 /// This is a relatively expensive operation, and need only be called after
 /// creating the graph and/or resizing any inputs.
-/*TfLiteStatus*/ int Function(Pointer<TfLiteInterpreter>)
-    TfLiteInterpreterAllocateTensors = tflitelib
+/*TfLiteStatus*/
+int Function(Pointer<TfLiteInterpreter>) TfLiteInterpreterAllocateTensors =
+    tflitelib
         .lookup<NativeFunction<_TfLiteInterpreterAllocateTensors_native_t>>(
             'TfLiteInterpreterAllocateTensors')
         .asFunction();
+
 typedef _TfLiteInterpreterAllocateTensors_native_t = /*TfLiteStatus*/ Int32
     Function(Pointer<TfLiteInterpreter>);
 
@@ -90,11 +98,12 @@ typedef _TfLiteInterpreterAllocateTensors_native_t = /*TfLiteStatus*/ Int32
 /// NOTE: It is possible that the interpreter is not in a ready state to
 /// evaluate (e.g., if a ResizeInputTensor() has been performed without a call to
 /// AllocateTensors()).
-/*TfLiteStatus*/ int Function(Pointer<TfLiteInterpreter>)
-    TfLiteInterpreterInvoke = tflitelib
-        .lookup<NativeFunction<_TfLiteInterpreterInvoke_native_t>>(
-            'TfLiteInterpreterInvoke')
-        .asFunction();
+/*TfLiteStatus*/
+int Function(Pointer<TfLiteInterpreter>) TfLiteInterpreterInvoke = tflitelib
+    .lookup<NativeFunction<_TfLiteInterpreterInvoke_native_t>>(
+        'TfLiteInterpreterInvoke')
+    .asFunction();
+
 typedef _TfLiteInterpreterInvoke_native_t = /*TfLiteStatus*/ Int32 Function(
     Pointer<TfLiteInterpreter>);
 
@@ -105,6 +114,7 @@ int Function(
     .lookup<NativeFunction<_TfLiteInterpreterGetOutputTensorCount_native_t>>(
         'TfLiteInterpreterGetOutputTensorCount')
     .asFunction();
+
 typedef _TfLiteInterpreterGetOutputTensorCount_native_t = Int32 Function(
     Pointer<TfLiteInterpreter>);
 
@@ -122,5 +132,6 @@ Pointer<TfLiteTensor> Function(
         .lookup<NativeFunction<_TfLiteInterpreterGetOutputTensor_native_t>>(
             'TfLiteInterpreterGetOutputTensor')
         .asFunction();
+
 typedef _TfLiteInterpreterGetOutputTensor_native_t = Pointer<TfLiteTensor>
     Function(Pointer<TfLiteInterpreter> interpreter, Int32 output_index);
