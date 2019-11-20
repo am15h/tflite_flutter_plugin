@@ -7,6 +7,22 @@
 # Fast fail the script on failures.
 set -e
 
+function dartanalyzer {
+    if [[ $TRAVIS_OS_NAME == "windows" ]]; then
+        command dartanalyzer.bat "$@"
+    else
+        command dartanalyzer "$@"
+    fi
+}
+
+function pub {
+    if [[ $TRAVIS_OS_NAME == "windows" ]]; then
+        command pub.bat "$@"
+    else
+        command pub "$@"
+    fi
+}
+
 # Analyze the codebase.
 dartanalyzer --fatal-warnings --fatal-infos \
   lib/ \

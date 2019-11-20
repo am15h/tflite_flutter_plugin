@@ -1,6 +1,7 @@
 os:
   - linux
   - osx
+  - windows
 language: dart
 
 dart:
@@ -14,3 +15,8 @@ branches:
 cache:
   directories:
     - $HOME/.pub-cache
+
+matrix:
+  # Re-enable once https://github.com/dart-lang/tflite_native/issues/38 is addressed.
+  allow_failures:
+    - os: windows
