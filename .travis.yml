@@ -2,10 +2,13 @@ os:
   - linux
   - osx
   - windows
+
 language: dart
 
 dart:
+  - stable
   - dev
+
 script: tool/travis.sh
 
 # Only building master means that we don't run two builds for each pull request.
