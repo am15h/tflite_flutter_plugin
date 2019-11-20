@@ -1,6 +1,7 @@
-# 0.3.1-dev.2
+# 0.4.0
 
 * Replaced uses of deprecated `asExternalTypedData` with `asTypedList`.
+* Updated to use Dart 2.6 and latest dart:ffi APIs
 
 # 0.3.0
 
