@@ -7,7 +7,7 @@ import 'dart:typed_data';
 
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
-import 'package:tflite_native/tflite.dart' as tfl;
+import 'package:tflite_flutter_plugin/tflite.dart' as tfl;
 
 final dataDir = path.join(Directory.current.path, 'testdata');
 final dataFile = '$dataDir/permute_uint8.tflite';

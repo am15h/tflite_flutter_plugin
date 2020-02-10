@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:cli' as cli;
+//import 'dart:cli' as cli;
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate' show Isolate;
@@ -46,10 +46,10 @@ DynamicLibrary tflitelib = () {
         File.fromUri(Platform.script).parent.path + '/' + _getObjectFilename();
   } else {
     final rootLibrary = 'package:tflite_native/tflite.dart';
-    final blobs = cli
-        .waitFor(Isolate.resolvePackageUri(Uri.parse(rootLibrary)))
-        .resolve('src/blobs/');
-    objectFile = blobs.resolve(_getObjectFilename()).toFilePath();
+//    final blobs = cli
+//        .waitFor(Isolate.resolvePackageUri(Uri.parse(rootLibrary)))
+//        .resolve('src/blobs/');
+//    objectFile = blobs.resolve(_getObjectFilename()).toFilePath();
   }
 
   return DynamicLibrary.open(objectFile);
