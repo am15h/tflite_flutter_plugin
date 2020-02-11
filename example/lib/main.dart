@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:tflite_flutter_plugin/tflite_flutter_plugin.dart';
+import 'package:tflite_flutter_plugin/tflite.dart' as tfl;
 
 void main() => runApp(MyApp());
 
@@ -18,6 +19,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initPlatformState();
+    print('Printing tfl version ${tfl.version}');
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
