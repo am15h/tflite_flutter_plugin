@@ -1,0 +1,6 @@
+framework module TensorFlowLiteC {
+  umbrella header "TensorFlowLiteC.h"
+  export *
+  module * { export * }
+  link framework "Metal"
+}
