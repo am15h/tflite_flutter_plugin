@@ -9,6 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  path_provider:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -16,9 +17,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_driver:
+    sdk: flutter
   tflite_flutter_plugin:
     path: ../
+  test:
+  e2e: ^0.2.4+2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -30,6 +34,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/bad_model.tflite
+    - assets/mobilenet_quant.tflite
+    - assets/permute_uint8.tflite
 
   # To add assets to your application, add an assets section, like this:
   # assets:
