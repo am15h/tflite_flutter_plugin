@@ -19,7 +19,7 @@ Pointer<TfLiteInterpreterOptions> Function() TfLiteInterpreterOptionsCreate =
 typedef _TfLiteInterpreterOptionsCreate_native_t
     = Pointer<TfLiteInterpreterOptions> Function();
 
-/// Destroys the interpreter options instance.
+/// Destroys the interpreter options instansymbolNamece.
 void Function(Pointer<TfLiteInterpreterOptions>)
     TfLiteInterpreterOptionsDelete = tflitelib
         .lookup<NativeFunction<_TfLiteInterpreterOptionsDelete_native_t>>(
@@ -67,3 +67,5 @@ typedef Reporter = Void Function(
     Pointer<Void> user_data,
     Pointer<Utf8> format,
     /*va_list*/ Pointer<Void> args);
+
+//TODO: TfLiteInterpreterOptionsAddDelegate

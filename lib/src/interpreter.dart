@@ -54,6 +54,7 @@ class Interpreter {
     _allocated = true;
   }
 
+  // TODO: We can convert invoke to run and runForMultipleInputs like JAVA api.
   /// Runs inference for the loaded graph.
   void invoke() {
     checkState(_allocated, message: 'Interpreter not allocated.');
@@ -84,4 +85,38 @@ class Interpreter {
     checkState(status == TfLiteStatus.ok);
     _allocated = false;
   }
+
+  /// Gets index of an input given the op name of the input.
+  int getInputIndex(String opName){
+    List<Tensor> inputTensors = getInputTensors();
+    Map<String, int> inputTensorsIndex = Map();
+    for(int i = 0; i < inputTensors.length; i++){
+      inputTensorsIndex[inputTensors[i].name] = i;
+    }
+    if(inputTensorsIndex.containsKey(opName)){
+      return inputTensorsIndex[opName];
+    }else{
+      throw ArgumentError("Input error: $opName' is not a valid name for any input. Names of inputs and their indexes are $inputTensorsIndex");
+    }
+  }
+
+  /// Gets index of an output given the op name of the output.
+  int getOutputIndex(String opName){
+    List<Tensor> outputTensors = getOutputTensors();
+    Map<String, int> outputTensorsIndex = Map();
+    for(int i = 0; i < outputTensors.length; i++){
+      outputTensorsIndex[outputTensors[i].name] = i;
+    }
+    if(outputTensorsIndex.containsKey(opName)){
+      return outputTensorsIndex[opName];
+    }else{
+      throw ArgumentError("Output error: $opName' is not a valid name for any output. Names of outputs and their indexes are $outputTensorsIndex");
+    }
+  }
+
+
+  //TODO: (JAVA) Add long getLastNativeInferenceDurationNanoseconds()
+  //TODO: (JAVA) void modifyGraphWithDelegate(Delegate delegate)
+  //TODO: (JAVA) void resetVariableTensors()
+
 }

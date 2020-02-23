@@ -30,6 +30,13 @@ void main() {
       model.delete();
     });
 
+    test('from buffer', () async {
+      final dataFileBuffer = await getBuffer(dataFileName);
+      var model = tfl.Model.fromBuffer(dataFileBuffer);
+      expect(model, isNotNull);
+      model.delete();
+    });
+
     test('deleting a deleted model throws', () async {
       final dataFile = await getPathOnDevice(dataFileName);
       var model = tfl.Model.fromFile(dataFile);
@@ -121,12 +128,27 @@ void main() {
       expect(interpreter.getInputTensors(), hasLength(1));
     });
 
-    test('get output tensors', () {
-      expect(interpreter.getOutputTensors(), hasLength(1));
+    test('get input tensor index', () {
+      String name = interpreter.getInputTensors()[0].name;
+      expect(interpreter.getInputIndex(name), 0);
+    });
+
+    test('get input tensor index throws argument error', () {
+      expect(() => interpreter.getInputIndex('abcd'), throwsA(isArgumentError));
     });
 
     test('get output tensors', () {
       expect(interpreter.getOutputTensors(), hasLength(1));
+    });
+
+    test('get output tensor index', () {
+      String name = interpreter.getOutputTensors()[0].name;
+      expect(interpreter.getOutputIndex(name), 0);
+    });
+
+    test('get output tensor index throws argument error', () {
+      expect(
+          () => interpreter.getOutputIndex('abcd'), throwsA(isArgumentError));
     });
 
     test('resize input tensor', () {
@@ -205,4 +227,10 @@ Future<String> getPathOnDevice(String assetFileName) async {
   final rawBytes = rawAssetFile.buffer.asUint8List();
   await fileOnDevice.writeAsBytes(rawBytes, flush: true);
   return fileOnDevice.path;
+}
+
+Future<Uint8List> getBuffer(String assetFileName) async {
+  final rawAssetFile = await rootBundle.load('assets/$assetFileName');
+  final rawBytes = rawAssetFile.buffer.asUint8List();
+  return rawBytes;
 }

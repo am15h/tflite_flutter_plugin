@@ -40,6 +40,30 @@ class Tensor {
         data.asTypedList(TfLiteTensorByteSize(_tensor)));
   }
 
+  /// Returns number of dimensions
+  int numDimensions() {
+    return TfLiteTensorNumDims(_tensor);
+  }
+
+  /// Returns the size, in bytes, of the tensor data.
+  int numBytes() {
+    return TfLiteTensorByteSize(_tensor);
+  }
+
+  /// Returns the number of elements in a flattened (1-D) view of the tensor.
+  int numElements() {
+    return computeNumElements(shape);
+  }
+
+  /// Returns the number of elements in a flattened (1-D) view of the tensor's shape.
+  static int computeNumElements(List<int> shape) {
+    var n = 1;
+    for (var i = 0; i < shape.length; i++) {
+      n *= shape[i];
+    }
+    return n;
+  }
+
   /// Updates the underlying data buffer with new bytes.
   ///
   /// The size must match the size of the tensor.
@@ -54,6 +78,9 @@ class Tensor {
 
   /// Copies the input bytes to the underlying data buffer.
   // TODO(shanehop): Prevent access if unallocated.
+
+  // TODO: The dart bindings are using Uint8List while JAVA api uses Object, see if Uint8List should be converted to Object
+
   void copyFrom(Uint8List bytes) {
     var size = bytes.length;
     final ptr = allocate<Uint8>(count: size);
@@ -81,4 +108,5 @@ class Tensor {
 
 // Unimplemented:
 // TfLiteTensorQuantizationParams
+// TODO: TfLiteTensorQuantizationParams
 }
