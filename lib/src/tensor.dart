@@ -40,6 +40,11 @@ class Tensor {
         data.asTypedList(TfLiteTensorByteSize(_tensor)));
   }
 
+  @override
+  String toString() {
+    return 'Tensor{_tensor: $_tensor, name: $name, type: $type, shape: $shape, data: $data}';
+  }
+
   /// Returns number of dimensions
   int numDimensions() {
     return TfLiteTensorNumDims(_tensor);
@@ -64,6 +69,42 @@ class Tensor {
     return n;
   }
 
+  /// Returns shape of an object as an int list
+  static List<int> computeShapeOf(Object o) {
+    var size = computeNumDimensions(o);
+    List<int> dimensions = List.filled(size, 0, growable: false);
+    fillShape(o, 0, dimensions);
+    return dimensions;
+  }
+
+  /// Returns the number of dimensions of a multi-dimensional array, otherwise 0.
+  static int computeNumDimensions(Object o) {
+    if (o == null || !(o is List)) {
+      return 0;
+    }
+    if ((o as List).isEmpty) {
+      throw ArgumentError('Array lengths cannot be 0.');
+    }
+    return 1 + computeNumDimensions((o as List).elementAt(0));
+  }
+
+  /// Recursively populates the shape dimensions for a given (multi-dimensional) array)
+  static void fillShape(Object o, int dim, List<int> shape) {
+    if (shape == null || dim == shape.length) {
+      return;
+    }
+    final len = (o as List).length;
+    if (shape[dim] == 0) {
+      shape[dim] = len;
+    } else if (shape[dim] != len) {
+      throw ArgumentError(
+          'Mismatched lengths ${shape[dim]} and $len in dimension $dim');
+    }
+    for (var i = 0; i < len; ++i) {
+      fillShape((o as List).elementAt(0), dim + 1, shape);
+    }
+  }
+
   /// Updates the underlying data buffer with new bytes.
   ///
   /// The size must match the size of the tensor.
@@ -76,14 +117,11 @@ class Tensor {
     externalTypedData.setRange(0, tensorByteSize, bytes);
   }
 
-  /// Copies the input bytes to the underlying data buffer.
-  // TODO(shanehop): Prevent access if unallocated.
-
-  // TODO: The dart bindings are using Uint8List while JAVA api uses Object, see if Uint8List should be converted to Object
-
-  void copyFrom(Uint8List bytes) {
+  void setTo(Object src) {
+    Uint8List bytes = _convertObjectToBytes(src);
     var size = bytes.length;
     final ptr = allocate<Uint8>(count: size);
+    checkState(isNotNull(ptr), message: 'unallocated');
     final externalTypedData = ptr.asTypedList(size);
     externalTypedData.setRange(0, bytes.length, bytes);
     checkState(TfLiteTensorCopyFromBuffer(_tensor, ptr.cast(), bytes.length) ==
@@ -91,22 +129,134 @@ class Tensor {
     free(ptr);
   }
 
-  /// Returns a copy of the underlying data buffer.
-  // TODO(shanehop): Prevent access if unallocated.
-  Uint8List copyTo() {
+  Object copyTo(Object dst) {
     var size = TfLiteTensorByteSize(_tensor);
     final ptr = allocate<Uint8>(count: size);
+    checkState(isNotNull(ptr), message: 'unallocated');
     final externalTypedData = ptr.asTypedList(size);
     checkState(
-        TfLiteTensorCopyToBuffer(_tensor, ptr.cast(), 4) == TfLiteStatus.ok);
+        TfLiteTensorCopyToBuffer(_tensor, ptr.cast(), size) == TfLiteStatus.ok);
     // Clone the data, because once `free(ptr)`, `externalTypedData` will be
     // volatile
     final bytes = externalTypedData.sublist(0);
+    data = bytes;
+    final obj = _convertBytesToObject(bytes);
     free(ptr);
-    return bytes;
+    return obj;
+  }
+
+  Uint8List _convertObjectToBytes(Object o) {
+    var bytes = List<int>();
+    if (o is List) {
+      o.forEach((e) {
+        bytes.addAll(_convertObjectToBytes(e));
+      });
+    } else {
+      return _convertElementToBytes(o);
+    }
+    return Uint8List.fromList(bytes);
+  }
+
+  Uint8List _convertElementToBytes(Object o) {
+    if (type == TfLiteType.float32) {
+      if (o is double) {
+        var buffer = Uint8List(4).buffer;
+        var bdata = ByteData.view(buffer);
+        bdata.setFloat32(0, o);
+        return buffer.asUint8List();
+      } else {
+        throw ArgumentError(
+            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.float32}');
+      }
+    } else if (type == TfLiteType.int32) {
+      if (o is int) {
+        var buffer = Uint8List(4).buffer;
+        var bdata = ByteData.view(buffer);
+        bdata.setInt32(0, o);
+        return buffer.asUint8List();
+      } else {
+        throw ArgumentError(
+            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.int32}');
+      }
+    } else {
+      throw ArgumentError(
+          'The input data type ${o.runtimeType} is unsupported');
+    }
+  }
+
+  Object _convertBytesToObject(Uint8List bytes) {
+    // stores flattened data
+    var list = List();
+    if (type == TfLiteType.int32) {
+      for (var i = 0; i < bytes.length; i += 4) {
+        list.add(ByteData.view(bytes.buffer).getUint32(i));
+      }
+    } else if (type == TfLiteType.float32) {
+      for (var i = 0; i < bytes.length; i += 4) {
+        list.add(ByteData.view(bytes.buffer).getFloat32(i));
+      }
+    }
+    return list.reshape(shape);
   }
 
 // Unimplemented:
 // TfLiteTensorQuantizationParams
 // TODO: TfLiteTensorQuantizationParams
+
+}
+
+extension Reshaping on List {
+  List reshape(List<int> shape) {
+    var dims = shape.length;
+    var numElements = 1;
+    for (var i = 0; i < dims; i++) {
+      numElements *= shape[i];
+    }
+
+    if (numElements != computeNumElements) {
+      throw ArgumentError(
+          'Total elements mismatch expected: $numElements elements for shape: $shape but found $computeNumElements');
+    }
+    var reshapedList = this.flatten();
+    for (var i = dims - 1; i >= 0; i--) {
+      var temp = List();
+      for (var start = 0;
+          start + shape[i] <= reshapedList.length;
+          start += shape[i]) {
+        temp.add(reshapedList.sublist(start, start + shape[i]));
+      }
+      reshapedList = temp;
+    }
+    return reshapedList[0] as List;
+  }
+
+  List<int> get shape {
+    var list = this as dynamic;
+    var shape = List<int>();
+    while (list is List) {
+      shape.add((list as List).length);
+      list = list.elementAt(0);
+    }
+    return shape;
+  }
+
+  List flatten() {
+    List flat = List();
+    this.forEach((e) {
+      if (e is Iterable) {
+        flat.addAll(e);
+      } else {
+        flat.add(e);
+      }
+    });
+    return flat;
+  }
+
+  int get computeNumElements {
+    var n = 1;
+    for (var i = 0; i < shape.length; i++) {
+      n *= shape[i];
+    }
+    return n;
+  }
 }

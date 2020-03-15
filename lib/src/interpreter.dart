@@ -3,8 +3,10 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
+import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
+import 'package:flutter/services.dart';
 import 'package:quiver/check.dart';
 
 import 'bindings/interpreter.dart';
@@ -39,6 +41,15 @@ class Interpreter {
     return interpreter;
   }
 
+  /// Creates interpreter from a buffer
+  factory Interpreter.fromBuffer(Uint8List buffer,
+      {InterpreterOptions options}) {
+    final model = Model.fromBuffer(buffer);
+    final interpreter = Interpreter(model, options: options);
+    model.delete();
+    return interpreter;
+  }
+
   /// Destroys the model instance.
   void delete() {
     checkState(!_deleted, message: 'Interpreter already deleted.');
@@ -54,11 +65,39 @@ class Interpreter {
     _allocated = true;
   }
 
-  // TODO: We can convert invoke to run and runForMultipleInputs like JAVA api.
   /// Runs inference for the loaded graph.
   void invoke() {
     checkState(_allocated, message: 'Interpreter not allocated.');
     checkState(TfLiteInterpreterInvoke(_interpreter) == TfLiteStatus.ok);
+  }
+
+  /// run
+  void run(Object input, Object output) {
+    runForMultipleInputs([input], {0: output});
+  }
+
+  void runForMultipleInputs(List<Object> inputs, Map<int, Object> outputs) {
+    if (inputs == null || inputs.isEmpty) {
+      throw ArgumentError('Input error: Inputs should not be null or empty.');
+    }
+    if (outputs == null || outputs.isEmpty) {
+      throw ArgumentError('Input error: Outputs should not be null or empty.');
+    }
+
+    if (!_allocated) {
+      allocateTensors();
+      _allocated = true;
+    }
+
+    var inputTensors = getInputTensors();
+    for (var i = 0; i < inputs.length; i++) {
+      inputTensors[i].setTo(inputs[i]);
+    }
+    invoke();
+    var outputTensors = getOutputTensors();
+    for (var i = 0; i < outputTensors.length; i++) {
+      outputs[i] = outputTensors[i].copyTo(outputs[i]);
+    }
   }
 
   /// Gets all input tensors associated with the model.
@@ -87,33 +126,34 @@ class Interpreter {
   }
 
   /// Gets index of an input given the op name of the input.
-  int getInputIndex(String opName){
+  int getInputIndex(String opName) {
     List<Tensor> inputTensors = getInputTensors();
     Map<String, int> inputTensorsIndex = Map();
-    for(int i = 0; i < inputTensors.length; i++){
+    for (int i = 0; i < inputTensors.length; i++) {
       inputTensorsIndex[inputTensors[i].name] = i;
     }
-    if(inputTensorsIndex.containsKey(opName)){
+    if (inputTensorsIndex.containsKey(opName)) {
       return inputTensorsIndex[opName];
-    }else{
-      throw ArgumentError("Input error: $opName' is not a valid name for any input. Names of inputs and their indexes are $inputTensorsIndex");
+    } else {
+      throw ArgumentError(
+          "Input error: $opName' is not a valid name for any input. Names of inputs and their indexes are $inputTensorsIndex");
     }
   }
 
   /// Gets index of an output given the op name of the output.
-  int getOutputIndex(String opName){
+  int getOutputIndex(String opName) {
     List<Tensor> outputTensors = getOutputTensors();
     Map<String, int> outputTensorsIndex = Map();
-    for(int i = 0; i < outputTensors.length; i++){
+    for (int i = 0; i < outputTensors.length; i++) {
       outputTensorsIndex[outputTensors[i].name] = i;
     }
-    if(outputTensorsIndex.containsKey(opName)){
+    if (outputTensorsIndex.containsKey(opName)) {
       return outputTensorsIndex[opName];
-    }else{
-      throw ArgumentError("Output error: $opName' is not a valid name for any output. Names of outputs and their indexes are $outputTensorsIndex");
+    } else {
+      throw ArgumentError(
+          "Output error: $opName' is not a valid name for any output. Names of outputs and their indexes are $outputTensorsIndex");
     }
   }
-
 
   //TODO: (JAVA) Add long getLastNativeInferenceDurationNanoseconds()
   //TODO: (JAVA) void modifyGraphWithDelegate(Delegate delegate)

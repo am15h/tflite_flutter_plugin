@@ -194,26 +194,6 @@ void main() {
           tensors[0].data = Uint8List.fromList(const [0, 1, 10, 100]);
           expect(tensors[0].data, [0, 1, 10, 100]);
         });
-
-        test('copyTo', () {
-          interpreter.allocateTensors();
-          expect(tensors[0].copyTo(), hasLength(4));
-        });
-
-        test('copyFrom throws if not allocated', () {
-          expect(
-              () => tensors[0].copyFrom(Uint8List.fromList(const [0, 0, 0, 0])),
-              throwsA(isStateError));
-        }, skip: 'segmentation fault!');
-        // TODO(shanehop): Prevent data access for unallocated tensors.
-
-        test('copyFrom', () {
-          interpreter.allocateTensors();
-          tensors[0].copyFrom(Uint8List.fromList(const [0, 0, 0, 0]));
-          expect(tensors[0].data, [0, 0, 0, 0]);
-          tensors[0].copyFrom(Uint8List.fromList(const [0, 1, 10, 100]));
-          expect(tensors[0].data, [0, 1, 10, 100]);
-        });
       });
     });
   });
