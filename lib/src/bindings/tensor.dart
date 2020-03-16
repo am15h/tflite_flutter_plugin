@@ -5,6 +5,7 @@
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
+import 'package:tflite_flutter_plugin/src/quanitzation_params.dart';
 
 import 'dlib.dart';
 import 'types.dart';
@@ -108,3 +109,22 @@ typedef _TfLiteTensorCopyToBuffer_native_t = /*TfLiteStatus*/ Int32 Function(
 // Unimplemented functions:
 // TfLiteTensorQuantizationParams
 // TODO: TfLiteQuantizationParams
+
+//
+/*Pointer<TfLiteQuantizationParams> Function(Pointer<TfLiteTensor> tensor)
+    TfLiteTensorQuantizationParams = tflitelib
+        .lookup<NativeFunction<_TfLiteTensorQuantizationParams_native_t>>(
+            'TfLiteTensorQuantizationParams')
+        .asFunction();
+
+typedef _TfLiteTensorQuantizationParams_native_t
+    = Pointer<TfLiteQuantizationParams> Function(Pointer<TfLiteTensor> tensor);*/
+
+/*QuantizationParams Function(Pointer<TfLiteTensor> tensor)
+TfLiteTensorQuantizationParams = tflitelib
+    .lookup<NativeFunction<_TfLiteTensorQuantizationParams_native_t>>(
+    'TfLiteTensorQuantizationParams')
+    .asFunction();
+
+typedef _TfLiteTensorQuantizationParams_native_t
+= TfLiteQuantizationParams Function(Pointer<TfLiteTensor> tensor);*/

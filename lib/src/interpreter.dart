@@ -6,7 +6,6 @@ import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
-import 'package:flutter/services.dart';
 import 'package:quiver/check.dart';
 
 import 'bindings/interpreter.dart';
@@ -125,11 +124,35 @@ class Interpreter {
     _allocated = false;
   }
 
+  /// Gets the input Tensor for the provided input index.
+  Tensor getInputTensor(int index) {
+    //TODO: Optimization: inputTensors in dart variable
+    final tensors = getInputTensors();
+    if (index < 0 || index >= tensors.length) {
+      throw ArgumentError('Invalid input Tensor index: $index');
+    }
+
+    final inputTensor = tensors[index];
+    return inputTensor;
+  }
+
+  /// Gets the output Tensor for the provided output index.
+  Tensor getOutputTensor(int index) {
+    //TODO: Optimization: outputTensors in dart variable
+    final tensors = getOutputTensors();
+    if (index < 0 || index >= tensors.length) {
+      throw ArgumentError('Invalid output Tensor index: $index');
+    }
+
+    final outputTensor = tensors[index];
+    return outputTensor;
+  }
+
   /// Gets index of an input given the op name of the input.
   int getInputIndex(String opName) {
-    List<Tensor> inputTensors = getInputTensors();
-    Map<String, int> inputTensorsIndex = Map();
-    for (int i = 0; i < inputTensors.length; i++) {
+    final inputTensors = getInputTensors();
+    var inputTensorsIndex = <String, int>{};
+    for (var i = 0; i < inputTensors.length; i++) {
       inputTensorsIndex[inputTensors[i].name] = i;
     }
     if (inputTensorsIndex.containsKey(opName)) {
@@ -142,9 +165,9 @@ class Interpreter {
 
   /// Gets index of an output given the op name of the output.
   int getOutputIndex(String opName) {
-    List<Tensor> outputTensors = getOutputTensors();
-    Map<String, int> outputTensorsIndex = Map();
-    for (int i = 0; i < outputTensors.length; i++) {
+    final outputTensors = getOutputTensors();
+    var outputTensorsIndex = <String, int>{};
+    for (var i = 0; i < outputTensors.length; i++) {
       outputTensorsIndex[outputTensors[i].name] = i;
     }
     if (outputTensorsIndex.containsKey(opName)) {

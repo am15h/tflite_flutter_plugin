@@ -7,6 +7,7 @@ import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
+import 'package:tflite_flutter_plugin/src/quanitzation_params.dart';
 
 import 'bindings/tensor.dart';
 import 'bindings/types.dart';
@@ -38,6 +39,11 @@ class Tensor {
     checkState(isNotNull(data), message: 'Tensor data is null.');
     return UnmodifiableUint8ListView(
         data.asTypedList(TfLiteTensorByteSize(_tensor)));
+  }
+
+  QuantizationParams get params {
+    //TODO: resolve the binding issue for TfLiteTensorQuantizationParams
+    return QuantizationParams(0.0, 0);
   }
 
   @override
@@ -72,7 +78,7 @@ class Tensor {
   /// Returns shape of an object as an int list
   static List<int> computeShapeOf(Object o) {
     var size = computeNumDimensions(o);
-    List<int> dimensions = List.filled(size, 0, growable: false);
+    var dimensions = List.filled(size, 0, growable: false);
     fillShape(o, 0, dimensions);
     return dimensions;
   }
@@ -118,7 +124,7 @@ class Tensor {
   }
 
   void setTo(Object src) {
-    Uint8List bytes = _convertObjectToBytes(src);
+    var bytes = _convertObjectToBytes(src);
     var size = bytes.length;
     final ptr = allocate<Uint8>(count: size);
     checkState(isNotNull(ptr), message: 'unallocated');
@@ -146,11 +152,11 @@ class Tensor {
   }
 
   Uint8List _convertObjectToBytes(Object o) {
-    var bytes = List<int>();
+    var bytes = <int>[];
     if (o is List) {
-      o.forEach((e) {
+      for (var e in o) {
         bytes.addAll(_convertObjectToBytes(e));
-      });
+      }
     } else {
       return _convertElementToBytes(o);
     }
@@ -186,7 +192,7 @@ class Tensor {
 
   Object _convertBytesToObject(Uint8List bytes) {
     // stores flattened data
-    var list = List();
+    var list = [];
     if (type == TfLiteType.int32) {
       for (var i = 0; i < bytes.length; i += 4) {
         list.add(ByteData.view(bytes.buffer).getUint32(i));
@@ -198,11 +204,6 @@ class Tensor {
     }
     return list.reshape(shape);
   }
-
-// Unimplemented:
-// TfLiteTensorQuantizationParams
-// TODO: TfLiteTensorQuantizationParams
-
 }
 
 extension Reshaping on List {
@@ -217,9 +218,9 @@ extension Reshaping on List {
       throw ArgumentError(
           'Total elements mismatch expected: $numElements elements for shape: $shape but found $computeNumElements');
     }
-    var reshapedList = this.flatten();
+    var reshapedList = flatten();
     for (var i = dims - 1; i >= 0; i--) {
-      var temp = List();
+      var temp = [];
       for (var start = 0;
           start + shape[i] <= reshapedList.length;
           start += shape[i]) {
@@ -232,7 +233,7 @@ extension Reshaping on List {
 
   List<int> get shape {
     var list = this as dynamic;
-    var shape = List<int>();
+    var shape = <int>[];
     while (list is List) {
       shape.add((list as List).length);
       list = list.elementAt(0);
@@ -241,8 +242,8 @@ extension Reshaping on List {
   }
 
   List flatten() {
-    List flat = List();
-    this.forEach((e) {
+    var flat = [];
+    forEach((e) {
       if (e is Iterable) {
         flat.addAll(e);
       } else {

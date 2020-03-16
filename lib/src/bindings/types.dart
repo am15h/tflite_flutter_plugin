@@ -4,6 +4,8 @@
 
 import 'dart:ffi';
 
+import 'package:ffi/ffi.dart';
+
 /// Wraps a model interpreter.
 class TfLiteInterpreter extends Struct {}
 
@@ -15,6 +17,21 @@ class TfLiteModel extends Struct {}
 
 /// Wraps data associated with a graph tensor.
 class TfLiteTensor extends Struct {}
+
+class TfLiteDelegate extends Struct {}
+
+class TfLiteQuantizationParams extends Struct {
+  @Float()
+  double scale;
+
+  @Int32()
+  int zero_point;
+
+  @override
+  String toString() {
+    return 'TfLiteQuantizationParams{scale: $scale, zero_point: $zero_point}';
+  }
+}
 
 /// Status of a TensorFlowLite function call.
 class TfLiteStatus {

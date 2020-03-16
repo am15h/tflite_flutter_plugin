@@ -14,6 +14,7 @@ import 'package:e2e/e2e.dart';
 final dataFileName = 'permute_uint8.tflite';
 final missingFileName = 'missing.tflite';
 final badFileName = 'bad_model.tflite';
+final quantFileName = 'mobilenet_quant.tflite';
 
 void main() {
   E2EWidgetsFlutterBinding.ensureInitialized();
@@ -128,8 +129,16 @@ void main() {
       expect(interpreter.getInputTensors(), hasLength(1));
     });
 
+    test('get input tensor', () {
+      expect(interpreter.getInputTensor(0), isNotNull);
+    });
+
+    test('get input tensor throws argument error', () {
+      expect(() => interpreter.getInputTensor(33), throwsA(isArgumentError));
+    });
+
     test('get input tensor index', () {
-      String name = interpreter.getInputTensors()[0].name;
+      var name = interpreter.getInputTensors()[0].name;
       expect(interpreter.getInputIndex(name), 0);
     });
 
@@ -141,8 +150,16 @@ void main() {
       expect(interpreter.getOutputTensors(), hasLength(1));
     });
 
+    test('get output tensor', () {
+      expect(interpreter.getOutputTensor(0), isNotNull);
+    });
+
+    test('get input tensor throws argument error', () {
+      expect(() => interpreter.getOutputTensor(33), throwsA(isArgumentError));
+    });
+
     test('get output tensor index', () {
-      String name = interpreter.getOutputTensors()[0].name;
+      var name = interpreter.getOutputTensors()[0].name;
       expect(interpreter.getOutputIndex(name), 0);
     });
 
@@ -195,6 +212,21 @@ void main() {
           expect(tensors[0].data, [0, 1, 10, 100]);
         });
       });
+
+      /*group('quant', () {
+        tfl.Interpreter interpreter;
+        setUp(() async {
+          final dataFile = await getPathOnDevice(quantFileName);
+          interpreter = tfl.Interpreter.fromFile(dataFile);
+        });
+        tearDown(() => interpreter.delete());
+        test('params', () {
+          interpreter.allocateTensors();
+          final tensor = interpreter.getInputTensor(0);
+          print(tensor);
+          print(tensor.params);
+        });
+      });*/
     });
   });
 }

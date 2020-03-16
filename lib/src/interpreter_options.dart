@@ -38,7 +38,6 @@ class InterpreterOptions {
 // TODO: TfLiteInterpreterOptionsSetErrorReporter
 // TODO: setAllowFp16PrecisionForFp32(bool allow)
 
-
 // TODO: (Later) NNAPI and GPU Delegate support for Android if Platform.isAndroid
 // setUseNNAPI(bool useNNAPI)
 // addDelegate(Delegate delegate)

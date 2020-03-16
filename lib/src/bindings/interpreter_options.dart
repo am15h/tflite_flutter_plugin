@@ -68,4 +68,13 @@ typedef Reporter = Void Function(
     Pointer<Utf8> format,
     /*va_list*/ Pointer<Void> args);
 
-//TODO: TfLiteInterpreterOptionsAddDelegate
+void Function(Pointer<TfLiteInterpreterOptions> options,
+        Pointer<TfLiteDelegate> delegate) TfLiteInterpreterOptionsAddDelegate =
+    tflitelib
+        .lookup<NativeFunction<_TfLiteInterpreterOptionsAddDelegate_native_t>>(
+            'TfLiteInterpreterOptionsAddDelegate')
+        .asFunction();
+
+typedef _TfLiteInterpreterOptionsAddDelegate_native_t = Void Function(
+    Pointer<TfLiteInterpreterOptions> options,
+    Pointer<TfLiteDelegate> delegate);
