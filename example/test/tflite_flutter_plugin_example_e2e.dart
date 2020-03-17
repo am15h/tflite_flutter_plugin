@@ -23,54 +23,26 @@ void main() {
     expect(tfl.version, isNotEmpty);
   });
 
-  group('model', () {
-    test('from file', () async {
-      final dataFile = await getPathOnDevice(dataFileName);
-      var model = tfl.Model.fromFile(dataFile);
-      expect(model, isNotNull);
-      model.delete();
-    });
-
-    test('from buffer', () async {
-      final dataFileBuffer = await getBuffer(dataFileName);
-      var model = tfl.Model.fromBuffer(dataFileBuffer);
-      expect(model, isNotNull);
-      model.delete();
-    });
-
-    test('deleting a deleted model throws', () async {
-      final dataFile = await getPathOnDevice(dataFileName);
-      var model = tfl.Model.fromFile(dataFile);
-      model.delete();
-      expect(() => model.delete(), throwsA(isStateError));
-    });
-
-    test('bad file throws', () async {
-      final badFile = await getPathOnDevice(badFileName);
-      if (!File(badFile).existsSync()) {
-        fail('badFile is missing.');
-      }
-      expect(() => tfl.Model.fromFile(badFile), throwsA(isArgumentError));
-    });
-  });
-
-  test('interpreter from model', () async {
-    final dataFile = await getPathOnDevice(dataFileName);
-    var model = tfl.Model.fromFile(dataFile);
-    var interpreter = tfl.Interpreter(model);
-    model.delete();
+  test('interpreter from file', () async {
+    final dataFile = await getFile(dataFileName);
+    var interpreter = tfl.Interpreter.fromFile(dataFile);
     interpreter.delete();
   });
 
-  test('interpreter from file', () async {
-    final dataFile = await getPathOnDevice(dataFileName);
-    var interpreter = tfl.Interpreter.fromFile(dataFile);
+  test('interpreter from buffer', () async {
+    final buffer = await getBuffer(dataFileName);
+    var interpreter = tfl.Interpreter.fromBuffer(buffer);
+    interpreter.delete();
+  });
+
+  test('interpreter from asset', () async {
+    final interpreter = await tfl.Interpreter.fromAsset(dataFileName);
     interpreter.delete();
   });
 
   group('interpreter options', () {
     test('default', () async {
-      final dataFile = await getPathOnDevice(dataFileName);
+      final dataFile = await getFile(dataFileName);
 
       var options = tfl.InterpreterOptions();
       var interpreter = tfl.Interpreter.fromFile(dataFile, options: options);
@@ -81,7 +53,7 @@ void main() {
     });
 
     test('threads', () async {
-      final dataFile = await getPathOnDevice(dataFileName);
+      final dataFile = await getFile(dataFileName);
 
       var options = tfl.InterpreterOptions()..threads = 1;
       var interpreter = tfl.Interpreter.fromFile(dataFile, options: options);
@@ -89,14 +61,13 @@ void main() {
       interpreter.allocateTensors();
       interpreter.invoke();
       interpreter.delete();
-      // TODO(shanehop): Is there something meaningful to verify?
     });
   });
 
   group('interpreter', () {
     tfl.Interpreter interpreter;
     setUp(() async {
-      final dataFile = await getPathOnDevice(dataFileName);
+      final dataFile = await getFile(dataFileName);
       interpreter = tfl.Interpreter.fromFile(dataFile);
     });
     tearDown(() => interpreter.delete());
@@ -231,13 +202,18 @@ void main() {
   });
 }
 
-Future<String> getPathOnDevice(String assetFileName) async {
+Future<File> getFile(String fileName) async {
   final appDir = await getTemporaryDirectory();
   final appPath = appDir.path;
-  final rawAssetFile = await rootBundle.load('assets/$assetFileName');
-  final fileOnDevice = File('$appPath/$assetFileName');
+  final fileOnDevice = File('$appPath/$fileName');
+  final rawAssetFile = await rootBundle.load('assets/$fileName');
   final rawBytes = rawAssetFile.buffer.asUint8List();
   await fileOnDevice.writeAsBytes(rawBytes, flush: true);
+  return fileOnDevice;
+}
+
+Future<String> getPathOnDevice(String assetFileName) async {
+  final fileOnDevice = await getFile(assetFileName);
   return fileOnDevice.path;
 }
 

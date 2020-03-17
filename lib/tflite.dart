@@ -11,7 +11,6 @@ import 'src/bindings/bindings.dart';
 
 export 'src/interpreter.dart';
 export 'src/interpreter_options.dart';
-export 'src/model.dart';
 export 'src/tensor.dart';
 
 /// tflite version information.
