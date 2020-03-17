@@ -5,6 +5,7 @@
 import 'dart:ffi';
 
 import 'package:quiver/check.dart';
+import 'package:tflite_flutter_plugin/src/delegate.dart';
 
 import 'bindings/interpreter_options.dart';
 import 'bindings/types.dart';
@@ -33,12 +34,17 @@ class InterpreterOptions {
   set threads(int threads) =>
       TfLiteInterpreterOptionsSetNumThreads(_options, threads);
 
+  /// Adds delegate to Interpreter Options
+  void addDelegate(Delegate delegate) {
+    TfLiteInterpreterOptionsAddDelegate(_options, delegate.base);
+  }
+
 // Unimplemented:
 // TfLiteInterpreterOptionsSetErrorReporter
 // TODO: TfLiteInterpreterOptionsSetErrorReporter
 // TODO: setAllowFp16PrecisionForFp32(bool allow)
 
-// TODO: (Later) NNAPI and GPU Delegate support for Android if Platform.isAndroid
+// TODO: NNAPI and GPU Delegate support for Android if Platform.isAndroid
 // setUseNNAPI(bool useNNAPI)
 // addDelegate(Delegate delegate)
 // setAllowBufferHandleOutput(bool allow)
