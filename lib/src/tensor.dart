@@ -42,7 +42,7 @@ class Tensor {
   }
 
   QuantizationParams get params {
-    //TODO: resolve the binding issue for TfLiteTensorQuantizationParams
+    //TODO: Add bindings for TfLiteQuantizationParams when struct returning functionality is added to the dart code
     return QuantizationParams(0.0, 0);
   }
 
@@ -164,6 +164,7 @@ class Tensor {
   }
 
   Uint8List _convertElementToBytes(Object o) {
+    //TODO: add conversions for rest of the types
     if (type == TfLiteType.float32) {
       if (o is double) {
         var buffer = Uint8List(4).buffer;
@@ -193,6 +194,7 @@ class Tensor {
   Object _convertBytesToObject(Uint8List bytes) {
     // stores flattened data
     var list = [];
+    //TODO: add conversions for the rest of the types
     if (type == TfLiteType.int32) {
       for (var i = 0; i < bytes.length; i += 4) {
         list.add(ByteData.view(bytes.buffer).getUint32(i));

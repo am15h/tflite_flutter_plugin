@@ -77,8 +77,8 @@ class Interpreter {
     return rawBytes;
   }
 
-  /// Destroys the model instance.
-  void delete() {
+  /// Destroys the interpreter instance.
+  void close() {
     checkState(!_deleted, message: 'Interpreter already deleted.');
     TfLiteInterpreterDelete(_interpreter);
     _deleted = true;

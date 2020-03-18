@@ -26,18 +26,18 @@ void main() {
   test('interpreter from file', () async {
     final dataFile = await getFile(dataFileName);
     var interpreter = tfl.Interpreter.fromFile(dataFile);
-    interpreter.delete();
+    interpreter.close();
   });
 
   test('interpreter from buffer', () async {
     final buffer = await getBuffer(dataFileName);
     var interpreter = tfl.Interpreter.fromBuffer(buffer);
-    interpreter.delete();
+    interpreter.close();
   });
 
   test('interpreter from asset', () async {
     final interpreter = await tfl.Interpreter.fromAsset(dataFileName);
-    interpreter.delete();
+    interpreter.close();
   });
 
   group('interpreter options', () {
@@ -49,7 +49,7 @@ void main() {
       options.delete();
       interpreter.allocateTensors();
       interpreter.invoke();
-      interpreter.delete();
+      interpreter.close();
     });
 
     test('threads', () async {
@@ -60,7 +60,7 @@ void main() {
       options.delete();
       interpreter.allocateTensors();
       interpreter.invoke();
-      interpreter.delete();
+      interpreter.close();
     });
   });
 
@@ -70,7 +70,7 @@ void main() {
       final dataFile = await getFile(dataFileName);
       interpreter = tfl.Interpreter.fromFile(dataFile);
     });
-    tearDown(() => interpreter.delete());
+    tearDown(() => interpreter.close());
 
     test('allocate', () {
       interpreter.allocateTensors();

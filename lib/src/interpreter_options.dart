@@ -3,12 +3,14 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:quiver/check.dart';
 import 'package:tflite_flutter_plugin/src/delegate.dart';
 
 import 'bindings/interpreter_options.dart';
 import 'bindings/types.dart';
+import 'delegates/nnapi_delegate.dart';
 
 /// TensorFlowLite interpreter options.
 class InterpreterOptions {
@@ -33,6 +35,13 @@ class InterpreterOptions {
   /// Sets the number of CPU threads to use.
   set threads(int threads) =>
       TfLiteInterpreterOptionsSetNumThreads(_options, threads);
+
+  /// Set true to use NnApi Delegate for Android
+  set useNnApi(bool useNnApi) {
+    if (Platform.isAndroid) {
+      addDelegate(NnApiDelegate());
+    }
+  }
 
   /// Adds delegate to Interpreter Options
   void addDelegate(Delegate delegate) {
