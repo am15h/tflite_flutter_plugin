@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -198,6 +199,63 @@ void main() {
           print(tensor.params);
         });
       });*/
+    });
+
+    group('tensor static', () {
+      test('dataTypeOf', () {
+        var d = 2.0;
+        var dList = [
+          [
+            [2.0],
+            [2.0]
+          ]
+        ];
+        var i = 1;
+        var str = 'str';
+        var byteList = Uint8List.fromList([0, 0, 0]);
+        expect(tfl.Tensor.dataTypeOf(d), tfl.TfLiteType.float32);
+        expect(tfl.Tensor.dataTypeOf(dList), tfl.TfLiteType.float32);
+        expect(tfl.Tensor.dataTypeOf(i), tfl.TfLiteType.int32);
+        expect(tfl.Tensor.dataTypeOf(str), tfl.TfLiteType.string);
+      });
+
+      test('dataTypeOf throws Argument error', () {
+        expect(tfl.Tensor.dataTypeOf({0: 'a'}), throwsArgumentError);
+      });
+    });
+
+    group('extension Reshaping', () {
+      test('shape', () {
+        var list1D = [0.0, 2.0, 1.0, 3.0];
+        var list2D = [
+          [1, 2, 3],
+          [1, 2, 3]
+        ];
+        var list3D = [
+          [
+            [1, 2],
+            [1, 2]
+          ],
+          [
+            [1, 2],
+            [1, 2]
+          ]
+        ];
+        //TODO: handle case when subLists of different sizes
+        expect(list1D.shape, [4]);
+        expect(list2D.shape, [2, 3]);
+        expect(list3D.shape, [2, 2, 2]);
+      });
+
+      test('reshape', () {
+        //TODO: resolve casting issue with dynamic
+        var list = [0.0, 1.0, 2.0, 3.0];
+        var listReshaped = list.reshape([2, 2]).cast<List<List<double>>>();
+        expect(listReshaped, [
+          [0.0, 1.0],
+          [2.0, 3.0]
+        ]);
+      });
     });
   });
 }

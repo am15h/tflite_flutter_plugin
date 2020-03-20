@@ -8,9 +8,7 @@ import 'package:tflite_flutter_plugin/src/delegate.dart';
 
 /// GPU delegate for Android
 class GpuDelegateV2 implements Delegate {
-  @override
   Pointer<TfLiteDelegate> _delegate;
-
   bool _deleted = false;
 
   @override
@@ -21,6 +19,7 @@ class GpuDelegateV2 implements Delegate {
   factory GpuDelegateV2(GpuDelegateOptionsV2 optionsV2) =>
       GpuDelegateV2._(TfLiteGpuDelegateV2Create(optionsV2?.base));
 
+  @override
   void delete() {
     checkState(!_deleted, message: 'TfLiteGpuDelegateV2 already deleted.');
     TfLiteGpuDelegateV2Delete(_delegate);

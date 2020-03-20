@@ -15,6 +15,7 @@ import 'bindings/model.dart';
 import 'bindings/types.dart';
 import 'ffi/helper.dart';
 import 'interpreter_options.dart';
+import 'model.dart';
 import 'tensor.dart';
 
 /// TensorFlowLite interpreter for running inference on a model.
@@ -26,7 +27,7 @@ class Interpreter {
   Interpreter._(this._interpreter);
 
   /// Creates interpreter from model or throws if unsuccessful.
-  factory Interpreter._Interpreter(_Model model, {InterpreterOptions options}) {
+  factory Interpreter._Interpreter(Model model, {InterpreterOptions options}) {
     final interpreter = TfLiteInterpreterCreate(
         model.base, options?.base ?? cast<TfLiteInterpreterOptions>(nullptr));
     checkArgument(isNotNull(interpreter),
@@ -36,7 +37,7 @@ class Interpreter {
 
   /// Creates interpreter from a model file or throws if unsuccessful.
   factory Interpreter.fromFile(File modelFile, {InterpreterOptions options}) {
-    final model = _Model.fromFile(modelFile.path);
+    final model = Model.fromFile(modelFile.path);
     final interpreter = Interpreter._Interpreter(model, options: options);
     model.delete();
     return interpreter;
@@ -45,7 +46,7 @@ class Interpreter {
   /// Creates interpreter from a buffer
   factory Interpreter.fromBuffer(Uint8List buffer,
       {InterpreterOptions options}) {
-    final model = _Model.fromBuffer(buffer);
+    final model = Model.fromBuffer(buffer);
     final interpreter = Interpreter._Interpreter(model, options: options);
     model.delete();
     return interpreter;
@@ -211,43 +212,4 @@ class Interpreter {
   //TODO: (JAVA) void modifyGraphWithDelegate(Delegate delegate)
   //TODO: (JAVA) void resetVariableTensors()
 
-}
-
-/// TensorFlowLite model.
-class _Model {
-  final Pointer<TfLiteModel> _model;
-  bool _deleted = false;
-
-  Pointer<TfLiteModel> get base => _model;
-
-  _Model._(this._model);
-
-  /// Loads model from a file or throws if unsuccessful.
-  factory _Model.fromFile(String path) {
-    final cpath = Utf8.toUtf8(path);
-    final model = TfLiteModelCreateFromFile(cpath);
-    free(cpath);
-    checkArgument(isNotNull(model),
-        message: 'Unable to create model from file');
-    return _Model._(model);
-  }
-
-  /// Loads model from a buffer or throws if unsuccessful.
-  factory _Model.fromBuffer(Uint8List buffer) {
-    final size = buffer.length;
-    final ptr = allocate<Uint8>(count: size);
-    final externalTypedData = ptr.asTypedList(size);
-    externalTypedData.setRange(0, buffer.length, buffer);
-    final model = TfLiteModelCreateFromBuffer(ptr.cast(), buffer.length);
-    checkArgument(isNotNull(model),
-        message: 'Unable to create model from buffer');
-    return _Model._(model);
-  }
-
-  /// Destroys the model instance.
-  void delete() {
-    checkState(!_deleted, message: 'Model already deleted.');
-    TfLiteModelDelete(_model);
-    _deleted = true;
-  }
 }

@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:quiver/check.dart';
 import 'package:tflite_flutter_plugin/src/delegate.dart';
+import 'package:tflite_flutter_plugin/tflite.dart';
 
 import 'bindings/interpreter_options.dart';
 import 'bindings/types.dart';
@@ -37,9 +38,16 @@ class InterpreterOptions {
       TfLiteInterpreterOptionsSetNumThreads(_options, threads);
 
   /// Set true to use NnApi Delegate for Android
-  set useNnApi(bool useNnApi) {
+  set useNnApiForAndroid(bool useNnApi) {
     if (Platform.isAndroid) {
       addDelegate(NnApiDelegate());
+    }
+  }
+
+  /// Set true to use Metal Delegate for iOS
+  set useMetalDelegateForIOS(bool useMetal) {
+    if (Platform.isIOS) {
+      addDelegate(GpuDelegate());
     }
   }
 

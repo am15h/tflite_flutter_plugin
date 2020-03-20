@@ -12,6 +12,7 @@ import 'package:tflite_flutter_plugin/src/quanitzation_params.dart';
 import 'bindings/tensor.dart';
 import 'bindings/types.dart';
 import 'ffi/helper.dart';
+import 'util/list_shape_extension.dart';
 
 export 'bindings/types.dart' show TfLiteType;
 
@@ -46,9 +47,16 @@ class Tensor {
     return QuantizationParams(0.0, 0);
   }
 
-  @override
-  String toString() {
-    return 'Tensor{_tensor: $_tensor, name: $name, type: $type, shape: $shape, data: $data}';
+  /// Updates the underlying data buffer with new bytes.
+  ///
+  /// The size must match the size of the tensor.
+  set data(Uint8List bytes) {
+    final tensorByteSize = TfLiteTensorByteSize(_tensor);
+    checkArgument(tensorByteSize == bytes.length);
+    final data = cast<Uint8>(TfLiteTensorData(_tensor));
+    checkState(isNotNull(data), message: 'Tensor data is null.');
+    final externalTypedData = data.asTypedList(tensorByteSize);
+    externalTypedData.setRange(0, tensorByteSize, bytes);
   }
 
   /// Returns number of dimensions
@@ -111,16 +119,24 @@ class Tensor {
     }
   }
 
-  /// Updates the underlying data buffer with new bytes.
-  ///
-  /// The size must match the size of the tensor.
-  set data(Uint8List bytes) {
-    final tensorByteSize = TfLiteTensorByteSize(_tensor);
-    checkArgument(tensorByteSize == bytes.length);
-    final data = cast<Uint8>(TfLiteTensorData(_tensor));
-    checkState(isNotNull(data), message: 'Tensor data is null.');
-    final externalTypedData = data.asTypedList(tensorByteSize);
-    externalTypedData.setRange(0, tensorByteSize, bytes);
+  /// Returns data type of given object
+  static TfLiteType dataTypeOf(Object o) {
+    var c;
+    while (o is List) {
+      o = (o as List).elementAt(0);
+    }
+    c = o;
+    if (c is double) {
+      return TfLiteType.float32;
+    } else if (c is int) {
+      return TfLiteType.int32;
+    } else if (c is String) {
+      return TfLiteType.string;
+    } else if (c is bool) {
+      return TfLiteType.bool;
+    }
+    throw ArgumentError(
+        'DataType error: cannot resolve DataType of ${o.runtimeType}');
   }
 
   void setTo(Object src) {
@@ -206,60 +222,9 @@ class Tensor {
     }
     return list.reshape(shape);
   }
-}
 
-extension Reshaping on List {
-  List reshape(List<int> shape) {
-    var dims = shape.length;
-    var numElements = 1;
-    for (var i = 0; i < dims; i++) {
-      numElements *= shape[i];
-    }
-
-    if (numElements != computeNumElements) {
-      throw ArgumentError(
-          'Total elements mismatch expected: $numElements elements for shape: $shape but found $computeNumElements');
-    }
-    var reshapedList = flatten();
-    for (var i = dims - 1; i >= 0; i--) {
-      var temp = [];
-      for (var start = 0;
-          start + shape[i] <= reshapedList.length;
-          start += shape[i]) {
-        temp.add(reshapedList.sublist(start, start + shape[i]));
-      }
-      reshapedList = temp;
-    }
-    return reshapedList[0] as List;
-  }
-
-  List<int> get shape {
-    var list = this as dynamic;
-    var shape = <int>[];
-    while (list is List) {
-      shape.add((list as List).length);
-      list = list.elementAt(0);
-    }
-    return shape;
-  }
-
-  List flatten() {
-    var flat = [];
-    forEach((e) {
-      if (e is Iterable) {
-        flat.addAll(e);
-      } else {
-        flat.add(e);
-      }
-    });
-    return flat;
-  }
-
-  int get computeNumElements {
-    var n = 1;
-    for (var i = 0; i < shape.length; i++) {
-      n *= shape[i];
-    }
-    return n;
+  @override
+  String toString() {
+    return 'Tensor{_tensor: $_tensor, name: $name, type: $type, shape: $shape, data: $data}';
   }
 }

@@ -8,9 +8,7 @@ import 'package:tflite_flutter_plugin/src/delegate.dart';
 
 /// Metal Delegate for iOS
 class GpuDelegate implements Delegate {
-  @override
   Pointer<TfLiteDelegate> _delegate;
-
   bool _deleted = false;
 
   @override
@@ -21,6 +19,7 @@ class GpuDelegate implements Delegate {
   factory GpuDelegate({GpuDelegateOptions options}) =>
       GpuDelegate._(TFLGpuDelegateCreate(options?.base));
 
+  @override
   void delete() {
     checkState(!_deleted, message: 'TfLiteGpuDelegate already deleted.');
     TFLGpuDelegateDelete(_delegate);

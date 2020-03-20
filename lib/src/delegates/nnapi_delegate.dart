@@ -1,11 +1,11 @@
 import 'dart:ffi';
 
+import 'package:quiver/check.dart';
 import 'package:tflite_flutter_plugin/src/bindings/types.dart';
 import 'package:tflite_flutter_plugin/src/delegate.dart';
 
 /// NnApi Delegate for Android
 class NnApiDelegate implements Delegate {
-  @override
   Pointer<TfLiteDelegate> _delegate;
   bool _deleted = false;
 
@@ -17,5 +17,10 @@ class NnApiDelegate implements Delegate {
   factory NnApiDelegate() {
     //TODO: Implement bindings and classes for NnApiDelegate
     return null;
+  }
+
+  @override
+  void delete() {
+    checkState(!_deleted, message: 'TfLiteGpuDelegate already deleted.');
   }
 }
