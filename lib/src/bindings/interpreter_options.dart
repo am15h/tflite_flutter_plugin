@@ -78,3 +78,13 @@ void Function(Pointer<TfLiteInterpreterOptions> options,
 typedef _TfLiteInterpreterOptionsAddDelegate_native_t = Void Function(
     Pointer<TfLiteInterpreterOptions> options,
     Pointer<TfLiteDelegate> delegate);
+
+/// Enable or disable the NN API for the interpreter (true to enable).
+void Function(Pointer<TfLiteInterpreterOptions> options, int enable)
+    TfLiteInterpreterOptionsSetUseNNAPI = tflitelib
+        .lookup<NativeFunction<_TfLiteInterpreterOptionsSetUseNNAPI_native_t>>(
+            'TfLiteInterpreterOptionsSetUseNNAPI')
+        .asFunction();
+
+typedef _TfLiteInterpreterOptionsSetUseNNAPI_native_t = Void Function(
+    Pointer<TfLiteInterpreterOptions> options, Int32 enable);

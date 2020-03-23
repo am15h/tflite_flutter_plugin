@@ -9,6 +9,7 @@ import 'package:ffi/ffi.dart';
 
 import 'src/bindings/bindings.dart';
 
+export 'src/bindings/types.dart';
 export 'src/delegate.dart';
 export 'src/delegates/gpu_delegate.dart';
 export 'src/delegates/metal_delegate.dart';

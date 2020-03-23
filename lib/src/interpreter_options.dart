@@ -40,7 +40,7 @@ class InterpreterOptions {
   /// Set true to use NnApi Delegate for Android
   set useNnApiForAndroid(bool useNnApi) {
     if (Platform.isAndroid) {
-      addDelegate(NnApiDelegate());
+      TfLiteInterpreterOptionsSetUseNNAPI(_options, 1);
     }
   }
 
@@ -65,8 +65,5 @@ class InterpreterOptions {
 // setUseNNAPI(bool useNNAPI)
 // addDelegate(Delegate delegate)
 // setAllowBufferHandleOutput(bool allow)
-
-// TODO: (Later) GPU (Metal) Delegate support for iOS if Platform.isIOS
-// wrap around metal_delegate.h
 
 }

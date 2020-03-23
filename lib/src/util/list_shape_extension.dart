@@ -10,7 +10,7 @@ extension ListShape on List {
       throw ArgumentError(
           'Total elements mismatch expected: $numElements elements for shape: $shape but found $computeNumElements');
     }
-    var reshapedList = flatten();
+    var reshapedList = flatten<dynamic>();
     for (var i = dims - 1; i >= 0; i--) {
       var temp = [];
       for (var start = 0;
@@ -33,13 +33,15 @@ extension ListShape on List {
     return shape;
   }
 
-  List flatten() {
-    var flat = [];
+  List<T> flatten<T>() {
+    var flat = <T>[];
     forEach((e) {
-      if (e is Iterable) {
+      if (e is Iterable<T>) {
         flat.addAll(e);
-      } else {
+      } else if (e is T) {
         flat.add(e);
+      } else {
+        // Error with typing
       }
     });
     return flat;

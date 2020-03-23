@@ -43,8 +43,12 @@ class Tensor {
   }
 
   QuantizationParams get params {
-    //TODO: Add bindings for TfLiteQuantizationParams when struct returning functionality is added to the dart code
-    return QuantizationParams(0.0, 0);
+    if (_tensor != null) {
+      final ref = TfLiteTensorQuantizationParams(_tensor).ref;
+      return QuantizationParams(ref.scale, ref.zero_point);
+    } else {
+      return QuantizationParams(0.0, 0);
+    }
   }
 
   /// Updates the underlying data buffer with new bytes.

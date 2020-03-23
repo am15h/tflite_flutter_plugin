@@ -59,3 +59,22 @@ typedef _TFLGpuDelegateV2Delete_native_t = Void Function(
     Pointer<TfLiteDelegate> delegate);
 
 //TODO: add TfLiteGpuDelegateOptionsV2 TfLiteGpuDelegateOptionsV2Default();
+
+/// Creates StatefulNnApiDelegate with default options
+Pointer<TfLiteDelegate> Function() TfLiteStatefulNnApiDelegateCreate = tflitelib
+    .lookup<NativeFunction<_TfLiteStatefulNnApiDelegateCreate_native_t>>(
+        'TfLiteStatefulNnApiDelegateCreate')
+    .asFunction();
+
+typedef _TfLiteStatefulNnApiDelegateCreate_native_t = Pointer<TfLiteDelegate>
+    Function();
+
+/// Destroys a delegate created with `TfLiteStatefulNnApiDelegateCreate` call.
+void Function(Pointer<TfLiteDelegate>) TfLiteStatefulNnApiDelegateDelete =
+    tflitelib
+        .lookup<NativeFunction<_TfLiteStatefulNnApiDelegateDelete_native_t>>(
+            'TfLiteStatefulNnApiDelegateDelete')
+        .asFunction();
+
+typedef _TfLiteStatefulNnApiDelegateDelete_native_t = Void Function(
+    Pointer<TfLiteDelegate> delegate);

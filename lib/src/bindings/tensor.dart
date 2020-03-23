@@ -106,25 +106,11 @@ typedef _TfLiteTensorCopyToBuffer_native_t = /*TfLiteStatus*/ Int32 Function(
   Int32 output_data_size,
 );
 
-// Unimplemented functions:
-// TfLiteTensorQuantizationParams
-// TODO: TfLiteQuantizationParams
-
-//
-/*Pointer<TfLiteQuantizationParams> Function(Pointer<TfLiteTensor> tensor)
+Pointer<TfLiteQuantizationParams> Function(Pointer<TfLiteTensor> tensor)
     TfLiteTensorQuantizationParams = tflitelib
         .lookup<NativeFunction<_TfLiteTensorQuantizationParams_native_t>>(
-            'TfLiteTensorQuantizationParams')
+            'TfLiteTensorQuantizationParamsPointer')
         .asFunction();
 
 typedef _TfLiteTensorQuantizationParams_native_t
-    = Pointer<TfLiteQuantizationParams> Function(Pointer<TfLiteTensor> tensor);*/
-
-/*QuantizationParams Function(Pointer<TfLiteTensor> tensor)
-TfLiteTensorQuantizationParams = tflitelib
-    .lookup<NativeFunction<_TfLiteTensorQuantizationParams_native_t>>(
-    'TfLiteTensorQuantizationParams')
-    .asFunction();
-
-typedef _TfLiteTensorQuantizationParams_native_t
-= TfLiteQuantizationParams Function(Pointer<TfLiteTensor> tensor);*/
+    = Pointer<TfLiteQuantizationParams> Function(Pointer<TfLiteTensor> tensor);

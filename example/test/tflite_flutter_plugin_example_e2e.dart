@@ -4,6 +4,7 @@
 
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
@@ -185,20 +186,18 @@ void main() {
         });
       });
 
-      /*group('quant', () {
+      group('quantization', () {
         tfl.Interpreter interpreter;
         setUp(() async {
-          final dataFile = await getPathOnDevice(quantFileName);
-          interpreter = tfl.Interpreter.fromFile(dataFile);
+          interpreter = await tfl.Interpreter.fromAsset(quantFileName);
         });
-        tearDown(() => interpreter.delete());
+        tearDown(() => interpreter.close());
         test('params', () {
           interpreter.allocateTensors();
           final tensor = interpreter.getInputTensor(0);
-          print(tensor);
           print(tensor.params);
         });
-      });*/
+      });
     });
 
     group('tensor static', () {
@@ -220,7 +219,7 @@ void main() {
       });
 
       test('dataTypeOf throws Argument error', () {
-        expect(tfl.Tensor.dataTypeOf({0: 'a'}), throwsArgumentError);
+        expect(() => tfl.Tensor.dataTypeOf({0: 'a'}), throwsA(isArgumentError));
       });
     });
 
@@ -248,15 +247,37 @@ void main() {
       });
 
       test('reshape', () {
-        //TODO: resolve casting issue with dynamic
-        var list = [0.0, 1.0, 2.0, 3.0];
-        var listReshaped = list.reshape([2, 2]).cast<List<List<double>>>();
-        expect(listReshaped, [
+        var list = <double>[0.0, 1.0, 2.0, 3.0];
+        var listReshaped = list.reshape([2, 2]);
+        expect(listReshaped[0], [
           [0.0, 1.0],
           [2.0, 3.0]
         ]);
       });
     });
+  });
+
+  group('gpu delegate android', () {
+    final gpuDelegate = tfl.GpuDelegateV2(tfl.GpuDelegateOptionsV2(
+        false,
+        tfl.TfLiteGpuInferenceUsage
+            .TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED,
+        tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
+        tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
+        tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO));
+    test('create', () {
+      expect(gpuDelegate, isNotNull);
+    });
+    test('delete', gpuDelegate.delete);
+  });
+
+  group('nnapi delegate android', () {
+    final nnapiDelegate = tfl.NnApiDelegate();
+    test('create', () {
+      expect(nnapiDelegate, isNotNull);
+    });
+
+    test('delete', nnapiDelegate.delete);
   });
 }
 
