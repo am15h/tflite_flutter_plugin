@@ -10,12 +10,13 @@ import 'dlib.dart';
 import 'types.dart';
 
 /// Returns a model from the provided buffer, or null on failure.
-Pointer<TfLiteModel> Function(Pointer<Void> data, int size) TfLiteNewModel =
-    tflitelib
-        .lookup<NativeFunction<_TfLiteNewModel_native_t>>('TfLiteNewModel')
+Pointer<TfLiteModel> Function(Pointer<Void> data, int size)
+    TfLiteModelCreateFromBuffer = tflitelib
+        .lookup<NativeFunction<_TfLiteModelCreateFromBuffer_native_t>>(
+            'TfLiteModelCreate')
         .asFunction();
 
-typedef _TfLiteNewModel_native_t = Pointer<TfLiteModel> Function(
+typedef _TfLiteModelCreateFromBuffer_native_t = Pointer<TfLiteModel> Function(
     Pointer<Void> data, Int32 size);
 
 /// Returns a model from the provided file, or null on failure.

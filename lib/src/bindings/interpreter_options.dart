@@ -19,7 +19,7 @@ Pointer<TfLiteInterpreterOptions> Function() TfLiteInterpreterOptionsCreate =
 typedef _TfLiteInterpreterOptionsCreate_native_t
     = Pointer<TfLiteInterpreterOptions> Function();
 
-/// Destroys the interpreter options instance.
+/// Destroys the interpreter options instansymbolNamece.
 void Function(Pointer<TfLiteInterpreterOptions>)
     TfLiteInterpreterOptionsDelete = tflitelib
         .lookup<NativeFunction<_TfLiteInterpreterOptionsDelete_native_t>>(
@@ -67,3 +67,24 @@ typedef Reporter = Void Function(
     Pointer<Void> user_data,
     Pointer<Utf8> format,
     /*va_list*/ Pointer<Void> args);
+
+void Function(Pointer<TfLiteInterpreterOptions> options,
+        Pointer<TfLiteDelegate> delegate) TfLiteInterpreterOptionsAddDelegate =
+    tflitelib
+        .lookup<NativeFunction<_TfLiteInterpreterOptionsAddDelegate_native_t>>(
+            'TfLiteInterpreterOptionsAddDelegate')
+        .asFunction();
+
+typedef _TfLiteInterpreterOptionsAddDelegate_native_t = Void Function(
+    Pointer<TfLiteInterpreterOptions> options,
+    Pointer<TfLiteDelegate> delegate);
+
+/// Enable or disable the NN API for the interpreter (true to enable).
+void Function(Pointer<TfLiteInterpreterOptions> options, int enable)
+    TfLiteInterpreterOptionsSetUseNNAPI = tflitelib
+        .lookup<NativeFunction<_TfLiteInterpreterOptionsSetUseNNAPI_native_t>>(
+            'TfLiteInterpreterOptionsSetUseNNAPI')
+        .asFunction();
+
+typedef _TfLiteInterpreterOptionsSetUseNNAPI_native_t = Void Function(
+    Pointer<TfLiteInterpreterOptions> options, Int32 enable);

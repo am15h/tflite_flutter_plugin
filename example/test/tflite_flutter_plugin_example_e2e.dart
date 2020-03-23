@@ -2,7 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
@@ -14,6 +16,7 @@ import 'package:e2e/e2e.dart';
 final dataFileName = 'permute_uint8.tflite';
 final missingFileName = 'missing.tflite';
 final badFileName = 'bad_model.tflite';
+final quantFileName = 'mobilenet_quant.tflite';
 
 void main() {
   E2EWidgetsFlutterBinding.ensureInitialized();
@@ -22,76 +25,54 @@ void main() {
     expect(tfl.version, isNotEmpty);
   });
 
-  group('model', () {
-    test('from file', () async {
-      final dataFile = await getPathOnDevice(dataFileName);
-      var model = tfl.Model.fromFile(dataFile);
-      expect(model, isNotNull);
-      model.delete();
-    });
-
-    test('deleting a deleted model throws', () async {
-      final dataFile = await getPathOnDevice(dataFileName);
-      var model = tfl.Model.fromFile(dataFile);
-      model.delete();
-      expect(() => model.delete(), throwsA(isStateError));
-    });
-
-    test('bad file throws', () async {
-      final badFile = await getPathOnDevice(badFileName);
-      if (!File(badFile).existsSync()) {
-        fail('badFile is missing.');
-      }
-      expect(() => tfl.Model.fromFile(badFile), throwsA(isArgumentError));
-    });
-  });
-
-  test('interpreter from model', () async {
-    final dataFile = await getPathOnDevice(dataFileName);
-    var model = tfl.Model.fromFile(dataFile);
-    var interpreter = tfl.Interpreter(model);
-    model.delete();
-    interpreter.delete();
-  });
-
   test('interpreter from file', () async {
-    final dataFile = await getPathOnDevice(dataFileName);
+    final dataFile = await getFile(dataFileName);
     var interpreter = tfl.Interpreter.fromFile(dataFile);
-    interpreter.delete();
+    interpreter.close();
+  });
+
+  test('interpreter from buffer', () async {
+    final buffer = await getBuffer(dataFileName);
+    var interpreter = tfl.Interpreter.fromBuffer(buffer);
+    interpreter.close();
+  });
+
+  test('interpreter from asset', () async {
+    final interpreter = await tfl.Interpreter.fromAsset(dataFileName);
+    interpreter.close();
   });
 
   group('interpreter options', () {
     test('default', () async {
-      final dataFile = await getPathOnDevice(dataFileName);
+      final dataFile = await getFile(dataFileName);
 
       var options = tfl.InterpreterOptions();
       var interpreter = tfl.Interpreter.fromFile(dataFile, options: options);
       options.delete();
       interpreter.allocateTensors();
       interpreter.invoke();
-      interpreter.delete();
+      interpreter.close();
     });
 
     test('threads', () async {
-      final dataFile = await getPathOnDevice(dataFileName);
+      final dataFile = await getFile(dataFileName);
 
       var options = tfl.InterpreterOptions()..threads = 1;
       var interpreter = tfl.Interpreter.fromFile(dataFile, options: options);
       options.delete();
       interpreter.allocateTensors();
       interpreter.invoke();
-      interpreter.delete();
-      // TODO(shanehop): Is there something meaningful to verify?
+      interpreter.close();
     });
   });
 
   group('interpreter', () {
     tfl.Interpreter interpreter;
     setUp(() async {
-      final dataFile = await getPathOnDevice(dataFileName);
+      final dataFile = await getFile(dataFileName);
       interpreter = tfl.Interpreter.fromFile(dataFile);
     });
-    tearDown(() => interpreter.delete());
+    tearDown(() => interpreter.close());
 
     test('allocate', () {
       interpreter.allocateTensors();
@@ -121,12 +102,43 @@ void main() {
       expect(interpreter.getInputTensors(), hasLength(1));
     });
 
-    test('get output tensors', () {
-      expect(interpreter.getOutputTensors(), hasLength(1));
+    test('get input tensor', () {
+      expect(interpreter.getInputTensor(0), isNotNull);
+    });
+
+    test('get input tensor throws argument error', () {
+      expect(() => interpreter.getInputTensor(33), throwsA(isArgumentError));
+    });
+
+    test('get input tensor index', () {
+      var name = interpreter.getInputTensors()[0].name;
+      expect(interpreter.getInputIndex(name), 0);
+    });
+
+    test('get input tensor index throws argument error', () {
+      expect(() => interpreter.getInputIndex('abcd'), throwsA(isArgumentError));
     });
 
     test('get output tensors', () {
       expect(interpreter.getOutputTensors(), hasLength(1));
+    });
+
+    test('get output tensor', () {
+      expect(interpreter.getOutputTensor(0), isNotNull);
+    });
+
+    test('get input tensor throws argument error', () {
+      expect(() => interpreter.getOutputTensor(33), throwsA(isArgumentError));
+    });
+
+    test('get output tensor index', () {
+      var name = interpreter.getOutputTensors()[0].name;
+      expect(interpreter.getOutputIndex(name), 0);
+    });
+
+    test('get output tensor index throws argument error', () {
+      expect(
+          () => interpreter.getOutputIndex('abcd'), throwsA(isArgumentError));
     });
 
     test('resize input tensor', () {
@@ -172,37 +184,120 @@ void main() {
           tensors[0].data = Uint8List.fromList(const [0, 1, 10, 100]);
           expect(tensors[0].data, [0, 1, 10, 100]);
         });
+      });
 
-        test('copyTo', () {
-          interpreter.allocateTensors();
-          expect(tensors[0].copyTo(), hasLength(4));
+      group('quantization', () {
+        tfl.Interpreter interpreter;
+        setUp(() async {
+          interpreter = await tfl.Interpreter.fromAsset(quantFileName);
         });
-
-        test('copyFrom throws if not allocated', () {
-          expect(
-              () => tensors[0].copyFrom(Uint8List.fromList(const [0, 0, 0, 0])),
-              throwsA(isStateError));
-        }, skip: 'segmentation fault!');
-        // TODO(shanehop): Prevent data access for unallocated tensors.
-
-        test('copyFrom', () {
+        tearDown(() => interpreter.close());
+        test('params', () {
           interpreter.allocateTensors();
-          tensors[0].copyFrom(Uint8List.fromList(const [0, 0, 0, 0]));
-          expect(tensors[0].data, [0, 0, 0, 0]);
-          tensors[0].copyFrom(Uint8List.fromList(const [0, 1, 10, 100]));
-          expect(tensors[0].data, [0, 1, 10, 100]);
+          final tensor = interpreter.getInputTensor(0);
+          print(tensor.params);
         });
       });
     });
+
+    group('tensor static', () {
+      test('dataTypeOf', () {
+        var d = 2.0;
+        var dList = [
+          [
+            [2.0],
+            [2.0]
+          ]
+        ];
+        var i = 1;
+        var str = 'str';
+        var byteList = Uint8List.fromList([0, 0, 0]);
+        expect(tfl.Tensor.dataTypeOf(d), tfl.TfLiteType.float32);
+        expect(tfl.Tensor.dataTypeOf(dList), tfl.TfLiteType.float32);
+        expect(tfl.Tensor.dataTypeOf(i), tfl.TfLiteType.int32);
+        expect(tfl.Tensor.dataTypeOf(str), tfl.TfLiteType.string);
+      });
+
+      test('dataTypeOf throws Argument error', () {
+        expect(() => tfl.Tensor.dataTypeOf({0: 'a'}), throwsA(isArgumentError));
+      });
+    });
+
+    group('extension Reshaping', () {
+      test('shape', () {
+        var list1D = [0.0, 2.0, 1.0, 3.0];
+        var list2D = [
+          [1, 2, 3],
+          [1, 2, 3]
+        ];
+        var list3D = [
+          [
+            [1, 2],
+            [1, 2]
+          ],
+          [
+            [1, 2],
+            [1, 2]
+          ]
+        ];
+        //TODO: handle case when subLists of different sizes
+        expect(list1D.shape, [4]);
+        expect(list2D.shape, [2, 3]);
+        expect(list3D.shape, [2, 2, 2]);
+      });
+
+      test('reshape', () {
+        var list = <double>[0.0, 1.0, 2.0, 3.0];
+        var listReshaped = list.reshape([2, 2]);
+        expect(listReshaped[0], [
+          [0.0, 1.0],
+          [2.0, 3.0]
+        ]);
+      });
+    });
+  });
+
+  group('gpu delegate android', () {
+    final gpuDelegate = tfl.GpuDelegateV2(tfl.GpuDelegateOptionsV2(
+        false,
+        tfl.TfLiteGpuInferenceUsage
+            .TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED,
+        tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
+        tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
+        tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO));
+    test('create', () {
+      expect(gpuDelegate, isNotNull);
+    });
+    test('delete', gpuDelegate.delete);
+  });
+
+  group('nnapi delegate android', () {
+    final nnapiDelegate = tfl.NnApiDelegate();
+    test('create', () {
+      expect(nnapiDelegate, isNotNull);
+    });
+
+    test('delete', nnapiDelegate.delete);
   });
 }
 
-Future<String> getPathOnDevice(String assetFileName) async {
+Future<File> getFile(String fileName) async {
   final appDir = await getTemporaryDirectory();
   final appPath = appDir.path;
-  final rawAssetFile = await rootBundle.load('assets/$assetFileName');
-  final fileOnDevice = File('$appPath/$assetFileName');
+  final fileOnDevice = File('$appPath/$fileName');
+  final rawAssetFile = await rootBundle.load('assets/$fileName');
   final rawBytes = rawAssetFile.buffer.asUint8List();
   await fileOnDevice.writeAsBytes(rawBytes, flush: true);
+  return fileOnDevice;
+}
+
+Future<String> getPathOnDevice(String assetFileName) async {
+  final fileOnDevice = await getFile(assetFileName);
   return fileOnDevice.path;
+}
+
+Future<Uint8List> getBuffer(String assetFileName) async {
+  final rawAssetFile = await rootBundle.load('assets/$assetFileName');
+  final rawBytes = rawAssetFile.buffer.asUint8List();
+  return rawBytes;
 }
