@@ -17,6 +17,9 @@ final dataFileName = 'permute_uint8.tflite';
 final missingFileName = 'missing.tflite';
 final badFileName = 'bad_model.tflite';
 final quantFileName = 'mobilenet_quant.tflite';
+final intFileName = 'int32.bin';
+final multiInputFileName = 'multi_add.bin';
+final addFileName = 'add.bin';
 
 void main() {
   E2EWidgetsFlutterBinding.ensureInitialized();
@@ -163,10 +166,6 @@ void main() {
       });
 
       group('data', () {
-        test('get throws if not allocated', () {
-          expect(() => tensors[0].data, throwsA(isStateError));
-        });
-
         test('get', () {
           interpreter.allocateTensors();
           expect(tensors[0].data, hasLength(4));
@@ -199,61 +198,93 @@ void main() {
         });
       });
     });
+  });
 
-    group('tensor static', () {
-      test('dataTypeOf', () {
-        var d = 2.0;
-        var dList = [
-          [
-            [2.0],
-            [2.0]
-          ]
-        ];
-        var i = 1;
-        var str = 'str';
-        var byteList = Uint8List.fromList([0, 0, 0]);
-        expect(tfl.Tensor.dataTypeOf(d), tfl.TfLiteType.float32);
-        expect(tfl.Tensor.dataTypeOf(dList), tfl.TfLiteType.float32);
-        expect(tfl.Tensor.dataTypeOf(i), tfl.TfLiteType.int32);
-        expect(tfl.Tensor.dataTypeOf(str), tfl.TfLiteType.string);
-      });
+  group('inference', () {
+    group('with int32', () {
+      tfl.Interpreter interpreter;
+      test('single input', () async {
+        final path = await getPathOnDevice(intFileName);
+        interpreter = tfl.Interpreter.fromFile(File(path));
+        final oneD = <int>[3, 7, -4];
+        final twoD = List.filled(8, oneD);
+        final threeD = List.filled(8, twoD);
+        final fourD = List.filled(2, threeD);
 
-      test('dataTypeOf throws Argument error', () {
-        expect(() => tfl.Tensor.dataTypeOf({0: 'a'}), throwsA(isArgumentError));
+        var output = List(2 * 4 * 4 * 12).reshape([2, 4, 4, 12]);
+
+        interpreter.run(fourD, output);
+
+        expect(output[0][0][0], [3, 7, -4, 3, 7, -4, 3, 7, -4, 3, 7, -4]);
+        interpreter.close();
       });
     });
+    test('with float32', () async {
+      tfl.Interpreter interpreter;
+      interpreter = await tfl.Interpreter.fromAsset(addFileName);
+      var o = [1.23, 6.54, 7.81];
+      var two = [o, o, o, o, o, o, o, o];
+      var three = [two, two, two, two, two, two, two, two];
+      var four = [three];
+      var output = List(1 * 8 * 8 * 3).reshape([1, 8, 8, 3]);
+      interpreter.run(four, output);
+      print(output[0][0][0]);
+    });
+  });
 
-    group('extension Reshaping', () {
-      test('shape', () {
-        var list1D = [0.0, 2.0, 1.0, 3.0];
-        var list2D = [
-          [1, 2, 3],
-          [1, 2, 3]
-        ];
-        var list3D = [
-          [
-            [1, 2],
-            [1, 2]
-          ],
-          [
-            [1, 2],
-            [1, 2]
-          ]
-        ];
-        //TODO: handle case when subLists of different sizes
-        expect(list1D.shape, [4]);
-        expect(list2D.shape, [2, 3]);
-        expect(list3D.shape, [2, 2, 2]);
-      });
+  group('tensor static', () {
+    test('dataTypeOf', () {
+      var d = 2.0;
+      var dList = [
+        [
+          [2.0],
+          [2.0]
+        ]
+      ];
+      var i = 1;
+      var str = 'str';
+      var byteList = Uint8List.fromList([0, 0, 0]);
+      expect(tfl.Tensor.dataTypeOf(d), tfl.TfLiteType.float32);
+      expect(tfl.Tensor.dataTypeOf(dList), tfl.TfLiteType.float32);
+      expect(tfl.Tensor.dataTypeOf(i), tfl.TfLiteType.int32);
+      expect(tfl.Tensor.dataTypeOf(str), tfl.TfLiteType.string);
+    });
 
-      test('reshape', () {
-        var list = <double>[0.0, 1.0, 2.0, 3.0];
-        var listReshaped = list.reshape([2, 2]);
-        expect(listReshaped[0], [
-          [0.0, 1.0],
-          [2.0, 3.0]
-        ]);
-      });
+    test('dataTypeOf throws Argument error', () {
+      expect(() => tfl.Tensor.dataTypeOf({0: 'a'}), throwsA(isArgumentError));
+    });
+  });
+
+  group('extension Reshaping', () {
+    test('shape', () {
+      var list1D = [0.0, 2.0, 1.0, 3.0];
+      var list2D = [
+        [1, 2, 3],
+        [1, 2, 3]
+      ];
+      var list3D = [
+        [
+          [1, 2],
+          [1, 2]
+        ],
+        [
+          [1, 2],
+          [1, 2]
+        ]
+      ];
+      //TODO: handle case when subLists of different sizes
+      expect(list1D.shape, [4]);
+      expect(list2D.shape, [2, 3]);
+      expect(list3D.shape, [2, 2, 2]);
+    });
+
+    test('reshape', () {
+      var list = <double>[0.0, 1.0, 2.0, 3.0];
+      var listReshaped = list.reshape([2, 2]);
+      expect(listReshaped, [
+        [0.0, 1.0],
+        [2.0, 3.0]
+      ]);
     });
   });
 

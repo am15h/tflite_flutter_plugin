@@ -37,9 +37,9 @@ class Tensor {
   /// Underlying data buffer as bytes.
   Uint8List get data {
     final data = cast<Uint8>(TfLiteTensorData(_tensor));
-    checkState(isNotNull(data), message: 'Tensor data is null.');
+//    checkState(isNotNull(data), message: 'Tensor data is null.');
     return UnmodifiableUint8ListView(
-        data.asTypedList(TfLiteTensorByteSize(_tensor)));
+        data?.asTypedList(TfLiteTensorByteSize(_tensor)));
   }
 
   QuantizationParams get params {
@@ -168,10 +168,18 @@ class Tensor {
     data = bytes;
     final obj = _convertBytesToObject(bytes);
     free(ptr);
+    if (obj is List && dst is List) {
+      _duplicateList(obj, dst);
+    } else {
+      dst = obj;
+    }
     return obj;
   }
 
   Uint8List _convertObjectToBytes(Object o) {
+    if (o is Uint8List) {
+      return o;
+    }
     var bytes = <int>[];
     if (o is List) {
       for (var e in o) {
@@ -217,7 +225,7 @@ class Tensor {
     //TODO: add conversions for the rest of the types
     if (type == TfLiteType.int32) {
       for (var i = 0; i < bytes.length; i += 4) {
-        list.add(ByteData.view(bytes.buffer).getUint32(i));
+        list.add(ByteData.view(bytes.buffer).getInt32(i));
       }
     } else if (type == TfLiteType.float32) {
       for (var i = 0; i < bytes.length; i += 4) {
@@ -227,8 +235,31 @@ class Tensor {
     return list.reshape(shape);
   }
 
+  void _duplicateList(List obj, List dst) {
+    var objShape = obj.shape;
+    var dstShape = dst.shape;
+    var equal = true;
+    if (objShape.length == dst.shape.length) {
+      for (var i = 0; i < objShape.length; i++) {
+        if (objShape[i] != dstShape[i]) {
+          equal = false;
+          break;
+        }
+      }
+    } else {
+      equal = false;
+    }
+    if (equal == false) {
+      throw ArgumentError(
+          'Output object shape mismatch, interpreter returned output of shape: ${obj.shape} while shape of output provided as argument in run is: ${dst.shape}');
+    }
+    for (var i = 0; i < obj.length; i++) {
+      dst[i] = obj[i];
+    }
+  }
+
   @override
   String toString() {
-    return 'Tensor{_tensor: $_tensor, name: $name, type: $type, shape: $shape, data: $data}';
+    return 'Tensor{_tensor: $_tensor, name: $name, type: $type, shape: $shape, data: ${data.sublist(0, 10)} ${data.length}';
   }
 }

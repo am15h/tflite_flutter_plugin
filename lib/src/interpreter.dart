@@ -11,12 +11,12 @@ import 'package:flutter/services.dart';
 import 'package:quiver/check.dart';
 
 import 'bindings/interpreter.dart';
-import 'bindings/model.dart';
 import 'bindings/types.dart';
 import 'ffi/helper.dart';
 import 'interpreter_options.dart';
 import 'model.dart';
 import 'tensor.dart';
+import 'util/list_shape_extension.dart';
 
 /// TensorFlowLite interpreter for running inference on a model.
 class Interpreter {
@@ -101,7 +101,9 @@ class Interpreter {
 
   /// Run for single input and output
   void run(Object input, Object output) {
-    runForMultipleInputs([input], {0: output});
+    var map = <int, Object>{};
+    map[0] = output;
+    runForMultipleInputs([input], map);
   }
 
   /// Run for multiple inputs and outputs
@@ -120,12 +122,17 @@ class Interpreter {
 
     var inputTensors = getInputTensors();
     for (var i = 0; i < inputs.length; i++) {
+      if (inputTensors[i].shape != (inputs[i] as List).shape) {
+        resizeInputTensor(i, (inputs[i] as List).shape);
+        allocateTensors();
+        inputTensors = getInputTensors();
+      }
       inputTensors[i].setTo(inputs[i]);
     }
     invoke();
     var outputTensors = getOutputTensors();
     for (var i = 0; i < outputTensors.length; i++) {
-      outputs[i] = outputTensors[i].copyTo(outputs[i]);
+      outputTensors[i].copyTo(outputs[i]);
     }
   }
 

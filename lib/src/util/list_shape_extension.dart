@@ -11,7 +11,7 @@ extension ListShape on List {
           'Total elements mismatch expected: $numElements elements for shape: $shape but found $computeNumElements');
     }
     var reshapedList = flatten<dynamic>();
-    for (var i = dims - 1; i >= 0; i--) {
+    for (var i = dims - 1; i > 0; i--) {
       var temp = [];
       for (var start = 0;
           start + shape[i] <= reshapedList.length;
@@ -24,6 +24,9 @@ extension ListShape on List {
   }
 
   List<int> get shape {
+    if (isEmpty) {
+      return [];
+    }
     var list = this as dynamic;
     var shape = <int>[];
     while (list is List) {
