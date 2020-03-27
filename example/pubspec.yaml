@@ -36,9 +36,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/bad_model.tflite
-    - assets/mobilenet_quant.tflite
-    - assets/permute_uint8.tflite
+    - assets/
+    - assets/test/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

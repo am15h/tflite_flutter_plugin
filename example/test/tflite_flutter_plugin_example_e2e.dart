@@ -17,6 +17,9 @@ final dataFileName = 'permute_uint8.tflite';
 final missingFileName = 'missing.tflite';
 final badFileName = 'bad_model.tflite';
 final quantFileName = 'mobilenet_quant.tflite';
+final intFileName = 'int32.bin';
+final multiInputFileName = 'multi_add.bin';
+final addFileName = 'add.bin';
 
 void main() {
   E2EWidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +41,7 @@ void main() {
   });
 
   test('interpreter from asset', () async {
-    final interpreter = await tfl.Interpreter.fromAsset(dataFileName);
+    final interpreter = await tfl.Interpreter.fromAsset('test/$dataFileName');
     interpreter.close();
   });
 
@@ -163,10 +166,6 @@ void main() {
       });
 
       group('data', () {
-        test('get throws if not allocated', () {
-          expect(() => tensors[0].data, throwsA(isStateError));
-        });
-
         test('get', () {
           interpreter.allocateTensors();
           expect(tensors[0].data, hasLength(4));
@@ -189,7 +188,7 @@ void main() {
       group('quantization', () {
         tfl.Interpreter interpreter;
         setUp(() async {
-          interpreter = await tfl.Interpreter.fromAsset(quantFileName);
+          interpreter = await tfl.Interpreter.fromAsset('test/$quantFileName');
         });
         tearDown(() => interpreter.close());
         test('params', () {
@@ -199,61 +198,123 @@ void main() {
         });
       });
     });
+  });
 
-    group('tensor static', () {
-      test('dataTypeOf', () {
-        var d = 2.0;
-        var dList = [
-          [
-            [2.0],
-            [2.0]
-          ]
-        ];
-        var i = 1;
-        var str = 'str';
-        var byteList = Uint8List.fromList([0, 0, 0]);
-        expect(tfl.Tensor.dataTypeOf(d), tfl.TfLiteType.float32);
-        expect(tfl.Tensor.dataTypeOf(dList), tfl.TfLiteType.float32);
-        expect(tfl.Tensor.dataTypeOf(i), tfl.TfLiteType.int32);
-        expect(tfl.Tensor.dataTypeOf(str), tfl.TfLiteType.string);
+  group('inference', () {
+    group('with float32', () {
+      test('single input', () async {
+        tfl.Interpreter interpreter;
+        interpreter = await tfl.Interpreter.fromAsset('test/$addFileName');
+        var o = [1.23, 6.54, 7.81];
+        var two = [o, o, o, o, o, o, o, o];
+        var three = [two, two, two, two, two, two, two, two];
+        var four = [three];
+        var output = List(1 * 8 * 8 * 3).reshape([1, 8, 8, 3]);
+        interpreter.run(four, output);
+        var exp = '';
+        if (output[0][0][0][0] is double) {
+          exp = (output[0][0][0][0] as double).toStringAsFixed(2);
+        }
+        expect(exp, '3.69');
       });
+      test('multiple input', () async {
+        tfl.Interpreter interpreter;
+        interpreter =
+            await tfl.Interpreter.fromAsset('test/$multiInputFileName');
+        final inputTensors = interpreter.getInputTensors();
+        expect(inputTensors.length, 4);
+        expect(inputTensors[0].type, tfl.TfLiteType.float32);
+        expect(inputTensors[1].type, tfl.TfLiteType.float32);
+        expect(inputTensors[2].type, tfl.TfLiteType.float32);
+        expect(inputTensors[3].type, tfl.TfLiteType.float32);
 
-      test('dataTypeOf throws Argument error', () {
-        expect(() => tfl.Tensor.dataTypeOf({0: 'a'}), throwsA(isArgumentError));
+        final outputTensors = interpreter.getOutputTensors();
+        expect(outputTensors.length, 2);
+        expect(outputTensors[0].type, tfl.TfLiteType.float32);
+        expect(outputTensors[1].type, tfl.TfLiteType.float32);
+
+        var input0 = [1.23];
+        var input1 = [2.43];
+        var inputs = [input0, input1, input0, input1];
+        var output0 = List<double>(1);
+        var output1 = List<double>(1);
+        var outputs = {0: output0, 1: output1};
+        interpreter.runForMultipleInputs(inputs, outputs);
+        expect(output0[0].toStringAsFixed(2), '4.89');
+        expect(output1[0].toStringAsFixed(2), '6.09');
       });
     });
+    test('single input', () async {
+      tfl.Interpreter interpreter;
+      final path = await getPathOnDevice(intFileName);
+      interpreter = tfl.Interpreter.fromFile(File(path));
+      final oneD = <int>[3, 7, -4];
+      final twoD = List.filled(8, oneD);
+      final threeD = List.filled(8, twoD);
+      final fourD = List.filled(2, threeD);
 
-    group('extension Reshaping', () {
-      test('shape', () {
-        var list1D = [0.0, 2.0, 1.0, 3.0];
-        var list2D = [
-          [1, 2, 3],
-          [1, 2, 3]
-        ];
-        var list3D = [
-          [
-            [1, 2],
-            [1, 2]
-          ],
-          [
-            [1, 2],
-            [1, 2]
-          ]
-        ];
-        //TODO: handle case when subLists of different sizes
-        expect(list1D.shape, [4]);
-        expect(list2D.shape, [2, 3]);
-        expect(list3D.shape, [2, 2, 2]);
-      });
+      var output = List(2 * 4 * 4 * 12).reshape([2, 4, 4, 12]);
 
-      test('reshape', () {
-        var list = <double>[0.0, 1.0, 2.0, 3.0];
-        var listReshaped = list.reshape([2, 2]);
-        expect(listReshaped[0], [
-          [0.0, 1.0],
-          [2.0, 3.0]
-        ]);
-      });
+      interpreter.run(fourD, output);
+
+      expect(output[0][0][0], [3, 7, -4, 3, 7, -4, 3, 7, -4, 3, 7, -4]);
+      interpreter.close();
+    });
+  });
+
+  group('tensor static', () {
+    test('dataTypeOf', () {
+      var d = 2.0;
+      var dList = [
+        [
+          [2.0],
+          [2.0]
+        ]
+      ];
+      var i = 1;
+      var str = 'str';
+      var byteList = Uint8List.fromList([0, 0, 0]);
+      expect(tfl.Tensor.dataTypeOf(d), tfl.TfLiteType.float32);
+      expect(tfl.Tensor.dataTypeOf(dList), tfl.TfLiteType.float32);
+      expect(tfl.Tensor.dataTypeOf(i), tfl.TfLiteType.int32);
+      expect(tfl.Tensor.dataTypeOf(str), tfl.TfLiteType.string);
+    });
+
+    test('dataTypeOf throws Argument error', () {
+      expect(() => tfl.Tensor.dataTypeOf({0: 'a'}), throwsA(isArgumentError));
+    });
+  });
+
+  group('extension Reshaping', () {
+    test('shape', () {
+      var list1D = [0.0, 2.0, 1.0, 3.0];
+      var list2D = [
+        [1, 2, 3],
+        [1, 2, 3]
+      ];
+      var list3D = [
+        [
+          [1, 2],
+          [1, 2]
+        ],
+        [
+          [1, 2],
+          [1, 2]
+        ]
+      ];
+      //TODO: handle case when subLists of different sizes
+      expect(list1D.shape, [4]);
+      expect(list2D.shape, [2, 3]);
+      expect(list3D.shape, [2, 2, 2]);
+    });
+
+    test('reshape', () {
+      var list = <double>[0.0, 1.0, 2.0, 3.0];
+      var listReshaped = list.reshape([2, 2]);
+      expect(listReshaped, [
+        [0.0, 1.0],
+        [2.0, 3.0]
+      ]);
     });
   });
 
@@ -285,7 +346,7 @@ Future<File> getFile(String fileName) async {
   final appDir = await getTemporaryDirectory();
   final appPath = appDir.path;
   final fileOnDevice = File('$appPath/$fileName');
-  final rawAssetFile = await rootBundle.load('assets/$fileName');
+  final rawAssetFile = await rootBundle.load('assets/test/$fileName');
   final rawBytes = rawAssetFile.buffer.asUint8List();
   await fileOnDevice.writeAsBytes(rawBytes, flush: true);
   return fileOnDevice;
@@ -297,7 +358,7 @@ Future<String> getPathOnDevice(String assetFileName) async {
 }
 
 Future<Uint8List> getBuffer(String assetFileName) async {
-  final rawAssetFile = await rootBundle.load('assets/$assetFileName');
+  final rawAssetFile = await rootBundle.load('assets/test/$assetFileName');
   final rawBytes = rawAssetFile.buffer.asUint8List();
   return rawBytes;
 }
