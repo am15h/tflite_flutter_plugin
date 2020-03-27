@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
-import 'package:tflite_flutter_plugin/tflite_flutter_plugin.dart';
-import 'package:tflite_flutter_plugin/tflite.dart' as tfl;
+import 'package:tflite_flutter_plugin_example/classifier.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,33 +9,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-
+  TextEditingController _controller;
+  Classifier _classifier;
+  List<Widget> _children;
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-    print('Printing tfl version ${tfl.version}');
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await TfliteFlutterPlugin.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
+    _controller = TextEditingController();
+    _classifier = Classifier();
+    _children = [];
+    _children.add(Container());
   }
 
   @override
@@ -47,10 +26,67 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          backgroundColor: Colors.orangeAccent,
+          title: const Text('Text classification'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Container(
+          padding: const EdgeInsets.all(4),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                  child: ListView.builder(
+                itemCount: _children.length,
+                itemBuilder: (_, index) {
+                  return _children[index];
+                },
+              )),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.orangeAccent)),
+                child: Row(children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      decoration: const InputDecoration(
+                          hintText: 'Write some text here'),
+                      controller: _controller,
+                    ),
+                  ),
+                  FlatButton(
+                    child: const Text('Classify'),
+                    onPressed: () {
+                      final text = _controller.text;
+                      final prediction = _classifier.classify(text);
+                      setState(() {
+                        _children.add(Dismissible(
+                          key: GlobalKey(),
+                          onDismissed: (direction) {},
+                          child: Card(
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              color: prediction == 1
+                                  ? Colors.lightGreen
+                                  : Colors.red,
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    text,
+                                    style: const TextStyle(fontSize: 16),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ));
+                        _controller.clear();
+                      });
+                    },
+                  ),
+                ]),
+              ),
+            ],
+          ),
         ),
       ),
     );
