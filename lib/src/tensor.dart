@@ -197,7 +197,7 @@ class Tensor {
       if (o is double) {
         var buffer = Uint8List(4).buffer;
         var bdata = ByteData.view(buffer);
-        bdata.setFloat32(0, o);
+        bdata.setFloat32(0, o, Endian.little);
         return buffer.asUint8List();
       } else {
         throw ArgumentError(
@@ -207,7 +207,7 @@ class Tensor {
       if (o is int) {
         var buffer = Uint8List(4).buffer;
         var bdata = ByteData.view(buffer);
-        bdata.setInt32(0, o);
+        bdata.setInt32(0, o, Endian.little);
         return buffer.asUint8List();
       } else {
         throw ArgumentError(
@@ -225,11 +225,11 @@ class Tensor {
     //TODO: add conversions for the rest of the types
     if (type == TfLiteType.int32) {
       for (var i = 0; i < bytes.length; i += 4) {
-        list.add(ByteData.view(bytes.buffer).getInt32(i));
+        list.add(ByteData.view(bytes.buffer).getInt32(i, Endian.little));
       }
     } else if (type == TfLiteType.float32) {
       for (var i = 0; i < bytes.length; i += 4) {
-        list.add(ByteData.view(bytes.buffer).getFloat32(i));
+        list.add(ByteData.view(bytes.buffer).getFloat32(i, Endian.little));
       }
     }
     return list.reshape(shape);
@@ -260,6 +260,6 @@ class Tensor {
 
   @override
   String toString() {
-    return 'Tensor{_tensor: $_tensor, name: $name, type: $type, shape: $shape, data: ${data.sublist(0, 10)} ${data.length}';
+    return 'Tensor{_tensor: $_tensor, name: $name, type: $type, shape: $shape, data:  ${data.length}';
   }
 }
