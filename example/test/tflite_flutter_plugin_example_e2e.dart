@@ -216,6 +216,7 @@ void main() {
           exp = (output[0][0][0][0] as double).toStringAsFixed(2);
         }
         expect(exp, '3.69');
+        interpreter.close();
       });
       test('multiple input', () async {
         tfl.Interpreter interpreter;
@@ -242,9 +243,10 @@ void main() {
         interpreter.runForMultipleInputs(inputs, outputs);
         expect(output0[0].toStringAsFixed(2), '4.89');
         expect(output1[0].toStringAsFixed(2), '6.09');
+        interpreter.close();
       });
     });
-    test('single input', () async {
+    test('with int32', () async {
       tfl.Interpreter interpreter;
       final path = await getPathOnDevice(intFileName);
       interpreter = tfl.Interpreter.fromFile(File(path));
@@ -258,6 +260,40 @@ void main() {
       interpreter.run(fourD, output);
 
       expect(output[0][0][0], [3, 7, -4, 3, 7, -4, 3, 7, -4, 3, 7, -4]);
+      interpreter.close();
+    });
+    test('using set use NnApi', () async {
+      tfl.Interpreter interpreter;
+      interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
+          options: tfl.InterpreterOptions()..useNnApiForAndroid = true);
+      var o = [1.23, 6.54, 7.81];
+      var two = [o, o, o, o, o, o, o, o];
+      var three = [two, two, two, two, two, two, two, two];
+      var four = [three];
+      var output = List(1 * 8 * 8 * 3).reshape([1, 8, 8, 3]);
+      interpreter.run(four, output);
+      var exp = '';
+      if (output[0][0][0][0] is double) {
+        exp = (output[0][0][0][0] as double).toStringAsFixed(2);
+      }
+      expect(exp, '3.69');
+      interpreter.close();
+    });
+    test('using NnApiDelegate', () async {
+      tfl.Interpreter interpreter;
+      interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
+          options: tfl.InterpreterOptions()..addDelegate(tfl.NnApiDelegate()));
+      var o = [1.23, 6.54, 7.81];
+      var two = [o, o, o, o, o, o, o, o];
+      var three = [two, two, two, two, two, two, two, two];
+      var four = [three];
+      var output = List(1 * 8 * 8 * 3).reshape([1, 8, 8, 3]);
+      interpreter.run(four, output);
+      var exp = '';
+      if (output[0][0][0][0] is double) {
+        exp = (output[0][0][0][0] as double).toStringAsFixed(2);
+      }
+      expect(exp, '3.69');
       interpreter.close();
     });
   });

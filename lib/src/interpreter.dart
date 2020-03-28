@@ -23,6 +23,10 @@ class Interpreter {
   final Pointer<TfLiteInterpreter> _interpreter;
   bool _deleted = false;
   bool _allocated = false;
+  int _lastNativeInferenceDurationMicroSeconds = 0;
+
+  int get lastNativeInferenceDurationMicroSeconds =>
+      _lastNativeInferenceDurationMicroSeconds;
 
   Interpreter._(this._interpreter);
 
@@ -129,7 +133,11 @@ class Interpreter {
       }
       inputTensors[i].setTo(inputs[i]);
     }
+
+    int inferenceStartNanos = DateTime.now().microsecondsSinceEpoch;
     invoke();
+    _lastNativeInferenceDurationMicroSeconds =
+        DateTime.now().microsecondsSinceEpoch - inferenceStartNanos;
     var outputTensors = getOutputTensors();
     for (var i = 0; i < outputTensors.length; i++) {
       outputTensors[i].copyTo(outputs[i]);
@@ -215,7 +223,6 @@ class Interpreter {
     }
   }
 
-  //TODO: (JAVA) Add long getLastNativeInferenceDurationNanoseconds()
   //TODO: (JAVA) void modifyGraphWithDelegate(Delegate delegate)
   //TODO: (JAVA) void resetVariableTensors()
 
