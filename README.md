@@ -1,4 +1,5 @@
 
+
 # TensorFlow Lite Flutter Plugin
 
 TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpreter and performing inference. It binds to TensorFlow Lite C API using dart:ffi. 
@@ -77,4 +78,7 @@ TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpr
 	// print outputs
 	print(outputs)
 	```
+
+
+Refer [Tests](https://github.com/am15h/tflite_flutter_plugin/blob/master/example/test/tflite_flutter_plugin_example_e2e.dart) for more examples.
 
