@@ -89,3 +89,7 @@ Refer [Tests](https://github.com/am15h/tflite_flutter_plugin/blob/master/example
 
 Refer [Text Classification Flutter Example App](https://github.com/am15h/tflite_flutter_plugin/tree/master/example) for demo.
 
+## Credits
+
+* Authors of [dart-lang/tflite_native](https://github.com/dart-lang/tflite_native).
+* Tian LIN, Jared Duke, Andrew Selle, YoungSeok Yoon, Shuangfeng Li from the TensorFlow Lite Team for their invaluable guidance.
