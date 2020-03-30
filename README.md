@@ -79,6 +79,13 @@ TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpr
 	print(outputs)
 	```
 
+### Closing the interpreter
 
-Refer [Tests](https://github.com/am15h/tflite_flutter_plugin/blob/master/example/test/tflite_flutter_plugin_example_e2e.dart) for more examples.
+```
+interpreter.close();
+```
+
+Refer [Tests](https://github.com/am15h/tflite_flutter_plugin/blob/master/example/test/tflite_flutter_plugin_example_e2e.dart) to see more example code for each method.
+
+Refer [Text Classification Flutter Example App](https://github.com/am15h/tflite_flutter_plugin/tree/master/example) for demo.
 
