@@ -2,9 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:ffi';
 import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
@@ -241,6 +239,36 @@ void main() {
         var output1 = List<double>(1);
         var outputs = {0: output0, 1: output1};
         interpreter.runForMultipleInputs(inputs, outputs);
+        print(interpreter.lastNativeInferenceDurationMicroSeconds);
+        expect(output0[0].toStringAsFixed(2), '4.89');
+        expect(output1[0].toStringAsFixed(2), '6.09');
+        interpreter.close();
+      });
+      test('multiple input multiple threads', () async {
+        tfl.Interpreter interpreter;
+        interpreter = await tfl.Interpreter.fromAsset(
+            'test/$multiInputFileName',
+            options: tfl.InterpreterOptions()..threads = 2);
+        final inputTensors = interpreter.getInputTensors();
+        expect(inputTensors.length, 4);
+        expect(inputTensors[0].type, tfl.TfLiteType.float32);
+        expect(inputTensors[1].type, tfl.TfLiteType.float32);
+        expect(inputTensors[2].type, tfl.TfLiteType.float32);
+        expect(inputTensors[3].type, tfl.TfLiteType.float32);
+
+        final outputTensors = interpreter.getOutputTensors();
+        expect(outputTensors.length, 2);
+        expect(outputTensors[0].type, tfl.TfLiteType.float32);
+        expect(outputTensors[1].type, tfl.TfLiteType.float32);
+
+        var input0 = [1.23];
+        var input1 = [2.43];
+        var inputs = [input0, input1, input0, input1];
+        var output0 = List<double>(1);
+        var output1 = List<double>(1);
+        var outputs = {0: output0, 1: output1};
+        interpreter.runForMultipleInputs(inputs, outputs);
+        print(interpreter.lastNativeInferenceDurationMicroSeconds);
         expect(output0[0].toStringAsFixed(2), '4.89');
         expect(output1[0].toStringAsFixed(2), '6.09');
         interpreter.close();
@@ -262,10 +290,51 @@ void main() {
       expect(output[0][0][0], [3, 7, -4, 3, 7, -4, 3, 7, -4, 3, 7, -4]);
       interpreter.close();
     });
-    test('using set use NnApi', () async {
+    if (Platform.isAndroid) {
+      test('using set use NnApi', () async {
+        tfl.Interpreter interpreter;
+        interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
+            options: tfl.InterpreterOptions()..useNnApiForAndroid = true);
+        var o = [1.23, 6.54, 7.81];
+        var two = [o, o, o, o, o, o, o, o];
+        var three = [two, two, two, two, two, two, two, two];
+        var four = [three];
+        var output = List(1 * 8 * 8 * 3).reshape([1, 8, 8, 3]);
+        interpreter.run(four, output);
+        var exp = '';
+        if (output[0][0][0][0] is double) {
+          exp = (output[0][0][0][0] as double).toStringAsFixed(2);
+        }
+        expect(exp, '3.69');
+        interpreter.close();
+      });
+      test('using NnApiDelegate', () async {
+        tfl.Interpreter interpreter;
+        interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
+            options: tfl.InterpreterOptions()
+              ..addDelegate(tfl.NnApiDelegate()));
+        var o = [1.23, 6.54, 7.81];
+        var two = [o, o, o, o, o, o, o, o];
+        var three = [two, two, two, two, two, two, two, two];
+        var four = [three];
+        var output = List(1 * 8 * 8 * 3).reshape([1, 8, 8, 3]);
+        interpreter.run(four, output);
+        var exp = '';
+        if (output[0][0][0][0] is double) {
+          exp = (output[0][0][0][0] as double).toStringAsFixed(2);
+        }
+        expect(exp, '3.69');
+        interpreter.close();
+      });
+
+      // Unable to create interpreter
+      /*test('using GpuDelegateV2 android', () async {
       tfl.Interpreter interpreter;
+      final gpuDelegate = tfl.GpuDelegateV2();
+      var interpreterOptions = tfl.InterpreterOptions()
+        ..addDelegate(gpuDelegate);
       interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
-          options: tfl.InterpreterOptions()..useNnApiForAndroid = true);
+          options: interpreterOptions);
       var o = [1.23, 6.54, 7.81];
       var two = [o, o, o, o, o, o, o, o];
       var three = [two, two, two, two, two, two, two, two];
@@ -278,24 +347,31 @@ void main() {
       }
       expect(exp, '3.69');
       interpreter.close();
-    });
-    test('using NnApiDelegate', () async {
-      tfl.Interpreter interpreter;
-      interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
-          options: tfl.InterpreterOptions()..addDelegate(tfl.NnApiDelegate()));
-      var o = [1.23, 6.54, 7.81];
-      var two = [o, o, o, o, o, o, o, o];
-      var three = [two, two, two, two, two, two, two, two];
-      var four = [three];
-      var output = List(1 * 8 * 8 * 3).reshape([1, 8, 8, 3]);
-      interpreter.run(four, output);
-      var exp = '';
-      if (output[0][0][0][0] is double) {
-        exp = (output[0][0][0][0] as double).toStringAsFixed(2);
+    });*/
+
+      if (Platform.isIOS) {
+        test('using GpuDelegateV2 android', () async {
+          tfl.Interpreter interpreter;
+          final gpuDelegate = tfl.GpuDelegateV2();
+          var interpreterOptions = tfl.InterpreterOptions()
+            ..addDelegate(gpuDelegate);
+          interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
+              options: interpreterOptions);
+          var o = [1.23, 6.54, 7.81];
+          var two = [o, o, o, o, o, o, o, o];
+          var three = [two, two, two, two, two, two, two, two];
+          var four = [three];
+          var output = List(1 * 8 * 8 * 3).reshape([1, 8, 8, 3]);
+          interpreter.run(four, output);
+          var exp = '';
+          if (output[0][0][0][0] is double) {
+            exp = (output[0][0][0][0] as double).toStringAsFixed(2);
+          }
+          expect(exp, '3.69');
+          interpreter.close();
+        });
       }
-      expect(exp, '3.69');
-      interpreter.close();
-    });
+    }
   });
 
   group('tensor static', () {
@@ -354,28 +430,43 @@ void main() {
     });
   });
 
-  group('gpu delegate android', () {
-    final gpuDelegate = tfl.GpuDelegateV2(tfl.GpuDelegateOptionsV2(
-        false,
-        tfl.TfLiteGpuInferenceUsage
-            .TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED,
-        tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
-        tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
-        tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO));
-    test('create', () {
-      expect(gpuDelegate, isNotNull);
-    });
-    test('delete', gpuDelegate.delete);
-  });
-
-  group('nnapi delegate android', () {
-    final nnapiDelegate = tfl.NnApiDelegate();
-    test('create', () {
-      expect(nnapiDelegate, isNotNull);
+  if (Platform.isAndroid) {
+    group('gpu delegate android', () {
+      final gpuDelegate = tfl.GpuDelegateV2(
+          options: tfl.GpuDelegateOptionsV2(
+              false,
+              tfl.TfLiteGpuInferenceUsage
+                  .TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED,
+              tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
+              tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
+              tfl.TfLiteGpuInferencePriority
+                  .TFLITE_GPU_INFERENCE_PRIORITY_AUTO));
+      test('create', () {
+        expect(gpuDelegate, isNotNull);
+      });
+      test('delete', gpuDelegate.delete);
     });
 
-    test('delete', nnapiDelegate.delete);
-  });
+    group('nnapi delegate android', () {
+      final nnapiDelegate = tfl.NnApiDelegate();
+      test('create', () {
+        expect(nnapiDelegate, isNotNull);
+      });
+
+      test('delete', nnapiDelegate.delete);
+    });
+  }
+  if (Platform.isIOS) {
+    group('gpu delegate ios', () {
+      final gpuDelegate = tfl.GpuDelegate(
+          options: tfl.GpuDelegateOptions(
+              false, tfl.TFLGpuDelegateWaitType.TFLGpuDelegateWaitTypeActive));
+      test('create', () {
+        expect(gpuDelegate, isNotNull);
+      });
+      test('delete', gpuDelegate.delete);
+    });
+  }
 }
 
 Future<File> getFile(String fileName) async {
