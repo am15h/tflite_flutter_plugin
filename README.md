@@ -4,6 +4,20 @@
 
 TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpreter and performing inference. It binds to TensorFlow Lite C API using dart:ffi. 
 
+## Initial setup
+#### Download dynamic libraries
+
+The pre-built binaries can be found in [release assets](https://github.com/am15h/tflite_flutter_plugin/releases).
+
+Place the script [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh) at the root of your project.
+
+Run <pre>sh [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh)</pre> at the root of your project to automatically download and place binaries at appropriate folders.
+    
+**Important**
+    
+If you do not wish to use `GpuDelegateV2` and `NnApiDelegate` in your app then its recommended and sufficient <br/>
+to run <pre>sh [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh) -b</pre> to install only basic .so for android which comes with reduced size. 
+
 ##  Import
 
     import 'package:tflite_flutter_plugin/tflite.dart' as tfl;
@@ -20,7 +34,7 @@ TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpr
 	Place `your_model.tflite` in `assets` directory. Make sure to include assets in `pubspec.yaml`.
 
 	```
-	final interpreter = await Interpreter.fromAsset('your_model.tflite');
+	final interpreter = await tfl.Interpreter.fromAsset('your_model.tflite');
 	```
 	
 * **from buffer**
@@ -34,6 +48,23 @@ TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpr
 	 return rawBytes;  
 	}
 	```
+
+* **from file**
+
+   ```
+   final dataFile = await getFile('assets/your_model.tflite');
+   final interpreter = tfl.Interpreter.fromFile(dataFile);
+   
+   Future<File> getFile(String fileName) async {
+     final appDir = await getTemporaryDirectory();
+     final appPath = appDir.path;
+     final fileOnDevice = File('$appPath/$fileName');
+     final rawAssetFile = await rootBundle.load(fileName);
+     final rawBytes = rawAssetFile.buffer.asUint8List();
+     await fileOnDevice.writeAsBytes(rawBytes, flush: true);
+     return fileOnDevice;
+   }
+   ```
 
 ### Performing inference
 
@@ -84,6 +115,31 @@ TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpr
 ```
 interpreter.close();
 ```
+
+### Improve performance using delegate support
+
+    Note: This feature is under testing and could be unstable with some builds and on some devices.
+
+* **NNAPI delegate for Android**
+
+    ```
+    var interpreterOptions = tfl.InterpreterOptions()..useNnApiForAndroid = true;
+    final interpreter = await tfl.Interpreter.fromAsset('your_model.tflite',
+        options: interpreterOptions);
+    
+    ```
+    or
+    
+    ```
+    var interpreterOptions = tfl.InterpreterOptions()..addDelegate(tfl.NnApiDelegate());
+    final interpreter = await tfl.Interpreter.fromAsset('your_model.tflite',
+        options: interpreterOptions);
+        
+    ```
+
+
+* **GPU delegate for Android and iOS**
+    
 
 Refer [Tests](https://github.com/am15h/tflite_flutter_plugin/blob/master/example/test/tflite_flutter_plugin_example_e2e.dart) to see more example code for each method.
 

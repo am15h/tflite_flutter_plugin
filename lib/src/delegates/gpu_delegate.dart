@@ -16,9 +16,13 @@ class GpuDelegateV2 implements Delegate {
 
   GpuDelegateV2._(this._delegate);
 
-  factory GpuDelegateV2(GpuDelegateOptionsV2 optionsV2) =>
-      GpuDelegateV2._(TfLiteGpuDelegateV2Create(optionsV2?.base));
-
+  factory GpuDelegateV2({GpuDelegateOptionsV2 options}) {
+    if (options == null) {
+      return GpuDelegateV2._(TfLiteGpuDelegateV2Create(
+          GpuDelegateOptionsV2.GpuDelegateOptionsV2Default().base));
+    }
+    return GpuDelegateV2._(TfLiteGpuDelegateV2Create(options?.base));
+  }
   @override
   void delete() {
     checkState(!_deleted, message: 'TfLiteGpuDelegateV2 already deleted.');
@@ -48,6 +52,10 @@ class GpuDelegateOptionsV2 {
             inferencePriority2,
             inferencePriority3)
         .addressOf);
+  }
+
+  factory GpuDelegateOptionsV2.GpuDelegateOptionsV2Default() {
+    return GpuDelegateOptionsV2._(TfLiteGpuDelegateOptionsV2Default());
   }
 
   void delete() {
