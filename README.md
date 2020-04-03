@@ -18,6 +18,10 @@ Run <pre>sh [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/mas
 If you do not wish to use `GpuDelegateV2` and `NnApiDelegate` in your app then its recommended and sufficient <br/>
 to run <pre>sh [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh) -b</pre> to install only basic .so for android which comes with reduced size. 
 
+## Dependency
+
+`tflite_flutter: ^0.1.0`
+
 ##  Import
 
     import 'package:tflite_flutter_plugin/tflite.dart' as tfl;
