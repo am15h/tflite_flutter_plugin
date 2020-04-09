@@ -8,8 +8,8 @@ TAG="v0.1.0"
 ANDROID_DIR="android/app/src/main/jniLibs/"
 ANDROID_LIB="libtensorflowlite_c.so"
 
-ARM_BASIC="libtensorflowlite_c_arm_basic.so"
-ARM_64_BASIC="libtensorflowlite_c_arm64_basic.so"
+ARM_DELEGATE="libtensorflowlite_c_arm_delegate.so"
+ARM_64_DELEGATE="libtensorflowlite_c_arm64_delegate.so"
 ARM="libtensorflowlite_c_arm.so"
 ARM_64="libtensorflowlite_c_arm64.so"
 X86="libtensorflowlite_c_x86.so"
@@ -17,12 +17,12 @@ X86_64="libtensorflowlite_c_x86_64.so"
 
 IOS="https://github.com/am15h/tflite_flutter_plugin/releases/download/v0.1.0/TensorFlowLiteC.framework_fat.zip"
 
-basic=0
+delegate=0
 
-while getopts "b" OPTION
+while getopts "d" OPTION
 do
 	case $OPTION in
-		b)  basic=1;;
+		b)  delegate=1;;
 	esac
 done
 
@@ -33,11 +33,11 @@ download () {
     mv $1 "${ANDROID_DIR}$2/${ANDROID_LIB}"
 }
 
-if [ ${basic} -eq 1 ]
+if [ ${delegate} -eq 1 ]
 then
 
-download ${ARM_BASIC} "armeabi-v7a"
-download ${ARM_64_BASIC} "arm64-v8a"
+download ${ARM_DELEGATE} "armeabi-v7a"
+download ${ARM_64_DELEGATE} "arm64-v8a"
 
 else
 

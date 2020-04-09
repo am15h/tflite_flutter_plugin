@@ -24,6 +24,7 @@ void main() {
 
   test('version', () {
     expect(tfl.version, isNotEmpty);
+    print('TensorFlow Lite version: ${tfl.version}');
   });
 
   test('interpreter from file', () async {
