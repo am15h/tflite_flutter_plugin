@@ -6,6 +6,8 @@ import 'package:tflite_flutter_plugin/src/bindings/delegate.dart';
 import 'package:tflite_flutter_plugin/src/bindings/types.dart';
 import 'package:tflite_flutter_plugin/src/delegate.dart';
 
+/// Unstable, may not work with some devices and models
+///
 /// GPU delegate for Android
 class GpuDelegateV2 implements Delegate {
   Pointer<TfLiteDelegate> _delegate;
@@ -31,6 +33,8 @@ class GpuDelegateV2 implements Delegate {
   }
 }
 
+/// Unstable, may not work with some devices and models
+///
 /// GPU delegate options for Android
 class GpuDelegateOptionsV2 {
   Pointer<TfLiteGpuDelegateOptionsV2> _options;

@@ -11,7 +11,6 @@ import 'package:tflite_flutter_plugin/tflite.dart';
 
 import 'bindings/interpreter_options.dart';
 import 'bindings/types.dart';
-import 'delegates/nnapi_delegate.dart';
 
 /// TensorFlowLite interpreter options.
 class InterpreterOptions {
@@ -37,6 +36,7 @@ class InterpreterOptions {
   set threads(int threads) =>
       TfLiteInterpreterOptionsSetNumThreads(_options, threads);
 
+  /// TensorFlow version >= v2.2
   /// Set true to use NnApi Delegate for Android
   set useNnApiForAndroid(bool useNnApi) {
     if (Platform.isAndroid) {
@@ -61,9 +61,5 @@ class InterpreterOptions {
 // TODO: TfLiteInterpreterOptionsSetErrorReporter
 // TODO: setAllowFp16PrecisionForFp32(bool allow)
 
-// TODO: NNAPI and GPU Delegate support for Android if Platform.isAndroid
-// setUseNNAPI(bool useNNAPI)
-// addDelegate(Delegate delegate)
 // setAllowBufferHandleOutput(bool allow)
-
 }

@@ -5,18 +5,48 @@
 TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpreter and performing inference. It binds to TensorFlow Lite C API using dart:ffi. 
 
 ## Initial setup
-#### Download dynamic libraries
+#### Add dynamic libraries to your app
 
 The pre-built binaries can be found in [release assets](https://github.com/am15h/tflite_flutter_plugin/releases).
 
 Place the script [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh) at the root of your project.
 
 Run <pre>sh [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh)</pre> at the root of your project to automatically download and place binaries at appropriate folders.
+
+*The binaries installed will **not** include support for `GpuDelegateV2` and `NnApiDelegate` however `InterpreterOptions().useNnApiForAndroid` can still be used.* 
+
+Use **`install.sh -d`** instead if you wish to use these `GpuDelegateV2` and `NnApiDelegate`.
+
+The pre-built binaries are updated with each stable tensorflow release. However, you many want to use latest unstable tf releases or older tf versions, 
+for that proceed to build locally.   
+
+#### How to build locally ?
+
+Make sure you have required version of bazel installed. (Check TF_MIN_BAZEL_VERSION, TF_MAX_BAZEL_VERSION in configure.py)
+
+* **Android**
+
+Configure your workspace for android builds as per [these instructions](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/g3doc/guide/android.md#configure-workspace-and-bazelrc). 
+
+For TensorFlow >= v2.2
+```
+    bazel build -c opt --cxxopt=--std=c++11 --config=android_arm //tensorflow/lite/c:tensorflowlite_c
     
-**Important**
+    // similarily for arm64 use --config=android_arm64
+```
+
+For TensorFlow <= v2.1
+```
+    bazel build -c opt --cxxopt=--std=c++11 --config=android_arm //tensorflow/lite/experimental/c:libtensorflowlite_c.so
     
-If you do not wish to use `GpuDelegateV2` and `NnApiDelegate` in your app then its recommended and sufficient <br/>
-to run <pre>sh [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh) -b</pre> to install only basic .so for android which comes with reduced size. 
+    // similarily for arm64 use --config=android_arm64
+```
+
+* **iOS**
+
+Refer [instructions on TensorFlow Lite website](https://www.tensorflow.org/lite/guide/build_ios#install_bazel) to build locally for iOS. 
+
+Note: You must use macOS for building iOS.
 
 ## Dependency
 
