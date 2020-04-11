@@ -435,12 +435,10 @@ void main() {
       final gpuDelegate = tfl.GpuDelegateV2(
           options: tfl.GpuDelegateOptionsV2(
               false,
-              tfl.TfLiteGpuInferenceUsage
-                  .TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED,
-              tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
-              tfl.TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
-              tfl.TfLiteGpuInferencePriority
-                  .TFLITE_GPU_INFERENCE_PRIORITY_AUTO));
+              tfl.TfLiteGpuInferenceUsage.preferenceSustainSpeed,
+              tfl.TfLiteGpuInferencePriority.auto,
+              tfl.TfLiteGpuInferencePriority.auto,
+              tfl.TfLiteGpuInferencePriority.auto));
       test('create', () {
         expect(gpuDelegate, isNotNull);
       });
@@ -460,7 +458,7 @@ void main() {
     group('gpu delegate ios', () {
       final gpuDelegate = tfl.GpuDelegate(
           options: tfl.GpuDelegateOptions(
-              false, tfl.TFLGpuDelegateWaitType.TFLGpuDelegateWaitTypeActive));
+              false, tfl.TFLGpuDelegateWaitType.active));
       test('create', () {
         expect(gpuDelegate, isNotNull);
       });

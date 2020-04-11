@@ -124,22 +124,18 @@ enum TfLiteType {
 /// iOS metal delegate wait types.
 enum TFLGpuDelegateWaitType {
   /// waitUntilCompleted
-  // ignore: constant_identifier_names
-  TFLGpuDelegateWaitTypePassive,
+  passive,
 
   /// Minimize latency. It uses active spinning instead of mutex and consumes
   /// additional CPU resources.
-  // ignore: constant_identifier_names
-  TFLGpuDelegateWaitTypeActive,
+  active,
 
   /// Useful when the output is used with GPU pipeline then or if external
   /// command encoder is set.
-  // ignore: constant_identifier_names
-  TFLGpuDelegateWaitTypeDoNotWait,
+  doNotWait,
 
   /// Tries to avoid GPU sleep mode.
-  // ignore: constant_identifier_names
-  TFLGpuDelegateWaitTypeAggressive,
+  aggressive,
 }
 
 // android gpu delegate
@@ -147,13 +143,13 @@ enum TFLGpuDelegateWaitType {
 enum TfLiteGpuInferenceUsage {
   /// Delegate will be used only once, therefore, bootstrap/init time should
   /// be taken into account.
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PREFERENCE_FAST_SINGLE_ANSWER,
+  ///TFLITE_GPU_INFERENCE_PREFERENCE_FAST_SINGLE_ANSWER,
+  fastSingleAnswer,
 
   /// Prefer maximizing the throughput. Same delegate will be used repeatedly on
   /// multiple inputs.
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED,
+  /// TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED,
+  preferenceSustainSpeed,
 }
 
 enum TfLiteGpuInferencePriority {
@@ -161,12 +157,15 @@ enum TfLiteGpuInferencePriority {
   /// factor. For example,
   /// priority1 = MIN_LATENCY would result in the configuration that achieves
   /// maximum performance.
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PRIORITY_MAX_PRECISION,
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY,
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE,
+  /// TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
+  auto,
+
+  /// TFLITE_GPU_INFERENCE_PRIORITY_MAX_PRECISION,
+  maxPrecision,
+
+  /// TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY,
+  minLatency,
+
+  /// TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE,
+  minMemoryUsage,
 }

@@ -122,12 +122,10 @@ class Tensor {
 
   /// Returns data type of given object
   static TfLiteType dataTypeOf(Object o) {
-    // ignore: prefer_typing_uninitialized_variables
-    var c;
     while (o is List) {
       o = (o as List).elementAt(0);
     }
-    c = o;
+    var c = o;
     if (c is double) {
       return TfLiteType.float32;
     } else if (c is int) {
