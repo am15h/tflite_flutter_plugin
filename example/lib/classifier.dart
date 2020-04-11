@@ -2,14 +2,14 @@ import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
 class Classifier {
-  final _MODEL_FILE = 'text_classification.tflite';
-  final _VOCAB_FILE = 'text_classification_vocab.txt';
+  final _modelFile = 'text_classification.tflite';
+  final _vocabFile = 'text_classification_vocab.txt';
 
-  final int _SENTENCE_LEN = 256;
+  final int _sentenceLen = 256;
 
-  final String START = '<START>';
-  final String PAD = '<PAD>';
-  final String UNKNOWN = '<UNKNOWN>';
+  final String start = '<START>';
+  final String pad = '<PAD>';
+  final String unk = '<UNKNOWN>';
 
   Map<String, int> _dict;
 
@@ -21,12 +21,12 @@ class Classifier {
   }
 
   void _loadModel() async {
-    _interpreter = await Interpreter.fromAsset(_MODEL_FILE);
+    _interpreter = await Interpreter.fromAsset(_modelFile);
     print('Interpreter loaded successfully');
   }
 
   void _loadDictionary() async {
-    final vocab = await rootBundle.loadString('assets/$_VOCAB_FILE');
+    final vocab = await rootBundle.loadString('assets/$_vocabFile');
     var dict = <String, int>{};
     final vocabList = vocab.split('\n');
     for (var i = 0; i < vocabList.length; i++) {
@@ -53,20 +53,20 @@ class Classifier {
 
   List<List<double>> tokenizeInputText(String text) {
     final toks = text.split(' ');
-    var vec = List<double>.filled(_SENTENCE_LEN, _dict[PAD].toDouble());
+    var vec = List<double>.filled(_sentenceLen, _dict[pad].toDouble());
 
     var index = 0;
-    if (_dict.containsKey(START)) {
-      vec[index++] = _dict[START].toDouble();
+    if (_dict.containsKey(start)) {
+      vec[index++] = _dict[start].toDouble();
     }
 
     for (var tok in toks) {
-      if (index > _SENTENCE_LEN) {
+      if (index > _sentenceLen) {
         break;
       }
       vec[index++] = _dict.containsKey(tok)
           ? _dict[tok].toDouble()
-          : _dict[UNKNOWN].toDouble();
+          : _dict[unk].toDouble();
     }
 
     return [vec];

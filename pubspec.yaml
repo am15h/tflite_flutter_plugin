@@ -1,6 +1,6 @@
 name: tflite_flutter
-description: TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpreter and performing inference. It binds to TensorFlow Lite C API using dart:ffi. The dart API structure has been kept similar to the TfLite Java API.
-version: 0.1.1
+description: TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpreter and performing inference. It binds to TensorFlow Lite C API using dart:ffi.
+version: 0.1.2
 homepage: https://github.com/am15h/tflite_flutter_plugin
 
 environment:

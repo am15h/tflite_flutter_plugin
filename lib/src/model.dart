@@ -20,7 +20,7 @@ class Model {
   /// Loads model from a file or throws if unsuccessful.
   factory Model.fromFile(String path) {
     final cpath = Utf8.toUtf8(path);
-    final model = TfLiteModelCreateFromFile(cpath);
+    final model = tfLiteModelCreateFromFile(cpath);
     free(cpath);
     checkArgument(isNotNull(model),
         message: 'Unable to create model from file');
@@ -33,7 +33,7 @@ class Model {
     final ptr = allocate<Uint8>(count: size);
     final externalTypedData = ptr.asTypedList(size);
     externalTypedData.setRange(0, buffer.length, buffer);
-    final model = TfLiteModelCreateFromBuffer(ptr.cast(), buffer.length);
+    final model = tfLiteModelCreateFromBuffer(ptr.cast(), buffer.length);
     checkArgument(isNotNull(model),
         message: 'Unable to create model from buffer');
     return Model._(model);
@@ -42,7 +42,7 @@ class Model {
   /// Destroys the model instance.
   void delete() {
     checkState(!_deleted, message: 'Model already deleted.');
-    TfLiteModelDelete(_model);
+    tfLiteModelDelete(_model);
     _deleted = true;
   }
 }

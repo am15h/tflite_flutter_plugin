@@ -22,27 +22,27 @@ class Tensor {
   }
 
   /// Name of the tensor element.
-  String get name => Utf8.fromUtf8(TfLiteTensorName(_tensor));
+  String get name => Utf8.fromUtf8(tfLiteTensorName(_tensor));
 
   /// Data type of the tensor element.
-  TfLiteType get type => TfLiteTensorType(_tensor);
+  TfLiteType get type => tfLiteTensorType(_tensor);
 
   /// Dimensions of the tensor.
   List<int> get shape => List.generate(
-      TfLiteTensorNumDims(_tensor), (i) => TfLiteTensorDim(_tensor, i));
+      tfLiteTensorNumDims(_tensor), (i) => tfLiteTensorDim(_tensor, i));
 
   /// Underlying data buffer as bytes.
   Uint8List get data {
-    final data = cast<Uint8>(TfLiteTensorData(_tensor));
+    final data = cast<Uint8>(tfLiteTensorData(_tensor));
 //    checkState(isNotNull(data), message: 'Tensor data is null.');
     return UnmodifiableUint8ListView(
-        data?.asTypedList(TfLiteTensorByteSize(_tensor)));
+        data?.asTypedList(tfLiteTensorByteSize(_tensor)));
   }
 
   QuantizationParams get params {
     if (_tensor != null) {
-      final ref = TfLiteTensorQuantizationParams(_tensor).ref;
-      return QuantizationParams(ref.scale, ref.zero_point);
+      final ref = tfLiteTensorQuantizationParams(_tensor).ref;
+      return QuantizationParams(ref.scale, ref.zeroPoint);
     } else {
       return QuantizationParams(0.0, 0);
     }
@@ -52,9 +52,9 @@ class Tensor {
   ///
   /// The size must match the size of the tensor.
   set data(Uint8List bytes) {
-    final tensorByteSize = TfLiteTensorByteSize(_tensor);
+    final tensorByteSize = tfLiteTensorByteSize(_tensor);
     checkArgument(tensorByteSize == bytes.length);
-    final data = cast<Uint8>(TfLiteTensorData(_tensor));
+    final data = cast<Uint8>(tfLiteTensorData(_tensor));
     checkState(isNotNull(data), message: 'Tensor data is null.');
     final externalTypedData = data.asTypedList(tensorByteSize);
     externalTypedData.setRange(0, tensorByteSize, bytes);
@@ -62,12 +62,12 @@ class Tensor {
 
   /// Returns number of dimensions
   int numDimensions() {
-    return TfLiteTensorNumDims(_tensor);
+    return tfLiteTensorNumDims(_tensor);
   }
 
   /// Returns the size, in bytes, of the tensor data.
   int numBytes() {
-    return TfLiteTensorByteSize(_tensor);
+    return tfLiteTensorByteSize(_tensor);
   }
 
   /// Returns the number of elements in a flattened (1-D) view of the tensor.
@@ -146,18 +146,18 @@ class Tensor {
     checkState(isNotNull(ptr), message: 'unallocated');
     final externalTypedData = ptr.asTypedList(size);
     externalTypedData.setRange(0, bytes.length, bytes);
-    checkState(TfLiteTensorCopyFromBuffer(_tensor, ptr.cast(), bytes.length) ==
+    checkState(tfLiteTensorCopyFromBuffer(_tensor, ptr.cast(), bytes.length) ==
         TfLiteStatus.ok);
     free(ptr);
   }
 
   Object copyTo(Object dst) {
-    var size = TfLiteTensorByteSize(_tensor);
+    var size = tfLiteTensorByteSize(_tensor);
     final ptr = allocate<Uint8>(count: size);
     checkState(isNotNull(ptr), message: 'unallocated');
     final externalTypedData = ptr.asTypedList(size);
     checkState(
-        TfLiteTensorCopyToBuffer(_tensor, ptr.cast(), size) == TfLiteStatus.ok);
+        tfLiteTensorCopyToBuffer(_tensor, ptr.cast(), size) == TfLiteStatus.ok);
     // Clone the data, because once `free(ptr)`, `externalTypedData` will be
     // volatile
     final bytes = externalTypedData.sublist(0);

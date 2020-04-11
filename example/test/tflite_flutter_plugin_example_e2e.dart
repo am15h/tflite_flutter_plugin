@@ -457,8 +457,8 @@ void main() {
   if (Platform.isIOS) {
     group('gpu delegate ios', () {
       final gpuDelegate = tfl.GpuDelegate(
-          options: tfl.GpuDelegateOptions(
-              false, tfl.TFLGpuDelegateWaitType.active));
+          options:
+              tfl.GpuDelegateOptions(false, tfl.TFLGpuDelegateWaitType.active));
       test('create', () {
         expect(gpuDelegate, isNotNull);
       });

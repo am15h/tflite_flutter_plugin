@@ -6,7 +6,7 @@ import 'dlib.dart';
 import 'types.dart';
 
 /// Returns a new interpreter options instances.
-Pointer<TfLiteInterpreterOptions> Function() TfLiteInterpreterOptionsCreate =
+Pointer<TfLiteInterpreterOptions> Function() tfLiteInterpreterOptionsCreate =
     tflitelib
         .lookup<NativeFunction<_TfLiteInterpreterOptionsCreate_native_t>>(
             'TfLiteInterpreterOptionsCreate')
@@ -17,7 +17,7 @@ typedef _TfLiteInterpreterOptionsCreate_native_t
 
 /// Destroys the interpreter options instansymbolNamece.
 void Function(Pointer<TfLiteInterpreterOptions>)
-    TfLiteInterpreterOptionsDelete = tflitelib
+    tfLiteInterpreterOptionsDelete = tflitelib
         .lookup<NativeFunction<_TfLiteInterpreterOptionsDelete_native_t>>(
             'TfLiteInterpreterOptionsDelete')
         .asFunction();
@@ -29,7 +29,7 @@ typedef _TfLiteInterpreterOptionsDelete_native_t = Void Function(
 void Function(
     Pointer<TfLiteInterpreterOptions> options,
     int
-        threads) TfLiteInterpreterOptionsSetNumThreads = tflitelib
+        threads) tfLiteInterpreterOptionsSetNumThreads = tflitelib
     .lookup<NativeFunction<_TfLiteInterpreterOptionsSetNumThreads_native_t>>(
         'TfLiteInterpreterOptionsSetNumThreads')
     .asFunction();
@@ -46,8 +46,8 @@ typedef _TfLiteInterpreterOptionsSetNumThreads_native_t = Void Function(
 void Function(
   Pointer<TfLiteInterpreterOptions> options,
   Pointer<NativeFunction<Reporter>> reporter,
-  Pointer<Void> user_data,
-) TfLiteInterpreterOptionsSetErrorReporter = tflitelib
+  Pointer<Void> userData,
+) tfLiteInterpreterOptionsSetErrorReporter = tflitelib
     .lookup<NativeFunction<_TfLiteInterpreterOptionsSetErrorReporter_native_t>>(
         'TfLiteInterpreterOptionsSetErrorReporter')
     .asFunction();
@@ -55,17 +55,17 @@ void Function(
 typedef _TfLiteInterpreterOptionsSetErrorReporter_native_t = Void Function(
   Pointer<TfLiteInterpreterOptions> options,
   Pointer<NativeFunction<Reporter>> reporter,
-  Pointer<Void> user_data,
+  Pointer<Void> userData,
 );
 
 /// Custom error reporter function for interpreter execution.
 typedef Reporter = Void Function(
-    Pointer<Void> user_data,
+    Pointer<Void> userData,
     Pointer<Utf8> format,
     /*va_list*/ Pointer<Void> args);
 
 void Function(Pointer<TfLiteInterpreterOptions> options,
-        Pointer<TfLiteDelegate> delegate) TfLiteInterpreterOptionsAddDelegate =
+        Pointer<TfLiteDelegate> delegate) tfLiteInterpreterOptionsAddDelegate =
     tflitelib
         .lookup<NativeFunction<_TfLiteInterpreterOptionsAddDelegate_native_t>>(
             'TfLiteInterpreterOptionsAddDelegate')
@@ -77,7 +77,7 @@ typedef _TfLiteInterpreterOptionsAddDelegate_native_t = Void Function(
 
 /// Enable or disable the NN API for the interpreter (true to enable).
 void Function(Pointer<TfLiteInterpreterOptions> options, int enable)
-    TfLiteInterpreterOptionsSetUseNNAPI = tflitelib
+    tfLiteInterpreterOptionsSetUseNNAPI = tflitelib
         .lookup<NativeFunction<_TfLiteInterpreterOptionsSetUseNNAPI_native_t>>(
             'TfLiteInterpreterOptionsSetUseNNAPI')
         .asFunction();

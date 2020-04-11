@@ -1,3 +1,6 @@
+## 0.1.2
+* fixed analysis issues to improve score
+
 ## 0.1.1
 * fixed warnings
 * longer package description

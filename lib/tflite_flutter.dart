@@ -21,4 +21,4 @@ export 'src/tensor.dart';
 export 'src/util/list_shape_extension.dart';
 
 /// tflite version information.
-String get version => Utf8.fromUtf8(TfLiteVersion());
+String get version => Utf8.fromUtf8(tfLiteVersion());
