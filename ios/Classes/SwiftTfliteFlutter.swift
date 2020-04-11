@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-public class SwiftTfliteFlutterPlugin: NSObject, FlutterPlugin {
+public class SwiftTfliteFlutter: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "tflite_flutter_plugin", binaryMessenger: registrar.messenger())
-    let instance = SwiftTfliteFlutterPlugin()
+    let channel = FlutterMethodChannel(name: "tflite_flutter", binaryMessenger: registrar.messenger())
+    let instance = SwiftTfliteFlutter()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 

@@ -3,8 +3,8 @@
 # Run `pod lib lint tflite_flutter_plugin.podspec' to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'tflite_flutter_plugin'
-  s.version          = '0.0.1'
+  s.name             = 'tflite_flutter'
+  s.version          = '0.1.0'
   s.summary          = 'TensorFlow Lite plugin for Flutter apps.'
   s.description      = <<-DESC
 TensorFlow Lite plugin for Flutter apps.
