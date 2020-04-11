@@ -1,7 +1,6 @@
 name: tflite_flutter
 description: TensorFlow Lite dart API for Flutter.
 version: 0.1.0
-author: Amish Garg
 homepage: https://github.com/am15h/tflite_flutter_plugin
 
 environment:

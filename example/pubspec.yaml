@@ -19,7 +19,7 @@ dev_dependencies:
     sdk: flutter
   flutter_driver:
     sdk: flutter
-  tflite_flutter_plugin:
+  tflite_flutter:
     path: ../
   test:
   e2e: ^0.2.4+2

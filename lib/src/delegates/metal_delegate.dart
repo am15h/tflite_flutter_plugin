@@ -2,9 +2,9 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
-import 'package:tflite_flutter_plugin/src/bindings/delegate.dart';
-import 'package:tflite_flutter_plugin/src/bindings/types.dart';
-import 'package:tflite_flutter_plugin/src/delegate.dart';
+import '../bindings/delegate.dart';
+import '../bindings/types.dart';
+import '../delegate.dart';
 
 /// Metal Delegate for iOS
 class GpuDelegate implements Delegate {
