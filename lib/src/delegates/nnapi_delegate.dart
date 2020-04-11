@@ -1,9 +1,9 @@
 import 'dart:ffi';
 
 import 'package:quiver/check.dart';
-import 'package:tflite_flutter_plugin/src/bindings/delegate.dart';
-import 'package:tflite_flutter_plugin/src/bindings/types.dart';
-import 'package:tflite_flutter_plugin/src/delegate.dart';
+import '../bindings/delegate.dart';
+import '../bindings/types.dart';
+import '../delegate.dart';
 
 /// NnApi Delegate for Android
 class NnApiDelegate implements Delegate {
@@ -21,7 +21,8 @@ class NnApiDelegate implements Delegate {
 
   @override
   void delete() {
-    checkState(!_deleted, message: 'TfLiteStatefulNnApiDelegate already deleted.');
+    checkState(!_deleted,
+        message: 'TfLiteStatefulNnApiDelegate already deleted.');
     TfLiteStatefulNnApiDelegateDelete(_delegate);
     _deleted = true;
   }

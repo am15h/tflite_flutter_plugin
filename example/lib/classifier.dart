@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:tflite_flutter_plugin/tflite.dart';
+import 'package:tflite_flutter_plugin/tflite_flutter.dart';
 
 class Classifier {
   final _MODEL_FILE = 'text_classification.tflite';

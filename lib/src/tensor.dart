@@ -1,17 +1,14 @@
-// Copyright (c) 2019, the Dart project authors. Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
 import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
-import 'package:tflite_flutter_plugin/src/quanitzation_params.dart';
 
 import 'bindings/tensor.dart';
 import 'bindings/types.dart';
+
 import 'ffi/helper.dart';
+import 'quanitzation_params.dart';
 import 'util/list_shape_extension.dart';
 
 export 'bindings/types.dart' show TfLiteType;
@@ -125,6 +122,7 @@ class Tensor {
 
   /// Returns data type of given object
   static TfLiteType dataTypeOf(Object o) {
+    // ignore: prefer_typing_uninitialized_variables
     var c;
     while (o is List) {
       o = (o as List).elementAt(0);

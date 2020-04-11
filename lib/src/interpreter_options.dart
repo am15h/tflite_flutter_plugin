@@ -1,16 +1,12 @@
-// Copyright (c) 2019, the Dart project authors. Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
 import 'dart:ffi';
 import 'dart:io';
 
 import 'package:quiver/check.dart';
-import 'package:tflite_flutter_plugin/src/delegate.dart';
-import 'package:tflite_flutter_plugin/tflite.dart';
-
+import '../tflite_flutter.dart';
 import 'bindings/interpreter_options.dart';
+
 import 'bindings/types.dart';
+import 'delegate.dart';
 
 /// TensorFlowLite interpreter options.
 class InterpreterOptions {

@@ -2,7 +2,7 @@
 
 import 'dart:ffi';
 
-import 'package:tflite_flutter_plugin/src/bindings/dlib.dart';
+import 'dlib.dart';
 
 import 'types.dart';
 

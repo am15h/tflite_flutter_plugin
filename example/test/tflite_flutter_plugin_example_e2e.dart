@@ -8,7 +8,7 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:tflite_flutter_plugin/tflite.dart' as tfl;
+import 'package:tflite_flutter_plugin/tflite_flutter.dart' as tfl;
 import 'package:e2e/e2e.dart';
 
 final dataFileName = 'permute_uint8.tflite';
@@ -386,7 +386,6 @@ void main() {
       ];
       var i = 1;
       var str = 'str';
-      var byteList = Uint8List.fromList([0, 0, 0]);
       expect(tfl.Tensor.dataTypeOf(d), tfl.TfLiteType.float32);
       expect(tfl.Tensor.dataTypeOf(dList), tfl.TfLiteType.float32);
       expect(tfl.Tensor.dataTypeOf(i), tfl.TfLiteType.int32);

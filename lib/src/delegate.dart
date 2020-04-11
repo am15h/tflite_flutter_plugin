@@ -1,6 +1,6 @@
 import 'dart:ffi';
 
-import 'package:tflite_flutter_plugin/src/bindings/types.dart';
+import 'bindings/types.dart';
 
 abstract class Delegate {
   /// Get pointer to TfLiteDelegate
