@@ -23,11 +23,11 @@ class TfLiteQuantizationParams extends Struct {
   double scale;
 
   @Int32()
-  int zero_point;
+  int zeroPoint;
 
   @override
   String toString() {
-    return 'TfLiteQuantizationParams{scale: $scale, zero_point: $zero_point}';
+    return 'TfLiteQuantizationParams{scale: $scale, zero_point: $zeroPoint}';
   }
 }
 
@@ -35,16 +35,16 @@ class TfLiteQuantizationParams extends Struct {
 class TFLGpuDelegateOptions extends Struct {
   /// Allows to quantify tensors, downcast values, process in float16 etc.
   @Int32()
-  int allow_precision_loss;
+  int allowPrecisionLoss;
 
   @Int32()
-  int wait_type;
+  int waitType;
 
   factory TFLGpuDelegateOptions.allocate(
           bool allowPrecisionLoss, TFLGpuDelegateWaitType waitType) =>
       allocate<TFLGpuDelegateOptions>().ref
-        ..allow_precision_loss = allowPrecisionLoss ? 1 : 0
-        ..wait_type = waitType.index;
+        ..allowPrecisionLoss = allowPrecisionLoss ? 1 : 0
+        ..waitType = waitType.index;
 }
 
 /// Wraps TfLiteGpuDelegateOptionsV2 for android gpu delegate
@@ -55,11 +55,11 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   /// warranted.
   /// [OBSOLETE]: to be removed
   @Int32()
-  int is_precision_loss_allowed;
+  int isPrecisionLossAllowed;
 
   /// Preference is defined in TfLiteGpuInferenceUsage.
   @Int32()
-  int inference_preference;
+  int inferencePreference;
 
   // Ordered priorities provide better control over desired semantics,
   // where priority(n) is more important than priority(n+1), therefore,
@@ -80,11 +80,11 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   //            priority3 = MAX_PRECISION
   // Invalid priorities will result in error.
   @Int32()
-  int inference_priority1;
+  int inferencePriority1;
   @Int32()
-  int inference_priority2;
+  int inferencePriority2;
   @Int32()
-  int inference_priority3;
+  int inferencePriority3;
 
   factory TfLiteGpuDelegateOptionsV2.allocate(
           bool isPrecisionLossAllowed,
@@ -93,11 +93,11 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
           TfLiteGpuInferencePriority inferencePriority2,
           TfLiteGpuInferencePriority inferencePriority3) =>
       allocate<TfLiteGpuDelegateOptionsV2>().ref
-        ..is_precision_loss_allowed = isPrecisionLossAllowed ? 1 : 0
-        ..inference_preference = inferencePreference.index
-        ..inference_priority1 = inferencePriority1.index
-        ..inference_priority2 = inferencePriority2.index
-        ..inference_priority3 = inferencePriority3.index;
+        ..isPrecisionLossAllowed = isPrecisionLossAllowed ? 1 : 0
+        ..inferencePreference = inferencePreference.index
+        ..inferencePriority1 = inferencePriority1.index
+        ..inferencePriority2 = inferencePriority2.index
+        ..inferencePriority3 = inferencePriority3.index;
 }
 
 /// Status of a TensorFlowLite function call.
@@ -124,22 +124,18 @@ enum TfLiteType {
 /// iOS metal delegate wait types.
 enum TFLGpuDelegateWaitType {
   /// waitUntilCompleted
-  // ignore: constant_identifier_names
-  TFLGpuDelegateWaitTypePassive,
+  passive,
 
   /// Minimize latency. It uses active spinning instead of mutex and consumes
   /// additional CPU resources.
-  // ignore: constant_identifier_names
-  TFLGpuDelegateWaitTypeActive,
+  active,
 
   /// Useful when the output is used with GPU pipeline then or if external
   /// command encoder is set.
-  // ignore: constant_identifier_names
-  TFLGpuDelegateWaitTypeDoNotWait,
+  doNotWait,
 
   /// Tries to avoid GPU sleep mode.
-  // ignore: constant_identifier_names
-  TFLGpuDelegateWaitTypeAggressive,
+  aggressive,
 }
 
 // android gpu delegate
@@ -147,13 +143,13 @@ enum TFLGpuDelegateWaitType {
 enum TfLiteGpuInferenceUsage {
   /// Delegate will be used only once, therefore, bootstrap/init time should
   /// be taken into account.
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PREFERENCE_FAST_SINGLE_ANSWER,
+  ///TFLITE_GPU_INFERENCE_PREFERENCE_FAST_SINGLE_ANSWER,
+  fastSingleAnswer,
 
   /// Prefer maximizing the throughput. Same delegate will be used repeatedly on
   /// multiple inputs.
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED,
+  /// TFLITE_GPU_INFERENCE_PREFERENCE_SUSTAINED_SPEED,
+  preferenceSustainSpeed,
 }
 
 enum TfLiteGpuInferencePriority {
@@ -161,12 +157,15 @@ enum TfLiteGpuInferencePriority {
   /// factor. For example,
   /// priority1 = MIN_LATENCY would result in the configuration that achieves
   /// maximum performance.
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PRIORITY_MAX_PRECISION,
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY,
-  // ignore: constant_identifier_names
-  TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE,
+  /// TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
+  auto,
+
+  /// TFLITE_GPU_INFERENCE_PRIORITY_MAX_PRECISION,
+  maxPrecision,
+
+  /// TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY,
+  minLatency,
+
+  /// TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE,
+  minMemoryUsage,
 }

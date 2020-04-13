@@ -27,8 +27,8 @@ class Interpreter {
   Interpreter._(this._interpreter);
 
   /// Creates interpreter from model or throws if unsuccessful.
-  factory Interpreter._Interpreter(Model model, {InterpreterOptions options}) {
-    final interpreter = TfLiteInterpreterCreate(
+  factory Interpreter._create(Model model, {InterpreterOptions options}) {
+    final interpreter = tfLiteInterpreterCreate(
         model.base, options?.base ?? cast<TfLiteInterpreterOptions>(nullptr));
     checkArgument(isNotNull(interpreter),
         message: 'Unable to create interpreter.');
@@ -38,7 +38,7 @@ class Interpreter {
   /// Creates interpreter from a model file or throws if unsuccessful.
   factory Interpreter.fromFile(File modelFile, {InterpreterOptions options}) {
     final model = Model.fromFile(modelFile.path);
-    final interpreter = Interpreter._Interpreter(model, options: options);
+    final interpreter = Interpreter._create(model, options: options);
     model.delete();
     return interpreter;
   }
@@ -47,7 +47,7 @@ class Interpreter {
   factory Interpreter.fromBuffer(Uint8List buffer,
       {InterpreterOptions options}) {
     final model = Model.fromBuffer(buffer);
-    final interpreter = Interpreter._Interpreter(model, options: options);
+    final interpreter = Interpreter._create(model, options: options);
     model.delete();
     return interpreter;
   }
@@ -81,7 +81,7 @@ class Interpreter {
   /// Destroys the interpreter instance.
   void close() {
     checkState(!_deleted, message: 'Interpreter already deleted.');
-    TfLiteInterpreterDelete(_interpreter);
+    tfLiteInterpreterDelete(_interpreter);
     _deleted = true;
   }
 
@@ -89,14 +89,14 @@ class Interpreter {
   void allocateTensors() {
     checkState(!_allocated, message: 'Interpreter already allocated.');
     checkState(
-        TfLiteInterpreterAllocateTensors(_interpreter) == TfLiteStatus.ok);
+        tfLiteInterpreterAllocateTensors(_interpreter) == TfLiteStatus.ok);
     _allocated = true;
   }
 
   /// Runs inference for the loaded graph.
   void invoke() {
     checkState(_allocated, message: 'Interpreter not allocated.');
-    checkState(TfLiteInterpreterInvoke(_interpreter) == TfLiteStatus.ok);
+    checkState(tfLiteInterpreterInvoke(_interpreter) == TfLiteStatus.ok);
   }
 
   /// Run for single input and output
@@ -142,14 +142,14 @@ class Interpreter {
 
   /// Gets all input tensors associated with the model.
   List<Tensor> getInputTensors() => List.generate(
-      TfLiteInterpreterGetInputTensorCount(_interpreter),
-      (i) => Tensor(TfLiteInterpreterGetInputTensor(_interpreter, i)),
+      tfLiteInterpreterGetInputTensorCount(_interpreter),
+      (i) => Tensor(tfLiteInterpreterGetInputTensor(_interpreter, i)),
       growable: false);
 
   /// Gets all output tensors associated with the model.
   List<Tensor> getOutputTensors() => List.generate(
-      TfLiteInterpreterGetOutputTensorCount(_interpreter),
-      (i) => Tensor(TfLiteInterpreterGetOutputTensor(_interpreter, i)),
+      tfLiteInterpreterGetOutputTensorCount(_interpreter),
+      (i) => Tensor(tfLiteInterpreterGetOutputTensor(_interpreter, i)),
       growable: false);
 
   /// Resize input tensor for the given tensor index. `allocateTensors` must be called again afterward.
@@ -158,7 +158,7 @@ class Interpreter {
     final dimensions = allocate<Int32>(count: dimensionSize);
     final externalTypedData = dimensions.asTypedList(dimensionSize);
     externalTypedData.setRange(0, dimensionSize, shape);
-    final status = TfLiteInterpreterResizeInputTensor(
+    final status = tfLiteInterpreterResizeInputTensor(
         _interpreter, tensorIndex, dimensions, dimensionSize);
     free(dimensions);
     checkState(status == TfLiteStatus.ok);

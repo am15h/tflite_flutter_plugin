@@ -50,7 +50,7 @@ Note: You must use macOS for building iOS.
 
 ## Dependency
 
-`tflite_flutter: ^0.1.0`
+`tflite_flutter: ^0.1.1`
 
 ##  Import
 

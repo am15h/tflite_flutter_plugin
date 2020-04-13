@@ -19,24 +19,24 @@ class InterpreterOptions {
 
   /// Creates a new options instance.
   factory InterpreterOptions() =>
-      InterpreterOptions._(TfLiteInterpreterOptionsCreate());
+      InterpreterOptions._(tfLiteInterpreterOptionsCreate());
 
   /// Destroys the options instance.
   void delete() {
     checkState(!_deleted, message: 'InterpreterOptions already deleted.');
-    TfLiteInterpreterOptionsDelete(_options);
+    tfLiteInterpreterOptionsDelete(_options);
     _deleted = true;
   }
 
   /// Sets the number of CPU threads to use.
   set threads(int threads) =>
-      TfLiteInterpreterOptionsSetNumThreads(_options, threads);
+      tfLiteInterpreterOptionsSetNumThreads(_options, threads);
 
   /// TensorFlow version >= v2.2
   /// Set true to use NnApi Delegate for Android
   set useNnApiForAndroid(bool useNnApi) {
     if (Platform.isAndroid) {
-      TfLiteInterpreterOptionsSetUseNNAPI(_options, 1);
+      tfLiteInterpreterOptionsSetUseNNAPI(_options, 1);
     }
   }
 
@@ -49,7 +49,7 @@ class InterpreterOptions {
 
   /// Adds delegate to Interpreter Options
   void addDelegate(Delegate delegate) {
-    TfLiteInterpreterOptionsAddDelegate(_options, delegate.base);
+    tfLiteInterpreterOptionsAddDelegate(_options, delegate.base);
   }
 
 // Unimplemented:

@@ -16,14 +16,14 @@ class NnApiDelegate implements Delegate {
   NnApiDelegate._(this._delegate);
 
   factory NnApiDelegate() {
-    return NnApiDelegate._(TfLiteStatefulNnApiDelegateCreate());
+    return NnApiDelegate._(tfLiteStatefulNnApiDelegateCreate());
   }
 
   @override
   void delete() {
     checkState(!_deleted,
         message: 'TfLiteStatefulNnApiDelegate already deleted.');
-    TfLiteStatefulNnApiDelegateDelete(_delegate);
+    tfLiteStatefulNnApiDelegateDelete(_delegate);
     _deleted = true;
   }
 }
