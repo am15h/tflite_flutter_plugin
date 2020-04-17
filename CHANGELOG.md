@@ -1,3 +1,6 @@
+## 0.1.3
+* update usage instructions
+
 ## 0.1.2
 * fixed analysis issues to improve score
 

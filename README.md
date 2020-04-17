@@ -20,6 +20,8 @@ Use **`install.sh -d`** instead if you wish to use these `GpuDelegateV2` and `Nn
 The pre-built binaries are updated with each stable tensorflow release. However, you many want to use latest unstable tf releases or older tf versions, 
 for that proceed to build locally.   
 
+Currently, The `TensorFlowLiteC.framework` is implicitly included with the plugin. 
+
 #### How to build locally ?
 
 Make sure you have required version of bazel installed. (Check TF_MIN_BAZEL_VERSION, TF_MAX_BAZEL_VERSION in configure.py)
@@ -48,13 +50,9 @@ Refer [instructions on TensorFlow Lite website](https://www.tensorflow.org/lite/
 
 Note: You must use macOS for building iOS.
 
-## Dependency
-
-`tflite_flutter: ^0.1.1`
-
 ##  Import
 
-    import 'package:tflite_flutter_plugin/tflite.dart' as tfl;
+    import 'package:tflite_flutter/tflite_flutter.dart';
 
 ## Usage instructions
 
@@ -74,7 +72,7 @@ Note: You must use macOS for building iOS.
 * **from buffer**
 	```
     final buffer = await getBuffer('assets/your_model.tflite');
-    final interpreter = tfl.Interpreter.fromBuffer(buffer);
+    final interpreter = Interpreter.fromBuffer(buffer);
 
 	Future<Uint8List> getBuffer(String filePath) async {  
 	 final rawAssetFile = await rootBundle.load(filePath);  
@@ -87,7 +85,7 @@ Note: You must use macOS for building iOS.
 
    ```
    final dataFile = await getFile('assets/your_model.tflite');
-   final interpreter = tfl.Interpreter.fromFile(dataFile);
+   final interpreter = Interpreter.fromFile(dataFile);
    
    Future<File> getFile(String fileName) async {
      final appDir = await getTemporaryDirectory();
@@ -157,16 +155,16 @@ interpreter.close();
 * **NNAPI delegate for Android**
 
     ```
-    var interpreterOptions = tfl.InterpreterOptions()..useNnApiForAndroid = true;
-    final interpreter = await tfl.Interpreter.fromAsset('your_model.tflite',
+    var interpreterOptions = InterpreterOptions()..useNnApiForAndroid = true;
+    final interpreter = await Interpreter.fromAsset('your_model.tflite',
         options: interpreterOptions);
     
     ```
     or
     
     ```
-    var interpreterOptions = tfl.InterpreterOptions()..addDelegate(tfl.NnApiDelegate());
-    final interpreter = await tfl.Interpreter.fromAsset('your_model.tflite',
+    var interpreterOptions = InterpreterOptions()..addDelegate(NnApiDelegate());
+    final interpreter = await Interpreter.fromAsset('your_model.tflite',
         options: interpreterOptions);
         
     ```
