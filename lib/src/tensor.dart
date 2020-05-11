@@ -39,6 +39,7 @@ class Tensor {
         data?.asTypedList(tfLiteTensorByteSize(_tensor)));
   }
 
+  /// Quantization Params associated with the model, [only Android]
   QuantizationParams get params {
     if (_tensor != null) {
       final ref = tfLiteTensorQuantizationParams(_tensor).ref;
@@ -162,7 +163,12 @@ class Tensor {
     // volatile
     final bytes = externalTypedData.sublist(0);
     data = bytes;
-    final obj = _convertBytesToObject(bytes);
+    var obj;
+    if (dst is Uint8List) {
+      obj = bytes;
+    } else {
+      obj = _convertBytesToObject(bytes);
+    }
     free(ptr);
     if (obj is List && dst is List) {
       _duplicateList(obj, dst);
@@ -209,6 +215,46 @@ class Tensor {
         throw ArgumentError(
             'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.int32}');
       }
+    } else if (type == TfLiteType.int64) {
+      if (o is int) {
+        var buffer = Uint8List(8).buffer;
+        var bdata = ByteData.view(buffer);
+        bdata.setInt64(0, o, Endian.big);
+        return buffer.asUint8List();
+      } else {
+        throw ArgumentError(
+            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.int32}');
+      }
+    } else if (type == TfLiteType.int16) {
+      if (o is int) {
+        var buffer = Uint8List(2).buffer;
+        var bdata = ByteData.view(buffer);
+        bdata.setInt16(0, o, Endian.little);
+        return buffer.asUint8List();
+      } else {
+        throw ArgumentError(
+            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.int32}');
+      }
+    } else if (type == TfLiteType.float16) {
+      if (o is double) {
+        var buffer = Uint8List(4).buffer;
+        var bdata = ByteData.view(buffer);
+        bdata.setFloat32(0, o, Endian.little);
+        return buffer.asUint8List().sublist(0, 2);
+      } else {
+        throw ArgumentError(
+            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.float32}');
+      }
+    } else if (type == TfLiteType.int8) {
+      if (o is int) {
+        var buffer = Uint8List(1).buffer;
+        var bdata = ByteData.view(buffer);
+        bdata.setInt8(0, o);
+        return buffer.asUint8List();
+      } else {
+        throw ArgumentError(
+            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.float32}');
+      }
     } else {
       throw ArgumentError(
           'The input data type ${o.runtimeType} is unsupported');
@@ -226,6 +272,27 @@ class Tensor {
     } else if (type == TfLiteType.float32) {
       for (var i = 0; i < bytes.length; i += 4) {
         list.add(ByteData.view(bytes.buffer).getFloat32(i, Endian.little));
+      }
+    } else if (type == TfLiteType.int16) {
+      for (var i = 0; i < bytes.length; i += 2) {
+        list.add(ByteData.view(bytes.buffer).getInt16(i, Endian.little));
+      }
+    } else if (type == TfLiteType.float16) {
+      Uint8List list32 = Uint8List(bytes.length * 2);
+      for (var i = 0; i < bytes.length; i += 2) {
+        list32[i] = bytes[i];
+        list32[i + 1] = bytes[i + 1];
+      }
+      for (var i = 0; i < list32.length; i += 4) {
+        list.add(ByteData.view(list32.buffer).getFloat32(i, Endian.little));
+      }
+    } else if (type == TfLiteType.int8) {
+      for (var i = 0; i < bytes.length; i += 1) {
+        list.add(ByteData.view(bytes.buffer).getInt8(i));
+      }
+    } else if (type == TfLiteType.int64) {
+      for (var i = 0; i < bytes.length; i += 8) {
+        list.add(ByteData.view(bytes.buffer).getInt64(i));
       }
     }
     return list.reshape(shape);

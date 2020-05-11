@@ -16,6 +16,7 @@ final missingFileName = 'missing.tflite';
 final badFileName = 'bad_model.tflite';
 final quantFileName = 'mobilenet_quant.tflite';
 final intFileName = 'int32.bin';
+final int64FileName = 'int64.bin';
 final multiInputFileName = 'multi_add.bin';
 final addFileName = 'add.bin';
 
@@ -184,18 +185,21 @@ void main() {
         });
       });
 
-      group('quantization', () {
-        tfl.Interpreter interpreter;
-        setUp(() async {
-          interpreter = await tfl.Interpreter.fromAsset('test/$quantFileName');
+      if (Platform.isAndroid) {
+        group('quantization', () {
+          tfl.Interpreter interpreter;
+          setUp(() async {
+            interpreter =
+                await tfl.Interpreter.fromAsset('test/$quantFileName');
+          });
+          tearDown(() => interpreter.close());
+          test('params', () {
+            interpreter.allocateTensors();
+            final tensor = interpreter.getInputTensor(0);
+            print(tensor.params);
+          });
         });
-        tearDown(() => interpreter.close());
-        test('params', () {
-          interpreter.allocateTensors();
-          final tensor = interpreter.getInputTensor(0);
-          print(tensor.params);
-        });
-      });
+      }
     });
   });
 
@@ -219,8 +223,9 @@ void main() {
       });
       test('multiple input', () async {
         tfl.Interpreter interpreter;
-        interpreter =
-            await tfl.Interpreter.fromAsset('test/$multiInputFileName');
+        interpreter = await tfl.Interpreter.fromAsset(
+          'test/$multiInputFileName',
+        );
         final inputTensors = interpreter.getInputTensors();
         expect(inputTensors.length, 4);
         expect(inputTensors[0].type, tfl.TfLiteType.float32);
@@ -291,6 +296,23 @@ void main() {
       expect(output[0][0][0], [3, 7, -4, 3, 7, -4, 3, 7, -4, 3, 7, -4]);
       interpreter.close();
     });
+    test('with int64', () async {
+      tfl.Interpreter interpreter;
+      final path = await getPathOnDevice(int64FileName);
+      interpreter = tfl.Interpreter.fromFile(File(path));
+      print(interpreter.getInputTensor(0));
+      final oneD = <int>[3, 7, -4];
+      final twoD = List.filled(8, oneD);
+      final threeD = List.filled(8, twoD);
+      final fourD = List.filled(2, threeD);
+
+      var output = List(2 * 4 * 4 * 12).reshape([2, 4, 4, 12]);
+
+      interpreter.run(fourD, output);
+
+      expect(output[0][0][0], [3, 7, -4, 3, 7, -4, 3, 7, -4, 3, 7, -4]);
+      interpreter.close();
+    });
     if (Platform.isAndroid) {
       test('using set use NnApi', () async {
         tfl.Interpreter interpreter;
@@ -329,29 +351,20 @@ void main() {
       });
 
       // Unable to create interpreter
-      /*test('using GpuDelegateV2 android', () async {
-      tfl.Interpreter interpreter;
-      final gpuDelegate = tfl.GpuDelegateV2();
-      var interpreterOptions = tfl.InterpreterOptions()
-        ..addDelegate(gpuDelegate);
-      interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
-          options: interpreterOptions);
-      var o = [1.23, 6.54, 7.81];
-      var two = [o, o, o, o, o, o, o, o];
-      var three = [two, two, two, two, two, two, two, two];
-      var four = [three];
-      var output = List(1 * 8 * 8 * 3).reshape([1, 8, 8, 3]);
-      interpreter.run(four, output);
-      var exp = '';
-      if (output[0][0][0][0] is double) {
-        exp = (output[0][0][0][0] as double).toStringAsFixed(2);
-      }
-      expect(exp, '3.69');
-      interpreter.close();
-    });*/
+      test('using GpuDelegateV2 android', () async {
+        tfl.Interpreter interpreter;
+        final gpuDelegate = tfl.GpuDelegateV2();
+        var interpreterOptions = tfl.InterpreterOptions()
+          ..addDelegate(gpuDelegate);
+        interpreter = await tfl.Interpreter.fromAsset(
+            'text_classification.tflite',
+            options: interpreterOptions);
+        expect(interpreter, isNotNull);
+        interpreter.close();
+      });
 
       if (Platform.isIOS) {
-        test('using GpuDelegateV2 android', () async {
+        test('using GpuDelegateV2 iOS', () async {
           tfl.Interpreter interpreter;
           final gpuDelegate = tfl.GpuDelegateV2();
           var interpreterOptions = tfl.InterpreterOptions()

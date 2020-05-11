@@ -3,7 +3,7 @@
 cd "$(dirname "$(readlink -f "$0")")"
 
 URL="https://github.com/am15h/tflite_flutter_plugin/releases/download/"
-TAG="v0.1.0"
+TAG="v0.2.0"
 
 ANDROID_DIR="android/app/src/main/jniLibs/"
 ANDROID_LIB="libtensorflowlite_c.so"
@@ -14,8 +14,6 @@ ARM="libtensorflowlite_c_arm.so"
 ARM_64="libtensorflowlite_c_arm64.so"
 X86="libtensorflowlite_c_x86.so"
 X86_64="libtensorflowlite_c_x86_64.so"
-
-#IOS="https://github.com/am15h/tflite_flutter_plugin/releases/download/v0.1.0/TensorFlowLiteC.framework_fat.zip"
 
 delegate=0
 
@@ -48,9 +46,3 @@ fi
 
 download ${X86} "x86"
 download ${X86_64} "x86_64"
-
-#ios
-#wget "$IOS"
-#unzip TensorFlowLiteC.framework_fat.zip
-#rm TensorFlowLiteC.framework_fat.zip
-#mv TensorFlowLiteC.framework ios/
