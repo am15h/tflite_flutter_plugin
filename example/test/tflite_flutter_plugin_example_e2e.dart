@@ -185,18 +185,21 @@ void main() {
         });
       });
 
-      group('quantization', () {
-        tfl.Interpreter interpreter;
-        setUp(() async {
-          interpreter = await tfl.Interpreter.fromAsset('test/$quantFileName');
+      if (Platform.isAndroid) {
+        group('quantization', () {
+          tfl.Interpreter interpreter;
+          setUp(() async {
+            interpreter =
+                await tfl.Interpreter.fromAsset('test/$quantFileName');
+          });
+          tearDown(() => interpreter.close());
+          test('params', () {
+            interpreter.allocateTensors();
+            final tensor = interpreter.getInputTensor(0);
+            print(tensor.params);
+          });
         });
-        tearDown(() => interpreter.close());
-        test('params', () {
-          interpreter.allocateTensors();
-          final tensor = interpreter.getInputTensor(0);
-          print(tensor.params);
-        });
-      });
+      }
     });
   });
 
@@ -353,24 +356,15 @@ void main() {
         final gpuDelegate = tfl.GpuDelegateV2();
         var interpreterOptions = tfl.InterpreterOptions()
           ..addDelegate(gpuDelegate);
-        interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
+        interpreter = await tfl.Interpreter.fromAsset(
+            'text_classification.tflite',
             options: interpreterOptions);
-        var o = [1.23, 6.54, 7.81];
-        var two = [o, o, o, o, o, o, o, o];
-        var three = [two, two, two, two, two, two, two, two];
-        var four = [three];
-        var output = List(1 * 8 * 8 * 3).reshape([1, 8, 8, 3]);
-        interpreter.run(four, output);
-        var exp = '';
-        if (output[0][0][0][0] is double) {
-          exp = (output[0][0][0][0] as double).toStringAsFixed(2);
-        }
-        expect(exp, '3.69');
+        expect(interpreter, isNotNull);
         interpreter.close();
       });
 
       if (Platform.isIOS) {
-        test('using GpuDelegateV2 android', () async {
+        test('using GpuDelegateV2 iOS', () async {
           tfl.Interpreter interpreter;
           final gpuDelegate = tfl.GpuDelegateV2();
           var interpreterOptions = tfl.InterpreterOptions()

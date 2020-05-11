@@ -1,3 +1,8 @@
+## 0.2.0
+* Direct conversion support for more TfLiteTypes
+* int16, float16, int8, int64
+* Pre-built tf 2.2.0 stable binaries
+
 ## 0.1.3
 * update usage instructions
 

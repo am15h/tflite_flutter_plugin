@@ -39,7 +39,7 @@ class Tensor {
         data?.asTypedList(tfLiteTensorByteSize(_tensor)));
   }
 
-  /// Quantization Params associated with the model,
+  /// Quantization Params associated with the model, [only Android]
   QuantizationParams get params {
     if (_tensor != null) {
       final ref = tfLiteTensorQuantizationParams(_tensor).ref;
