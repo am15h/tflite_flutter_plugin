@@ -64,16 +64,19 @@ class _MyAppState extends State<MyApp> {
                           child: Card(
                             child: Container(
                               padding: const EdgeInsets.all(16),
-                              color: prediction == 1
+                              color: prediction[1] > prediction[0]
                                   ? Colors.lightGreen
-                                  : Colors.red,
+                                  : Colors.redAccent,
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    text,
+                                    "Input: $text",
                                     style: const TextStyle(fontSize: 16),
-                                    textAlign: TextAlign.left,
                                   ),
+                                  Text("Output:"),
+                                  Text("   Positive: ${prediction[1]}"),
+                                  Text("   Negative: ${prediction[0]}"),
                                 ],
                               ),
                             ),
