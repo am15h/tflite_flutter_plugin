@@ -4,25 +4,42 @@
 
 TensorFlow Lite plugin provides a dart API for accessing TensorFlow Lite interpreter and performing inference. It binds to TensorFlow Lite C API using dart:ffi. 
 
-## Initial setup
+## (Most Important) Initial setup 
+
 #### Add dynamic libraries to your app
 
-The pre-built binaries can be found in [release assets](https://github.com/am15h/tflite_flutter_plugin/releases).
+* **Linux/Mac Users**
 
-Place the script [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh) at the root of your project.
+	Place the script [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh) at the root of your project.
 
-Run <pre>sh [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh)</pre> at the root of your project to automatically download and place binaries at appropriate folders.
+	Execute <pre>sh [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh)</pre> at the root of your project to automatically download and place binaries at appropriate folders.
 
-*The binaries installed will **not** include support for `GpuDelegateV2` and `NnApiDelegate` however `InterpreterOptions().useNnApiForAndroid` can still be used.* 
+	*The binaries installed will **not** include support for `GpuDelegateV2` and `NnApiDelegate` however `InterpreterOptions().useNnApiForAndroid` can still be used.* 
 
-Use **`install.sh -d`** instead if you wish to use these `GpuDelegateV2` and `NnApiDelegate`.
+	Use **`install.sh -d`** instead if you wish to use these `GpuDelegateV2` and `NnApiDelegate`.
 
-The pre-built binaries are updated with each stable tensorflow release. However, you many want to use latest unstable tf releases or older tf versions, 
-for that proceed to build locally.   
+* **Windows users** 
 
-Currently, The `TensorFlowLiteC.framework` is implicitly included with the plugin. 
+	Place the script [install.bat](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.bat) at the root of your project.
+
+	Execute <pre>[install.bat](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.bat)</pre> at the root of your project to automatically download and place binaries at appropriate folders.
+
+	If you want to use delegate support then execute **`install.bat -d`**. 
+
+	These scripts install pre-built binaries based on latest stable tensorflow release.
+
+
+#### Why do we need to do this?
+
+`tflite_flutter` dynamically links to C APIs which are supplied in the form of `libtensorflowlite_c.so` on Android and `TensorFlowLiteC.framework` on iOS.
+
+For Android, We need to manually download these binaries from release assets and place the libtensorflowlite_c.so files in the `<root>/android/app/src/main/jniLibs/` directory for each arm, arm64, x86, x86_64 architecture as done here in the example app.  
+
+No setup needed for iOS as of now, `TensorFlowLiteC.framework` is embedded in the plugin itself.
 
 #### How to build locally ?
+
+The pre-built binaries are updated with each stable tensorflow release. However, you many want to use latest unstable tf releases or older tf versions, for that proceed to build locally, if you are unable to find the required version in [release assets](https://github.com/am15h/tflite_flutter_plugin/releases).
 
 Make sure you have required version of bazel installed. (Check TF_MIN_BAZEL_VERSION, TF_MAX_BAZEL_VERSION in configure.py)
 
