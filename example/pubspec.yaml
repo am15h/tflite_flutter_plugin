@@ -9,8 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  tflite_flutter:
-    path: ../
+  tflite_flutter: ^0.2.0
   path_provider:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

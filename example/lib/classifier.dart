@@ -1,10 +1,14 @@
 import 'package:flutter/services.dart';
+
+// Import tflite_flutter
 import 'package:tflite_flutter/tflite_flutter.dart';
 
 class Classifier {
+  // name of the model file
   final _modelFile = 'text_classification.tflite';
   final _vocabFile = 'text_classification_vocab.txt';
 
+  // Maximum length of sentence
   final int _sentenceLen = 256;
 
   final String start = '<START>';
@@ -13,14 +17,17 @@ class Classifier {
 
   Map<String, int> _dict;
 
+  // TensorFlow Lite Interpreter object
   Interpreter _interpreter;
 
   Classifier() {
+    // Load model when the classifier is initialized.
     _loadModel();
     _loadDictionary();
   }
 
   void _loadModel() async {
+    // Creating the interpreter using Interpreter.fromAsset
     _interpreter = await Interpreter.fromAsset(_modelFile);
     print('Interpreter loaded successfully');
   }
@@ -38,21 +45,34 @@ class Classifier {
   }
 
   int classify(String rawText) {
-    var input = tokenizeInputText(rawText);
+    // tokenizeInputText returns List<List<double>>
+    // of shape [1, 256].
+    List<List<double>> input = tokenizeInputText(rawText);
+
+    // output of shape [1,2].
     var output = List<double>(2).reshape([1, 2]);
+
+    // The run method will run inference and
+    // store the resulting values in output.
     _interpreter.run(input, output);
 
-    var s = 0;
+    var result = 0;
+    // If value of first element in output is greater than second,
+    // then sentece is negative
+
     if ((output[0][0] as double) > (output[0][1] as double)) {
-      s = 0;
+      result = 0;
     } else {
-      s = 1;
+      result = 1;
     }
-    return s;
+    return result;
   }
 
   List<List<double>> tokenizeInputText(String text) {
+    // Whitespace tokenization
     final toks = text.split(' ');
+
+    // Create a list of length==_sentenceLen filled with the value <pad>
     var vec = List<double>.filled(_sentenceLen, _dict[pad].toDouble());
 
     var index = 0;
@@ -60,6 +80,7 @@ class Classifier {
       vec[index++] = _dict[start].toDouble();
     }
 
+    // For each word in sentence find corresponding index in dict
     for (var tok in toks) {
       if (index > _sentenceLen) {
         break;
@@ -69,6 +90,7 @@ class Classifier {
           : _dict[unk].toDouble();
     }
 
+    // returning List<List<double>> as our interpreter input tensor expects the shape, [1,256]
     return [vec];
   }
 }
