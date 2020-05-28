@@ -1,14 +1,4 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:e2e/e2e_driver.dart' as e2e;
 
-import 'package:flutter_driver/flutter_driver.dart';
-
-Future<void> main() async {
-  // ignore: omit_local_variable_types
-  final FlutterDriver driver = await FlutterDriver.connect();
-  // ignore: omit_local_variable_types
-  final String result =
-      await driver.requestData(null, timeout: const Duration(minutes: 1));
-  await driver.close();
-  exit(result == 'pass' ? 0 : 1);
-}
+Future<void> main() async => e2e.main();
