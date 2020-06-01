@@ -269,14 +269,17 @@ class Tensor {
       for (var i = 0; i < bytes.length; i += 4) {
         list.add(ByteData.view(bytes.buffer).getInt32(i, Endian.little));
       }
+      return list.reshape<int>(shape);
     } else if (type == TfLiteType.float32) {
       for (var i = 0; i < bytes.length; i += 4) {
         list.add(ByteData.view(bytes.buffer).getFloat32(i, Endian.little));
       }
+      return list.reshape<double>(shape);
     } else if (type == TfLiteType.int16) {
       for (var i = 0; i < bytes.length; i += 2) {
         list.add(ByteData.view(bytes.buffer).getInt16(i, Endian.little));
       }
+      return list.reshape<int>(shape);
     } else if (type == TfLiteType.float16) {
       Uint8List list32 = Uint8List(bytes.length * 2);
       for (var i = 0; i < bytes.length; i += 2) {
@@ -286,16 +289,18 @@ class Tensor {
       for (var i = 0; i < list32.length; i += 4) {
         list.add(ByteData.view(list32.buffer).getFloat32(i, Endian.little));
       }
+      return list.reshape<double>(shape);
     } else if (type == TfLiteType.int8) {
       for (var i = 0; i < bytes.length; i += 1) {
         list.add(ByteData.view(bytes.buffer).getInt8(i));
       }
+      return list.reshape<int>(shape);
     } else if (type == TfLiteType.int64) {
       for (var i = 0; i < bytes.length; i += 8) {
         list.add(ByteData.view(bytes.buffer).getInt64(i));
       }
+      return list.reshape<int>(shape);
     }
-    return list.reshape(shape);
   }
 
   void _duplicateList(List obj, List dst) {
