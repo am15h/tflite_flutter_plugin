@@ -188,7 +188,36 @@ interpreter.close();
 
 
 * **GPU delegate for Android and iOS**
-    
+
+    * **Android** GpuDelegateV2
+
+    ```
+    final gpuDelegateV2 = GpuDelegateV2(
+            options: GpuDelegateOptionsV2(
+          false,
+          TfLiteGpuInferenceUsage.fastSingleAnswer,
+          TfLiteGpuInferencePriority.minLatency,
+          TfLiteGpuInferencePriority.auto,
+          TfLiteGpuInferencePriority.auto,
+        ));
+
+    var interpreterOptions = InterpreterOptions()..addDelegate(gpuDelegateV2);
+    final interpreter = await Interpreter.fromAsset('your_model.tflite',
+        options: interpreterOptions);
+    ```
+
+    * **iOS** Metal Delegate (GpuDelegate)
+
+    ```
+    final gpuDelegate = GpuDelegate(
+          options: GpuDelegateOptions(true, TFLGpuDelegateWaitType.active),
+        );
+    var interpreterOptions = InterpreterOptions()..addDelegate(gpuDelegate);
+    final interpreter = await Interpreter.fromAsset('your_model.tflite',
+        options: interpreterOptions);
+
+    ```
+
 
 Refer [Tests](https://github.com/am15h/tflite_flutter_plugin/blob/master/example/test/tflite_flutter_plugin_example_e2e.dart) to see more example code for each method.
 

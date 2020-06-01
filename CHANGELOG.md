@@ -1,3 +1,10 @@
+## 0.3.0
+* New features
+    * multi-dimensional reshape with type
+* Bug fixes
+    * extension flatten on List fixed.
+    * error on passing not dynamic type list to interpreter output fixed
+
 ## 0.2.0
 * Direct conversion support for more TfLiteTypes
 * int16, float16, int8, int64
