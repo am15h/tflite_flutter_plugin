@@ -301,6 +301,7 @@ class Tensor {
       }
       return list.reshape<int>(shape);
     }
+    return null;
   }
 
   void _duplicateList(List obj, List dst) {

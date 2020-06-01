@@ -1,4 +1,13 @@
 extension ListShape on List {
+  /// Reshape list to a another [shape]
+  ///
+  /// [T] is the type of elements in list
+  ///
+  /// Returns List<dynamic> if [shape.length] > 5
+  /// else returns list with exact type
+  ///
+  /// Throws [ArgumentError] if number of elements for [shape]
+  /// mismatch with current number of elements in list
   List reshape<T>(List<int> shape) {
     var dims = shape.length;
     var numElements = 1;
@@ -14,13 +23,13 @@ extension ListShape on List {
     if (dims <= 5) {
       switch (dims) {
         case 2:
-          return this.reshape2<T>(shape);
+          return this._reshape2<T>(shape);
         case 3:
-          return this.reshape3<T>(shape);
+          return this._reshape3<T>(shape);
         case 4:
-          return this.reshape4<T>(shape);
+          return this._reshape4<T>(shape);
         case 5:
-          return this.reshape5<T>(shape);
+          return this._reshape5<T>(shape);
       }
     }
 
@@ -37,26 +46,7 @@ extension ListShape on List {
     return reshapedList;
   }
 
-  List<List<T>> reshape2<T>(List<int> shape) {
-    if (shape.length != 2) {
-      if (shape.length <= 5) {
-        throw ArgumentError(
-            'Use the extension reshape${shape.length} instead of reshape2');
-      } else {
-        throw ArgumentError('Use the extension reshape instead of reshape2');
-      }
-    }
-
-    var dims = shape.length;
-    var numElements = 1;
-    for (var i = 0; i < dims; i++) {
-      numElements *= shape[i];
-    }
-
-    if (numElements != computeNumElements) {
-      throw ArgumentError(
-          'Total elements mismatch expected: $numElements elements for shape: $shape but found $computeNumElements');
-    }
+  List<List<T>> _reshape2<T>(List<int> shape) {
     var flatList = flatten<T>();
     List<List<T>> reshapedList = List.generate(
       shape[0],
@@ -69,26 +59,7 @@ extension ListShape on List {
     return reshapedList;
   }
 
-  List<List<List<T>>> reshape3<T>(List<int> shape) {
-    if (shape.length != 3) {
-      if (shape.length <= 5) {
-        throw ArgumentError(
-            'Use the extension reshape${shape.length} instead of reshape3');
-      } else {
-        throw ArgumentError('Use the extension reshape instead of reshape3');
-      }
-    }
-
-    var dims = shape.length;
-    var numElements = 1;
-    for (var i = 0; i < dims; i++) {
-      numElements *= shape[i];
-    }
-
-    if (numElements != computeNumElements) {
-      throw ArgumentError(
-          'Total elements mismatch expected: $numElements elements for shape: $shape but found $computeNumElements');
-    }
+  List<List<List<T>>> _reshape3<T>(List<int> shape) {
     var flatList = flatten<T>();
     List<List<List<T>>> reshapedList = List.generate(
       shape[0],
@@ -104,28 +75,8 @@ extension ListShape on List {
     return reshapedList;
   }
 
-  List<List<List<List<T>>>> reshape4<T>(List<int> shape) {
-    if (shape.length != 4) {
-      if (shape.length <= 5) {
-        throw ArgumentError(
-            'Use the extension reshape${shape.length} instead of reshape4');
-      } else {
-        throw ArgumentError('Use the extension reshape instead of reshape4');
-      }
-    }
-
-    var dims = shape.length;
-    var numElements = 1;
-    for (var i = 0; i < dims; i++) {
-      numElements *= shape[i];
-    }
-
-    if (numElements != computeNumElements) {
-      throw ArgumentError(
-          'Total elements mismatch expected: $numElements elements for shape: $shape but found $computeNumElements');
-    }
+  List<List<List<List<T>>>> _reshape4<T>(List<int> shape) {
     var flatList = this.flatten<T>();
-    print('aaa ${flatList.shape}');
 
     List<List<List<List<T>>>> reshapedList = List.generate(
       shape[0],
@@ -147,26 +98,7 @@ extension ListShape on List {
     return reshapedList;
   }
 
-  List<List<List<List<List<T>>>>> reshape5<T>(List<int> shape) {
-    if (shape.length != 5) {
-      if (shape.length <= 5) {
-        throw ArgumentError(
-            'Use the extension reshape${shape.length} instead of reshape5');
-      } else {
-        throw ArgumentError('Use the extension reshape instead of reshape5');
-      }
-    }
-
-    var dims = shape.length;
-    var numElements = 1;
-    for (var i = 0; i < dims; i++) {
-      numElements *= shape[i];
-    }
-
-    if (numElements != computeNumElements) {
-      throw ArgumentError(
-          'Total elements mismatch expected: $numElements elements for shape: $shape but found $computeNumElements');
-    }
+  List<List<List<List<List<T>>>>> _reshape5<T>(List<int> shape) {
     var flatList = flatten<T>();
     List<List<List<List<List<T>>>>> reshapedList = List.generate(
       shape[0],
@@ -192,6 +124,7 @@ extension ListShape on List {
     return reshapedList;
   }
 
+  /// Get shape of the list
   List<int> get shape {
     if (isEmpty) {
       return [];
@@ -205,6 +138,8 @@ extension ListShape on List {
     return shape;
   }
 
+  /// Flatten this list, [T] is element type
+  /// if not specified List<dynamic> is returned
   List<T> flatten<T>() {
     var flat = <T>[];
     forEach((e) {
@@ -219,6 +154,7 @@ extension ListShape on List {
     return flat;
   }
 
+  /// Get the total number of elements in list
   int get computeNumElements {
     var n = 1;
     for (var i = 0; i < shape.length; i++) {
