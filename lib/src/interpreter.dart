@@ -24,7 +24,10 @@ class Interpreter {
   int get lastNativeInferenceDurationMicroSeconds =>
       _lastNativeInferenceDurationMicroSeconds;
 
-  Interpreter._(this._interpreter);
+  Interpreter._(this._interpreter) {
+    // Allocate tensors when interpreter is created
+    allocateTensors();
+  }
 
   /// Creates interpreter from model or throws if unsuccessful.
   factory Interpreter._create(Model model, {InterpreterOptions options}) {
@@ -87,7 +90,7 @@ class Interpreter {
 
   /// Updates allocations for all tensors.
   void allocateTensors() {
-    checkState(!_allocated, message: 'Interpreter already allocated.');
+//    checkState(!_allocated, message: 'Interpreter already allocated.');
     checkState(
         tfLiteInterpreterAllocateTensors(_interpreter) == TfLiteStatus.ok);
     _allocated = true;
@@ -115,25 +118,32 @@ class Interpreter {
       throw ArgumentError('Input error: Outputs should not be null or empty.');
     }
 
+    var inputTensors = getInputTensors();
+
+    for (int i = 0; i < inputs.length; i++) {
+      var tensor = inputTensors.elementAt(i);
+      final newShape = tensor.getInputShapeIfDifferent(inputs[i]);
+      if (newShape != null) {
+        resizeInputTensor(i, newShape);
+      }
+    }
+
     if (!_allocated) {
       allocateTensors();
       _allocated = true;
     }
 
-    var inputTensors = getInputTensors();
-    for (var i = 0; i < inputs.length; i++) {
-      if (inputTensors[i].shape != (inputs[i] as List).shape) {
-        resizeInputTensor(i, (inputs[i] as List).shape);
-        allocateTensors();
-        inputTensors = getInputTensors();
-      }
-      inputTensors[i].setTo(inputs[i]);
+    inputTensors = getInputTensors();
+
+    for (int i = 0; i < inputs.length; i++) {
+      inputTensors.elementAt(i).setTo(inputs[i]);
     }
 
     var inferenceStartNanos = DateTime.now().microsecondsSinceEpoch;
     invoke();
     _lastNativeInferenceDurationMicroSeconds =
         DateTime.now().microsecondsSinceEpoch - inferenceStartNanos;
+
     var outputTensors = getOutputTensors();
     for (var i = 0; i < outputTensors.length; i++) {
       outputTensors[i].copyTo(outputs[i]);

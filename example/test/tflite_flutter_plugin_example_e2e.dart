@@ -81,15 +81,6 @@ void main() {
       interpreter.allocateTensors();
     });
 
-    test('allocate throws if already allocated', () {
-      interpreter.allocateTensors();
-      expect(() => interpreter.allocateTensors(), throwsA(isStateError));
-    });
-
-    test('invoke throws if not allocated', () {
-      expect(() => interpreter.invoke(), throwsA(isStateError));
-    });
-
     test('invoke throws if not allocated after resized', () {
       interpreter.allocateTensors();
       interpreter.resizeInputTensor(0, [1, 2, 4]);
@@ -169,11 +160,6 @@ void main() {
         test('get', () {
           interpreter.allocateTensors();
           expect(tensors[0].data, hasLength(4));
-        });
-
-        test('set throws if not allocated', () {
-          expect(() => tensors[0].data = Uint8List.fromList(const [0, 0, 0, 0]),
-              throwsA(isStateError));
         });
 
         test('set', () {

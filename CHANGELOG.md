@@ -1,3 +1,8 @@
+## 0.4.0 (Jun 18, 2020)
+* run supports UintList8 and ByteBuffer objects
+* Bug fix, resize input tensor
+* Improved efficiency
+
 ## 0.3.0
 * New features
     * multi-dimensional reshape with type

@@ -166,6 +166,8 @@ class Tensor {
     var obj;
     if (dst is Uint8List) {
       obj = bytes;
+    } else if (dst is ByteBuffer) {
+      obj = bytes.buffer;
     } else {
       obj = _convertBytesToObject(bytes);
     }
@@ -181,6 +183,9 @@ class Tensor {
   Uint8List _convertObjectToBytes(Object o) {
     if (o is Uint8List) {
       return o;
+    }
+    if (o is ByteBuffer) {
+      return o.asUint8List();
     }
     var bytes = <int>[];
     if (o is List) {
@@ -325,6 +330,21 @@ class Tensor {
     for (var i = 0; i < obj.length; i++) {
       dst[i] = obj[i];
     }
+  }
+
+  List<int> getInputShapeIfDifferent(Object input) {
+    if (input == null) {
+      return null;
+    }
+    if (input is ByteBuffer || input is Uint8List) {
+      return null;
+    }
+
+    final inputShape = computeShapeOf(input);
+    if (inputShape == shape) {
+      return null;
+    }
+    return inputShape;
   }
 
   @override
