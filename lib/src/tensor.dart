@@ -167,7 +167,10 @@ class Tensor {
     if (dst is Uint8List) {
       obj = bytes;
     } else if (dst is ByteBuffer) {
-      obj = bytes.buffer;
+      var bdata = dst.asByteData();
+      for (int i = 0; i < bdata.lengthInBytes; i++) {
+        bdata.setUint8(i, bytes[i]);
+      }
     } else {
       obj = _convertBytesToObject(bytes);
     }
