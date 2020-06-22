@@ -1,3 +1,6 @@
+## 0.4.1 (Jun 23, 2020)
+* Bug fix, output values copy to bytebuffer
+
 ## 0.4.0 (Jun 18, 2020)
 * run supports UintList8 and ByteBuffer objects
 * Bug fix, resize input tensor
