@@ -12,7 +12,6 @@ import 'ffi/helper.dart';
 import 'interpreter_options.dart';
 import 'model.dart';
 import 'tensor.dart';
-import 'util/list_shape_extension.dart';
 
 /// TensorFlowLite interpreter for running inference on a model.
 class Interpreter {
@@ -20,6 +19,9 @@ class Interpreter {
   bool _deleted = false;
   bool _allocated = false;
   int _lastNativeInferenceDurationMicroSeconds = 0;
+
+  List<Tensor> _inputTensors;
+  List<Tensor> _outputTensors;
 
   int get lastNativeInferenceDurationMicroSeconds =>
       _lastNativeInferenceDurationMicroSeconds;
@@ -29,7 +31,9 @@ class Interpreter {
     allocateTensors();
   }
 
-  /// Creates interpreter from model or throws if unsuccessful.
+  /// Creates interpreter from model
+  ///
+  /// Throws [ArgumentError] is unsuccessful.
   factory Interpreter._create(Model model, {InterpreterOptions options}) {
     final interpreter = tfLiteInterpreterCreate(
         model.base, options?.base ?? cast<TfLiteInterpreterOptions>(nullptr));
@@ -38,7 +42,26 @@ class Interpreter {
     return Interpreter._(interpreter);
   }
 
-  /// Creates interpreter from a model file or throws if unsuccessful.
+  /// Creates [Interpreter] from a model file
+  ///
+  /// Throws [ArgumentError] if unsuccessful.
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  /// final dataFile = await getFile('assets/your_model.tflite');
+  /// final interpreter = Interpreter.fromFile(dataFile);
+  ///
+  /// Future<File> getFile(String fileName) async {
+  ///   final appDir = await getTemporaryDirectory();
+  ///   final appPath = appDir.path;
+  ///   final fileOnDevice = File('$appPath/$fileName');
+  ///   final rawAssetFile = await rootBundle.load(fileName);
+  ///   final rawBytes = rawAssetFile.buffer.asUint8List();
+  ///   await fileOnDevice.writeAsBytes(rawBytes, flush: true);
+  ///   return fileOnDevice;
+  /// }
+  /// ```
   factory Interpreter.fromFile(File modelFile, {InterpreterOptions options}) {
     final model = Model.fromFile(modelFile.path);
     final interpreter = Interpreter._create(model, options: options);
@@ -46,7 +69,22 @@ class Interpreter {
     return interpreter;
   }
 
-  /// Creates interpreter from a buffer
+  /// Creates interpreter from a [buffer]
+  ///
+  /// Throws [ArgumentError] if unsuccessful.
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  ///   final buffer = await getBuffer('assets/your_model.tflite');
+  ///   final interpreter = Interpreter.fromBuffer(buffer);
+  ///
+  ///   Future<Uint8List> getBuffer(String filePath) async {
+  ///       final rawAssetFile = await rootBundle.load(filePath);
+  ///       final rawBytes = rawAssetFile.buffer.asUint8List();
+  ///       return rawBytes;
+  ///   }
+  /// ```
   factory Interpreter.fromBuffer(Uint8List buffer,
       {InterpreterOptions options}) {
     final model = Model.fromBuffer(buffer);
@@ -55,7 +93,15 @@ class Interpreter {
     return interpreter;
   }
 
-  /// Creates interpreter from a asset file name
+  /// Creates interpreter from a [assetName]
+  ///
+  /// Place your `.tflite` file in the assets folder.
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  /// final interpreter = await tfl.Interpreter.fromAsset('your_model.tflite');
+  /// ```
   static Future<Interpreter> fromAsset(String assetName,
       {InterpreterOptions options}) async {
     Uint8List buffer;
@@ -90,7 +136,6 @@ class Interpreter {
 
   /// Updates allocations for all tensors.
   void allocateTensors() {
-//    checkState(!_allocated, message: 'Interpreter already allocated.');
     checkState(
         tfLiteInterpreterAllocateTensors(_interpreter) == TfLiteStatus.ok);
     _allocated = true;
@@ -134,7 +179,6 @@ class Interpreter {
     }
 
     inputTensors = getInputTensors();
-
     for (int i = 0; i < inputs.length; i++) {
       inputTensors.elementAt(i).setTo(inputs[i]);
     }
@@ -151,16 +195,32 @@ class Interpreter {
   }
 
   /// Gets all input tensors associated with the model.
-  List<Tensor> getInputTensors() => List.generate(
-      tfLiteInterpreterGetInputTensorCount(_interpreter),
-      (i) => Tensor(tfLiteInterpreterGetInputTensor(_interpreter, i)),
-      growable: false);
+  List<Tensor> getInputTensors() {
+    if (_inputTensors != null) {
+      return _inputTensors;
+    }
+
+    var tensors = List.generate(
+        tfLiteInterpreterGetInputTensorCount(_interpreter),
+        (i) => Tensor(tfLiteInterpreterGetInputTensor(_interpreter, i)),
+        growable: false);
+
+    return tensors;
+  }
 
   /// Gets all output tensors associated with the model.
-  List<Tensor> getOutputTensors() => List.generate(
-      tfLiteInterpreterGetOutputTensorCount(_interpreter),
-      (i) => Tensor(tfLiteInterpreterGetOutputTensor(_interpreter, i)),
-      growable: false);
+  List<Tensor> getOutputTensors() {
+    if (_outputTensors != null) {
+      return _outputTensors;
+    }
+
+    var tensors = List.generate(
+        tfLiteInterpreterGetOutputTensorCount(_interpreter),
+        (i) => Tensor(tfLiteInterpreterGetOutputTensor(_interpreter, i)),
+        growable: false);
+
+    return tensors;
+  }
 
   /// Resize input tensor for the given tensor index. `allocateTensors` must be called again afterward.
   void resizeInputTensor(int tensorIndex, List<int> shape) {
@@ -172,30 +232,36 @@ class Interpreter {
         _interpreter, tensorIndex, dimensions, dimensionSize);
     free(dimensions);
     checkState(status == TfLiteStatus.ok);
+    _inputTensors = null;
+    _outputTensors = null;
     _allocated = false;
   }
 
   /// Gets the input Tensor for the provided input index.
   Tensor getInputTensor(int index) {
-    //TODO: Optimization: inputTensors in dart variable
-    final tensors = getInputTensors();
-    if (index < 0 || index >= tensors.length) {
-      throw ArgumentError('Invalid input Tensor index: $index');
+    if (_inputTensors != null) {
+      if (index < 0 || index > _inputTensors.length) {
+        throw ArgumentError('Invalid input Tensor index: $index');
+      }
+      return _inputTensors[index];
     }
 
-    final inputTensor = tensors[index];
+    final inputTensor =
+        Tensor(tfLiteInterpreterGetInputTensor(_interpreter, index));
     return inputTensor;
   }
 
   /// Gets the output Tensor for the provided output index.
   Tensor getOutputTensor(int index) {
-    //TODO: Optimization: outputTensors in dart variable
-    final tensors = getOutputTensors();
-    if (index < 0 || index >= tensors.length) {
-      throw ArgumentError('Invalid output Tensor index: $index');
+    if (_outputTensors != null) {
+      if (index < 0 || index > _outputTensors.length) {
+        throw ArgumentError('Invalid output Tensor index: $index');
+      }
+      return _outputTensors[index];
     }
 
-    final outputTensor = tensors[index];
+    final outputTensor =
+        Tensor(tfLiteInterpreterGetOutputTensor(_interpreter, index));
     return outputTensor;
   }
 

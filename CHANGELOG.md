@@ -1,3 +1,7 @@
+## 0.4.2 (Jul 6, 2020)
+* Optimize getTensors and getTensor by Index
+* Update readme
+
 ## 0.4.1 (Jun 23, 2020)
 * Bug fix, output values copy to bytebuffer
 
