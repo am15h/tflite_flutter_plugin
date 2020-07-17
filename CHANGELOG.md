@@ -1,3 +1,7 @@
+## 0.5.0 (Jul 17, 2020)
+* Expose interpreter's address
+* Create interpreter by address.
+
 ## 0.4.2 (Jul 6, 2020)
 * Optimize getTensors and getTensor by Index
 * Update readme
