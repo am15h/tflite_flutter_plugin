@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ final int64FileName = 'int64.bin';
 final multiInputFileName = 'multi_add.bin';
 final addFileName = 'add.bin';
 
+//flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart
 void main() {
   E2EWidgetsFlutterBinding.ensureInitialized();
 
@@ -43,6 +45,13 @@ void main() {
   test('interpreter from asset', () async {
     final interpreter = await tfl.Interpreter.fromAsset('test/$dataFileName');
     interpreter.close();
+  });
+
+  test('interpreter from address', () async {
+    final interpreter = await tfl.Interpreter.fromAsset('test/$dataFileName');
+    final interpreter2 = tfl.Interpreter.fromAddress(interpreter.address);
+    interpreter.close();
+    interpreter2.close();
   });
 
   group('interpreter options', () {

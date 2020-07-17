@@ -127,6 +127,17 @@ class Interpreter {
     return rawBytes;
   }
 
+  /// Creates interpreter from an address.
+  ///
+  /// Typically used for passing interpreter between isolates.
+  factory Interpreter.fromAddress(int address,
+      {bool allocated: false, bool deleted: false}) {
+    final interpreter = Pointer<TfLiteInterpreter>.fromAddress(address);
+    return Interpreter._(interpreter)
+      .._deleted = deleted
+      .._allocated = allocated;
+  }
+
   /// Destroys the interpreter instance.
   void close() {
     checkState(!_deleted, message: 'Interpreter already deleted.');
@@ -294,6 +305,13 @@ class Interpreter {
           "Output error: $opName' is not a valid name for any output. Names of outputs and their indexes are $outputTensorsIndex");
     }
   }
+
+  /// Returns the address to the interpreter
+  int get address => _interpreter.address;
+
+  bool get isAllocated => _allocated;
+
+  bool get isDeleted => _deleted;
 
   //TODO: (JAVA) void modifyGraphWithDelegate(Delegate delegate)
   //TODO: (JAVA) void resetVariableTensors()
