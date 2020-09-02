@@ -3,6 +3,16 @@
 TensorFlow Lite Flutter plugin provides a flexible and fast solution for accessing TensorFlow Lite interpreter and performing inference. The API is similar to the TFLite Java and Swift APIs. It directly binds to TFLite C API making it efficient (low-latency). Offers acceleration support using NNAPI, GPU delegates on Android, and Metal delegate on iOS.
 
 
+## Key Features
+
+* Flexibility to use any TFLite Model.
+* Acceleration using multi-threading and delegate support.
+* Similar structure as TensorFlow Lite Java API.
+* Inference speeds close to native Android Apps built using the Java API.
+* You can choose to use any TensorFlow version by building binaries locally.
+* Run inference in different isolates to prevent jank in UI thread.
+
+
 ## (Important) Initial setup
 
 ### Add dynamic libraries to your app
@@ -192,6 +202,11 @@ Note: You must use macOS for building iOS.
 For Android, We need to manually download these binaries from release assets and place the libtensorflowlite_c.so files in the `<root>/android/app/src/main/jniLibs/` directory for each arm, arm64, x86, x86_64 architecture as done here in the example app.  
 
 No setup needed for iOS as of now, `TensorFlowLiteC.framework` is embedded in the plugin itself.
+
+## Future Work
+
+* Enabling support for Flutter Desktop Applications.
+* Better and more precise error handling.
 
 ## Credits
 
