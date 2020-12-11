@@ -3,7 +3,7 @@
 cd "$(dirname "$(readlink -f "$0")")"
 
 URL="https://github.com/am15h/tflite_flutter_plugin/releases/download/"
-TAG="v0.2.0"
+TAG="v0.5.0"
 
 ANDROID_DIR="android/app/src/main/jniLibs/"
 ANDROID_LIB="libtensorflowlite_c.so"

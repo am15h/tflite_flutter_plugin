@@ -4,7 +4,7 @@ setlocal enableextensions
 cd %~dp0
 
 set URL=https://github.com/am15h/tflite_flutter_plugin/releases/download/
-set TAG=v0.2.0
+set TAG=v0.5.0
 
 set ANDROID_DIR=android\app\src\main\jniLibs\
 set ANDROID_LIB=libtensorflowlite_c.so
