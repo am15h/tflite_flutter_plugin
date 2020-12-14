@@ -95,7 +95,8 @@ class Interpreter {
 
   /// Creates interpreter from a [assetName]
   ///
-  /// Place your `.tflite` file in the assets folder.
+  /// Place your `.tflite` file in the assets folder. Do not include the "assets/"
+  /// directory in assetName.
   ///
   /// Example:
   ///
