@@ -172,7 +172,7 @@ Make sure you have required version of bazel installed. (Check TF_MIN_BAZEL_VERS
 
 * **Android**
 
-Configure your workspace for android builds as per [these instructions](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/g3doc/guide/android.md#configure-workspace-and-bazelrc).
+Configure your workspace for android builds as per [these instructions](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/g3doc/guide/build_android.md#configure-workspace-and-bazelrc).
 
 For TensorFlow >= v2.2
 
