@@ -1,4 +1,8 @@
-# TensorFlow Lite Flutter Plugin
+---
+<h1 align="center"> TensorFlow Lite Flutter Plugin </h1>
+
+---
+
 
 TensorFlow Lite Flutter plugin provides a flexible and fast solution for accessing TensorFlow Lite interpreter and performing inference. The API is similar to the TFLite Java and Swift APIs. It directly binds to TFLite C API making it efficient (low-latency). Offers acceleration support using NNAPI, GPU delegates on Android, and Metal delegate on iOS.
 
@@ -38,6 +42,11 @@ TensorFlow Lite Flutter plugin provides a flexible and fast solution for accessi
  These scripts install pre-built binaries based on latest stable tensorflow release.
 
  For info about using other tensorflow versions refer to [this](#use-the-plugin-with-any-tensorflow-version) part of readme.
+
+
+## Examples
+
+
 
 ## Import
 
