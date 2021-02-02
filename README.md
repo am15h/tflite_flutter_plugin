@@ -3,8 +3,26 @@
     <img src="https://github.com/am15h/tflite_flutter_plugin/raw/update_readme/docs/tflite_flutter_cover.png"/>
     </br>
 </p>
+<p align="center">
+ 
+   <a href="https://flutter.dev">
+     <img src="https://img.shields.io/badge/Platform-Flutter-02569B?logo=flutter"
+       alt="Platform" />
+   </a>
+   <a href="https://pub.dartlang.org/packages/tflite_flutter">
+     <img src="https://img.shields.io/pub/v/tflite_flutter.svg"
+       alt="Pub Package" />
+   </a>
+    <a href="https://pub.dev/documentation/tflite_flutter/latest/tflite_flutter/tflite_flutter-library.html">
+        <img alt="Docs" src="https://readthedocs.org/projects/hubdb/badge/?version=latest">
+    </a>
+    <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"></a>
 
-## TensorFlow Lite Flutter Plugin
+
+</a>
+</p>
+
+## Overview
 
 TensorFlow Lite Flutter plugin provides a flexible and fast solution for accessing TensorFlow Lite interpreter and performing inference. The API is similar to the TFLite Java and Swift APIs. It directly binds to TFLite C API making it efficient (low-latency). Offers acceleration support using NNAPI, GPU delegates on Android, and Metal delegate on iOS.
 
