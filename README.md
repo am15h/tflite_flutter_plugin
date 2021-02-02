@@ -37,11 +37,9 @@ TensorFlow Lite Flutter plugin provides a flexible and fast solution for accessi
 * Run inference in different isolates to prevent jank in UI thread.
 
 
-## (Important) Initial setup
+## (Important) Initial setup : Add dynamic libraries to your app
 
-### Add dynamic libraries to your app
-
-#### Android
+### Android
 
 1. Place the script [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh) (Linux/Mac) or [install.bat](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.bat) (Windows) at the root of your project.
 
@@ -53,7 +51,7 @@ TensorFlow Lite Flutter plugin provides a flexible and fast solution for accessi
 
 These scripts install pre-built binaries based on latest stable tensorflow release. For info about using other tensorflow versions refer to [this](#use-the-plugin-with-any-tensorflow-version) part of readme.
 
-#### iOS
+### iOS
 
 
 ## Examples
