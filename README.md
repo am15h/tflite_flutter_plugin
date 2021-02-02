@@ -25,27 +25,15 @@ TensorFlow Lite Flutter plugin provides a flexible and fast solution for accessi
 
 #### Android
 
-* **Linux/Mac Users**
+1. Place the script [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh) (Linux/Mac) or [install.bat](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.bat) (Windows) at the root of your project.
 
-    Place the script [install.sh](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.sh) at the root of your project.
+2. Execute `sh install.sh` (Linux) / `install.bat` (Windows) at the root of your project to automatically download and place binaries at appropriate folders.
 
-    Execute `sh install.sh` at the root of your project to automatically download and place binaries at appropriate folders.
+   Note: *The binaries installed will **not** include support for `GpuDelegateV2` and `NnApiDelegate` however `InterpreterOptions().useNnApiForAndroid` can still be used.* 
 
-    *The binaries installed will **not** include support for `GpuDelegateV2` and `NnApiDelegate` however `InterpreterOptions().useNnApiForAndroid` can still be used.* 
+3. Use **`sh install.sh -d`** (Linux) or **`install.bat -d`** (Windows) instead if you wish to use these `GpuDelegateV2` and `NnApiDelegate`.
 
-    Use **`sh install.sh -d`** instead if you wish to use these `GpuDelegateV2` and `NnApiDelegate`.
-
-* **Windows users**
-
-    Place the script [install.bat](https://github.com/am15h/tflite_flutter_plugin/blob/master/install.bat) at the root of your project.
-
-    Execute `install.bat` at the root of your project to automatically download and place binaries at appropriate folders.
-
-    If you want to use delegate support then execute **`install.bat -d`**.
-
- These scripts install pre-built binaries based on latest stable tensorflow release.
-
- For info about using other tensorflow versions refer to [this](#use-the-plugin-with-any-tensorflow-version) part of readme.
+These scripts install pre-built binaries based on latest stable tensorflow release. For info about using other tensorflow versions refer to [this](#use-the-plugin-with-any-tensorflow-version) part of readme.
 
 #### iOS
 
