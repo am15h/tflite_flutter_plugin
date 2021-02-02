@@ -181,8 +181,6 @@ interpreter.close();
 
 Refer [Tests](https://github.com/am15h/tflite_flutter_plugin/blob/master/example/test/tflite_flutter_plugin_example_e2e.dart) to see more example code for each method.
 
-Refer [Text Classification Flutter Example App](https://github.com/am15h/tflite_flutter_plugin/tree/master/example) for demo.
-
 #### Use the plugin with any tensorflow version
 
 The pre-built binaries are updated with each stable tensorflow release. However, you many want to use latest unstable tf releases or older tf versions, for that proceed to build locally, if you are unable to find the required version in [release assets](https://github.com/am15h/tflite_flutter_plugin/releases).
@@ -219,8 +217,6 @@ Note: You must use macOS for building iOS.
 `tflite_flutter` dynamically links to C APIs which are supplied in the form of `libtensorflowlite_c.so` on Android and `TensorFlowLiteC.framework` on iOS.
 
 For Android, We need to manually download these binaries from release assets and place the libtensorflowlite_c.so files in the `<root>/android/app/src/main/jniLibs/` directory for each arm, arm64, x86, x86_64 architecture as done here in the example app.  
-
-No setup needed for iOS as of now, `TensorFlowLiteC.framework` is embedded in the plugin itself.
 
 ## Future Work
 
