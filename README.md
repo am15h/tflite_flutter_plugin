@@ -51,9 +51,6 @@ TensorFlow Lite Flutter plugin provides a flexible and fast solution for accessi
 
 These scripts install pre-built binaries based on latest stable tensorflow release. For info about using other tensorflow versions refer to [this](#use-the-plugin-with-any-tensorflow-version) part of readme.
 
-### iOS
-
-
 ## Examples
 
 |Title|Code|Demo|Blog|
