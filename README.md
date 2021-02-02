@@ -1,5 +1,5 @@
 ---
-<h1 align="center"> TensorFlow Lite Flutter Plugin </h1>
+<h3 align="center"> TensorFlow Lite Flutter Plugin </h3>
 
 ---
 
