@@ -39,12 +39,12 @@ class GpuDelegateOptions {
   factory GpuDelegateOptions(
       bool allowPrecisionLoss, TFLGpuDelegateWaitType waitType) {
     return GpuDelegateOptions._(
-        TFLGpuDelegateOptions.allocate(allowPrecisionLoss, waitType).addressOf);
+        TFLGpuDelegateOptions.allocate(allowPrecisionLoss, waitType));
   }
 
   void delete() {
     checkState(!_deleted, message: 'TfLiteGpuDelegate already deleted.');
-    free(_options);
+    calloc.free(_options);
     _deleted = true;
   }
 }
