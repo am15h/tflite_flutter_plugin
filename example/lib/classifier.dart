@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'package:flutter/services.dart';
 
 // Import tflite_flutter
