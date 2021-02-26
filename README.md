@@ -51,6 +51,10 @@ TensorFlow Lite Flutter plugin provides a flexible and fast solution for accessi
 
 These scripts install pre-built binaries based on latest stable tensorflow release. For info about using other tensorflow versions refer to [this](#use-the-plugin-with-any-tensorflow-version) part of readme.
 
+## TFLite Flutter Helper Library
+
+A dedicated library with simple architecture for processing and manipulating input and output of TFLite Models. API design and documentation is identical to the TensorFlow Lite Android Support Library. Strongly recommended to be used with `tflite_flutter_plugin`. [Learn more](https://github.com/am15h/tflite_flutter_helper). 
+
 ## Examples
 
 |Title|Code|Demo|Blog|
