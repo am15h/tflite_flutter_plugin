@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'dart:ffi';
 import 'dart:typed_data';
 
@@ -22,7 +23,7 @@ class Tensor {
   }
 
   /// Name of the tensor element.
-  String get name => Utf8.fromUtf8(tfLiteTensorName(_tensor));
+  String get name => tfLiteTensorName(_tensor).toDartString();
 
   /// Data type of the tensor element.
   TfLiteType get type => tfLiteTensorType(_tensor);
@@ -143,18 +144,18 @@ class Tensor {
   void setTo(Object src) {
     var bytes = _convertObjectToBytes(src);
     var size = bytes.length;
-    final ptr = allocate<Uint8>(count: size);
+    final ptr = calloc<Uint8>(size);
     checkState(isNotNull(ptr), message: 'unallocated');
     final externalTypedData = ptr.asTypedList(size);
     externalTypedData.setRange(0, bytes.length, bytes);
     checkState(tfLiteTensorCopyFromBuffer(_tensor, ptr.cast(), bytes.length) ==
         TfLiteStatus.ok);
-    free(ptr);
+    calloc.free(ptr);
   }
 
   Object copyTo(Object dst) {
     var size = tfLiteTensorByteSize(_tensor);
-    final ptr = allocate<Uint8>(count: size);
+    final ptr = calloc<Uint8>(size);
     checkState(isNotNull(ptr), message: 'unallocated');
     final externalTypedData = ptr.asTypedList(size);
     checkState(
@@ -174,7 +175,7 @@ class Tensor {
     } else {
       obj = _convertBytesToObject(bytes);
     }
-    free(ptr);
+    calloc.free(ptr);
     if (obj is List && dst is List) {
       _duplicateList(obj, dst);
     } else {

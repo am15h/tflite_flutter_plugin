@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
@@ -237,12 +238,12 @@ class Interpreter {
   /// Resize input tensor for the given tensor index. `allocateTensors` must be called again afterward.
   void resizeInputTensor(int tensorIndex, List<int> shape) {
     final dimensionSize = shape.length;
-    final dimensions = allocate<Int32>(count: dimensionSize);
+    final dimensions = calloc<Int32>(dimensionSize);
     final externalTypedData = dimensions.asTypedList(dimensionSize);
     externalTypedData.setRange(0, dimensionSize, shape);
     final status = tfLiteInterpreterResizeInputTensor(
         _interpreter, tensorIndex, dimensions, dimensionSize);
-    free(dimensions);
+    calloc.free(dimensions);
     checkState(status == TfLiteStatus.ok);
     _inputTensors = null;
     _outputTensors = null;

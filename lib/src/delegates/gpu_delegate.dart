@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
@@ -50,12 +51,11 @@ class GpuDelegateOptionsV2 {
       TfLiteGpuInferencePriority inferencePriority2,
       TfLiteGpuInferencePriority inferencePriority3) {
     return GpuDelegateOptionsV2._(TfLiteGpuDelegateOptionsV2.allocate(
-            isPrecisionLossAllowed,
-            inferencePreference,
-            inferencePriority1,
-            inferencePriority2,
-            inferencePriority3)
-        .addressOf);
+        isPrecisionLossAllowed,
+        inferencePreference,
+        inferencePriority1,
+        inferencePriority2,
+        inferencePriority3));
   }
 
   factory GpuDelegateOptionsV2.defaultOptions() {
@@ -64,7 +64,7 @@ class GpuDelegateOptionsV2 {
 
   void delete() {
     checkState(!_deleted, message: 'TfLiteGpuDelegateV2 already deleted.');
-    free(_options);
+    calloc.free(_options);
     _deleted = true;
   }
 }

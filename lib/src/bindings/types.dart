@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
@@ -40,11 +41,14 @@ class TFLGpuDelegateOptions extends Struct {
   @Int32()
   int waitType;
 
-  factory TFLGpuDelegateOptions.allocate(
-          bool allowPrecisionLoss, TFLGpuDelegateWaitType waitType) =>
-      allocate<TFLGpuDelegateOptions>().ref
-        ..allowPrecisionLoss = allowPrecisionLoss ? 1 : 0
-        ..waitType = waitType.index;
+  static Pointer<TFLGpuDelegateOptions> allocate(
+      bool allowPrecisionLoss, TFLGpuDelegateWaitType waitType) {
+    final result = calloc<TFLGpuDelegateOptions>();
+    result.ref
+      ..allowPrecisionLoss = allowPrecisionLoss ? 1 : 0
+      ..waitType = waitType.index;
+    return result;
+  }
 }
 
 /// Wraps TfLiteGpuDelegateOptionsV2 for android gpu delegate
@@ -86,18 +90,21 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   @Int32()
   int inferencePriority3;
 
-  factory TfLiteGpuDelegateOptionsV2.allocate(
-          bool isPrecisionLossAllowed,
-          TfLiteGpuInferenceUsage inferencePreference,
-          TfLiteGpuInferencePriority inferencePriority1,
-          TfLiteGpuInferencePriority inferencePriority2,
-          TfLiteGpuInferencePriority inferencePriority3) =>
-      allocate<TfLiteGpuDelegateOptionsV2>().ref
-        ..isPrecisionLossAllowed = isPrecisionLossAllowed ? 1 : 0
-        ..inferencePreference = inferencePreference.index
-        ..inferencePriority1 = inferencePriority1.index
-        ..inferencePriority2 = inferencePriority2.index
-        ..inferencePriority3 = inferencePriority3.index;
+  static Pointer<TfLiteGpuDelegateOptionsV2> allocate(
+      bool isPrecisionLossAllowed,
+      TfLiteGpuInferenceUsage inferencePreference,
+      TfLiteGpuInferencePriority inferencePriority1,
+      TfLiteGpuInferencePriority inferencePriority2,
+      TfLiteGpuInferencePriority inferencePriority3) {
+    final result = calloc<TfLiteGpuDelegateOptionsV2>();
+    result.ref
+      ..isPrecisionLossAllowed = isPrecisionLossAllowed ? 1 : 0
+      ..inferencePreference = inferencePreference.index
+      ..inferencePriority1 = inferencePriority1.index
+      ..inferencePriority2 = inferencePriority2.index
+      ..inferencePriority3 = inferencePriority3.index;
+    return result;
+  }
 }
 
 /// Status of a TensorFlowLite function call.

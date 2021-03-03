@@ -19,9 +19,9 @@ class Model {
 
   /// Loads model from a file or throws if unsuccessful.
   factory Model.fromFile(String path) {
-    final cpath = Utf8.toUtf8(path);
+    final cpath = path.toNativeUtf8();
     final model = tfLiteModelCreateFromFile(cpath);
-    free(cpath);
+    calloc.free(cpath);
     checkArgument(isNotNull(model),
         message: 'Unable to create model from file');
     return Model._(model);
@@ -30,7 +30,7 @@ class Model {
   /// Loads model from a buffer or throws if unsuccessful.
   factory Model.fromBuffer(Uint8List buffer) {
     final size = buffer.length;
-    final ptr = allocate<Uint8>(count: size);
+    final ptr = calloc<Uint8>(size);
     final externalTypedData = ptr.asTypedList(size);
     externalTypedData.setRange(0, buffer.length, buffer);
     final model = tfLiteModelCreateFromBuffer(ptr.cast(), buffer.length);

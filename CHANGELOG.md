@@ -1,3 +1,6 @@
+## 0.6.0 (Feb 26, 2021)
+* Update to Dart 2.12 and package:ffi 1.0.0.
+
 ## 0.5.0 (Jul 17, 2020)
 * Expose interpreter's address
 * Create interpreter by address.
