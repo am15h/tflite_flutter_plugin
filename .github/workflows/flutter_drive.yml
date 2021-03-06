@@ -51,7 +51,7 @@ jobs:
           brew install tree
           tree
           echo "drive"
-          cd ./example && flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart
+          cd ./example && flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart --no-sound-null-safety
 
   android-integration-test:
     name: Android
@@ -83,5 +83,5 @@ jobs:
           profile: ${{ matrix.device }}
           script: |
             cd ./example && flutter pub get
-            cd ./example && flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart
+            cd ./example && flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart --no-sound-null-safety
 
