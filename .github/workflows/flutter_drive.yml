@@ -82,4 +82,4 @@ jobs:
           profile: ${{ matrix.device }}
           script: |
             cd ./example && flutter pub get
-            flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart
+            cd ./example && flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart
