@@ -51,7 +51,9 @@ jobs:
           brew install tree
           tree
           echo "drive"
-          cd ./example && flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart --no-sound-null-safety
+      - name: Run tests
+        run: |
+          cd ./example && flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart
   android-integration-test:
     name: Android
     runs-on: macOS-latest

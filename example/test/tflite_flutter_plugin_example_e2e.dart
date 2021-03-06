@@ -4,6 +4,8 @@
 
 // @dart=2.8
 
+@Timeout(Duration(minutes: 1))
+
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
