@@ -134,7 +134,7 @@ void main() {
       expect(interpreter.getOutputTensor(0), isNotNull);
     });
 
-    test('get input tensor throws argument error', () {
+    test('get output tensor throws argument error', () {
       expect(() => interpreter.getOutputTensor(33), throwsA(isArgumentError));
     });
 
@@ -191,12 +191,12 @@ void main() {
             interpreter =
                 await tfl.Interpreter.fromAsset('test/$quantFileName');
           });
-          tearDown(() => interpreter.close());
           test('params', () {
             interpreter.allocateTensors();
             final tensor = interpreter.getInputTensor(0);
             print(tensor.params);
           });
+          tearDown(() => interpreter.close());
         });
       }
     });
