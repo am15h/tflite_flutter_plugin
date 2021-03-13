@@ -7,53 +7,6 @@ on:
     branches: [ master ]
 
 jobs:
-  drive:
-    name: iOS
-    # Creates a build matrix for your jobs. You can define different
-    # variations of an environment to run each job in.
-    strategy:
-      # A set of different configurations of the virtual
-      # environment.
-      matrix:
-        device:
-          - "iPhone 11 Pro Max (14.4)"
-      # When set to true, GitHub cancels all in-progress jobs if any
-      # matrix job fails.
-      fail-fast: false
-    # The type of machine to run the job on.
-    runs-on: macOS-latest
-    # Contains a sequence of tasks.
-    steps:
-      # A name for your step to display on GitHub.
-      - name: "List all simulators"
-        run: "xcrun instruments -s"
-      - name: "Start Simulator"
-        run: |
-          UDID=$(
-            xcrun instruments -s |
-            awk \
-              -F ' *[][]' \
-              -v 'device=${{ matrix.device }}' \
-              '$1 == device { print $2 }'
-          )
-          xcrun simctl boot "${UDID:?No Simulator with this name found}"
-      - uses: actions/checkout@v1
-      # Setup the flutter environment.
-      - uses: subosito/flutter-action@v1
-        with:
-          flutter-version: '2.0.0'
-          channel: 'stable'
-
-      - name: Get dependencies
-        run: |
-          echo "Getting Dependencies"
-          flutter pub get
-          brew install tree
-          tree
-          echo "drive"
-      - name: Run tests
-        run: |
-          cd ./example && flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart
           
   android-integration-test:
     name: Android
