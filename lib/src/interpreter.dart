@@ -24,6 +24,9 @@ class Interpreter {
   List<Tensor> _inputTensors;
   List<Tensor> _outputTensors;
 
+  int _inputTensorsCount;
+  int _outputTensorsCount;
+
   int get lastNativeInferenceDurationMicroSeconds =>
       _lastNativeInferenceDurationMicroSeconds;
 
@@ -252,10 +255,13 @@ class Interpreter {
 
   /// Gets the input Tensor for the provided input index.
   Tensor getInputTensor(int index) {
+    if (_inputTensorsCount == null) {
+      _inputTensorsCount = tfLiteInterpreterGetInputTensorCount(_interpreter);
+    }
+    if (index < 0 || index >= _inputTensorsCount) {
+      throw ArgumentError('Invalid input Tensor index: $index');
+    }
     if (_inputTensors != null) {
-      if (index < 0 || index > _inputTensors.length) {
-        throw ArgumentError('Invalid input Tensor index: $index');
-      }
       return _inputTensors[index];
     }
 
@@ -266,13 +272,15 @@ class Interpreter {
 
   /// Gets the output Tensor for the provided output index.
   Tensor getOutputTensor(int index) {
+    if (_outputTensorsCount == null) {
+      _outputTensorsCount = tfLiteInterpreterGetOutputTensorCount(_interpreter);
+    }
+    if (index < 0 || index >= _outputTensorsCount) {
+      throw ArgumentError('Invalid output Tensor index: $index');
+    }
     if (_outputTensors != null) {
-      if (index < 0 || index > _outputTensors.length) {
-        throw ArgumentError('Invalid output Tensor index: $index');
-      }
       return _outputTensors[index];
     }
-
     final outputTensor =
         Tensor(tfLiteInterpreterGetOutputTensor(_interpreter, index));
     return outputTensor;
