@@ -60,9 +60,9 @@ A dedicated library with simple architecture for processing and manipulating inp
 |Title|Code|Demo|Blog|
 |-----|----|----|----|
 |Text Classification App| [Code](https://github.com/am15h/tflite_flutter_plugin/tree/master/example)|<img src="https://github.com/am15h/tflite_flutter_plugin/raw/master/example/demo.gif" width=120/> |[Blog/Tutorial](https://medium.com/@am15hg/text-classification-using-tensorflow-lite-plugin-for-flutter-3b92f6655982)| 
-|Image Classification App| [Code](https://github.com/am15h/tflite_flutter_helper/tree/master/example/image_classification)|<img src="https://github.com/am15h/tflite_flutter_helper/blob/master/example/image_classification/demo.gif" width=120/> |-|
-|Object Detection App| [Code](https://github.com/am15h/object_detection_flutter)|<img src="https://github.com/am15h/object_detection_flutter/blob/master/object_detection_demo.gif" width=120/> |[Blog/Tutorial](https://medium.com/@am15hg/real-time-object-detection-using-new-tensorflow-lite-flutter-support-ea41263e801d)|
-|Reinforcement Learning App| [Code](https://github.com/windmaple/planestrike-flutter)|<img src="https://github.com/windmaple/planestrike-flutter/blob/main/demo.gif" width=120/> |[Blog/Tutorial](https://windmaple.medium.com/playing-a-board-game-on-device-using-tensorflow-lite-and-fluter-a7c865b9aefc)| 
+|Image Classification App| [Code](https://github.com/am15h/tflite_flutter_helper/tree/master/example/image_classification)|<img src="https://github.com/am15h/tflite_flutter_helper/raw/master/example/image_classification/demo.gif" width=120/> |-|
+|Object Detection App| [Code](https://github.com/am15h/object_detection_flutter)|<img src="https://github.com/am15h/object_detection_flutter/raw/master/object_detection_demo.gif" width=120/> |[Blog/Tutorial](https://medium.com/@am15hg/real-time-object-detection-using-new-tensorflow-lite-flutter-support-ea41263e801d)|
+|Reinforcement Learning App| [Code](https://github.com/windmaple/planestrike-flutter)|<img src="https://github.com/windmaple/planestrike-flutter/raw/main/demo.gif" width=120/> |[Blog/Tutorial](https://windmaple.medium.com/playing-a-board-game-on-device-using-tensorflow-lite-and-fluter-a7c865b9aefc)| 
 
 ## Import
 
@@ -94,7 +94,7 @@ See [TFLite Flutter Helper Library](https://www.github.com/am15h/tflite_flutter_
     var input = [[1.23, 6.54, 7.81. 3.21, 2.22]];
 
     // if output tensor shape [1,2] and type is float32
-    var output = List(1*2).reshape([1,2]);
+    var output = List.filled(1*2, 0).reshape([1,2]);
 
     // inference
     interpreter.run(input, output);
@@ -114,8 +114,8 @@ See [TFLite Flutter Helper Library](https://www.github.com/am15h/tflite_flutter_
     // input: List<Object>
     var inputs = [input0, input1, input0, input1];  
 
-    var output0 = List<double>(1);  
-    var output1 = List<double>(1);
+    var output0 = List<double>.filled(1, 0);  
+    var output1 = List<double>.filled(1, 0);
 
     // output: Map<int, Object>
     var outputs = {0: output0, 1: output1};

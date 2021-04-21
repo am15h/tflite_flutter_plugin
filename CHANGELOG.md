@@ -1,3 +1,6 @@
+## 0.7.0 (Apr 21, 2021)
+* Stable null-safety support
+
 ## 0.6.0 (Feb 26, 2021)
 * Update to Dart 2.12 and package:ffi 1.0.0.
 
