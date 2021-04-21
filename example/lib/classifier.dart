@@ -1,4 +1,3 @@
-// @dart=2.11
 import 'package:flutter/services.dart';
 
 // Import tflite_flutter
@@ -16,10 +15,10 @@ class Classifier {
   final String pad = '<PAD>';
   final String unk = '<UNKNOWN>';
 
-  Map<String, int> _dict;
+  late Map<String, int> _dict;
 
   // TensorFlow Lite Interpreter object
-  Interpreter _interpreter;
+  late Interpreter _interpreter;
 
   Classifier() {
     // Load model when the classifier is initialized.
@@ -51,7 +50,7 @@ class Classifier {
     List<List<double>> input = tokenizeInputText(rawText);
 
     // output of shape [1,2].
-    var output = List<double>(2).reshape([1, 2]);
+    var output = List<double>.filled(2, 0).reshape([1, 2]);
 
     // The run method will run inference and
     // store the resulting values in output.
@@ -65,11 +64,11 @@ class Classifier {
     final toks = text.split(' ');
 
     // Create a list of length==_sentenceLen filled with the value <pad>
-    var vec = List<double>.filled(_sentenceLen, _dict[pad].toDouble());
+    var vec = List<double>.filled(_sentenceLen, _dict[pad]!.toDouble());
 
     var index = 0;
     if (_dict.containsKey(start)) {
-      vec[index++] = _dict[start].toDouble();
+      vec[index++] = _dict[start]!.toDouble();
     }
 
     // For each word in sentence find corresponding index in dict
@@ -78,8 +77,8 @@ class Classifier {
         break;
       }
       vec[index++] = _dict.containsKey(tok)
-          ? _dict[tok].toDouble()
-          : _dict[unk].toDouble();
+          ? _dict[tok]!.toDouble()
+          : _dict[unk]!.toDouble();
     }
 
     // returning List<List<double>> as our interpreter input tensor expects the shape, [1,256]
