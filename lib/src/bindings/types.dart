@@ -20,10 +20,10 @@ class TfLiteDelegate extends Opaque {}
 /// Wraps Quantization Params
 class TfLiteQuantizationParams extends Struct {
   @Float()
-  double scale;
+  external double scale;
 
   @Int32()
-  int zeroPoint;
+  external int zeroPoint;
 
   @override
   String toString() {
@@ -35,10 +35,10 @@ class TfLiteQuantizationParams extends Struct {
 class TFLGpuDelegateOptions extends Struct {
   /// Allows to quantify tensors, downcast values, process in float16 etc.
   @Int32()
-  int allowPrecisionLoss;
+  external int allowPrecisionLoss;
 
   @Int32()
-  int waitType;
+  external int waitType;
 
   static Pointer<TFLGpuDelegateOptions> allocate(
       bool allowPrecisionLoss, TFLGpuDelegateWaitType waitType) {
@@ -58,11 +58,11 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   /// warranted.
   /// [OBSOLETE]: to be removed
   @Int32()
-  int isPrecisionLossAllowed;
+  external int isPrecisionLossAllowed;
 
   /// Preference is defined in TfLiteGpuInferenceUsage.
   @Int32()
-  int inferencePreference;
+  external int inferencePreference;
 
   // Ordered priorities provide better control over desired semantics,
   // where priority(n) is more important than priority(n+1), therefore,
@@ -83,11 +83,11 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   //            priority3 = MAX_PRECISION
   // Invalid priorities will result in error.
   @Int32()
-  int inferencePriority1;
+  external int inferencePriority1;
   @Int32()
-  int inferencePriority2;
+  external int inferencePriority2;
   @Int32()
-  int inferencePriority3;
+  external int inferencePriority3;
 
   static Pointer<TfLiteGpuDelegateOptionsV2> allocate(
       bool isPrecisionLossAllowed,
