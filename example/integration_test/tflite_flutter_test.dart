@@ -13,7 +13,6 @@ import 'package:integration_test/integration_test.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tflite_flutter/tflite_flutter.dart' as tfl;
 
-
 final dataFileName = 'permute_uint8.tflite';
 final missingFileName = 'missing.tflite';
 final badFileName = 'bad_model.tflite';
@@ -23,7 +22,7 @@ final int64FileName = 'int64.bin';
 final multiInputFileName = 'multi_add.bin';
 final addFileName = 'add.bin';
 
-//flutter drive --driver=test_driver/tflite_flutter_plugin_example_e2e_test.dart test/tflite_flutter_plugin_example_e2e.dart
+//flutter drive --driver=test_driver/integration_test.dart --target=integration_test/tflite_flutter_test.dart
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -51,7 +50,7 @@ void main() {
 
   test('interpreter from address', () async {
     final interpreter = await tfl.Interpreter.fromAsset('test/$dataFileName');
-    final interpreter2 = tfl.Interpreter.fromAddress(interpreter.address);    
+    final interpreter2 = tfl.Interpreter.fromAddress(interpreter.address);
     interpreter2.close();
   });
 
@@ -204,11 +203,9 @@ void main() {
       test('single input', () async {
         tfl.Interpreter interpreter;
         interpreter = await tfl.Interpreter.fromAsset('test/$addFileName');
-        var o = [1.23, 6.54, 7.81];
-        var two = [o, o, o, o, o, o, o, o];
-        var three = [two, two, two, two, two, two, two, two];
-        var four = [three];
-        var output = List.filled(1 * 8 * 8 * 3, 0).reshape([1, 8, 8, 3]);
+        var four =
+            List.filled(1, List.filled(8, List.filled(8, [1.23, 6.54, 7.81])));
+        var output = List.filled(1 * 8 * 8 * 3, 0.0).reshape([1, 8, 8, 3]);
         interpreter.run(four, output);
         var exp = '';
         if (output[0][0][0][0] is double) {
@@ -217,6 +214,44 @@ void main() {
         expect(exp, '3.69');
         interpreter.close();
       });
+
+      test('single input bytes', () async {
+        tfl.Interpreter interpreter;
+        interpreter = await tfl.Interpreter.fromAsset('test/$addFileName');
+        var four =
+            List.filled(1, List.filled(8, List.filled(8, [1.23, 6.54, 7.81])));
+        var output = List.filled(1 * 8 * 8 * 3, 0.0).reshape([1, 8, 8, 3]);
+        var inputBytes = tfl.ByteConversionUtils.convertObjectToBytes(
+            four, tfl.TfLiteType.float32);
+        var outputBytes = tfl.ByteConversionUtils.convertObjectToBytes(
+            output, tfl.TfLiteType.float32);
+        interpreter.run(inputBytes, outputBytes);
+        var outputList = tfl.ByteConversionUtils.convertBytesToObject(
+                outputBytes, tfl.TfLiteType.float32, [1, 8, 8, 3])
+            as List<List<List<List<double>>>>;
+        expect(outputList[0][0][0][0].toStringAsFixed(2), '3.69');
+        interpreter.close();
+      });
+
+      test('single input buffer', () async {
+        tfl.Interpreter interpreter;
+        interpreter = await tfl.Interpreter.fromAsset('test/$addFileName');
+        var four =
+            List.filled(1, List.filled(8, List.filled(8, [1.23, 6.54, 7.81])));
+        var output = List.filled(1 * 8 * 8 * 3, 0.0).reshape([1, 8, 8, 3]);
+        var inputBuffer = tfl.ByteConversionUtils.convertObjectToBytes(
+                four, tfl.TfLiteType.float32)
+            .buffer;
+        var outputBuffer = tfl.ByteConversionUtils.convertObjectToBytes(
+                output, tfl.TfLiteType.float32)
+            .buffer;
+        interpreter.run(inputBuffer, outputBuffer);
+        var outputElement =
+            ByteData.view(outputBuffer).getFloat32(0, Endian.little);
+        expect(outputElement.toStringAsFixed(2), '3.69');
+        interpreter.close();
+      });
+
       test('multiple input', () async {
         late tfl.Interpreter interpreter;
         interpreter = await tfl.Interpreter.fromAsset(
@@ -309,6 +344,7 @@ void main() {
       expect(output[0][0][0], [3, 7, -4, 3, 7, -4, 3, 7, -4, 3, 7, -4]);
       interpreter.close();
     });
+
     if (Platform.isAndroid) {
       test('using set use NnApi', () async {
         tfl.Interpreter interpreter;
