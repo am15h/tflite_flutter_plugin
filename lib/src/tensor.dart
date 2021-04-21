@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
+import 'package:tflite_flutter/src/util/byte_conversion_utils.dart';
 
 import 'bindings/tensor.dart';
 import 'bindings/types.dart';
@@ -180,130 +181,11 @@ class Tensor {
   }
 
   Uint8List _convertObjectToBytes(Object o) {
-    if (o is Uint8List) {
-      return o;
-    }
-    if (o is ByteBuffer) {
-      return o.asUint8List();
-    }
-    List<int> bytes = <int>[];
-    if (o is List) {
-      for (var e in o) {
-        bytes.addAll(_convertObjectToBytes(e));
-      }
-    } else {
-      return _convertElementToBytes(o);
-    }
-    return Uint8List.fromList(bytes);
-  }
-
-  Uint8List _convertElementToBytes(Object o) {
-    if (type == TfLiteType.float32) {
-      if (o is double) {
-        var buffer = Uint8List(4).buffer;
-        var bdata = ByteData.view(buffer);
-        bdata.setFloat32(0, o, Endian.little);
-        return buffer.asUint8List();
-      } else {
-        throw ArgumentError(
-            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.float32}');
-      }
-    } else if (type == TfLiteType.int32) {
-      if (o is int) {
-        var buffer = Uint8List(4).buffer;
-        var bdata = ByteData.view(buffer);
-        bdata.setInt32(0, o, Endian.little);
-        return buffer.asUint8List();
-      } else {
-        throw ArgumentError(
-            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.int32}');
-      }
-    } else if (type == TfLiteType.int64) {
-      if (o is int) {
-        var buffer = Uint8List(8).buffer;
-        var bdata = ByteData.view(buffer);
-        bdata.setInt64(0, o, Endian.big);
-        return buffer.asUint8List();
-      } else {
-        throw ArgumentError(
-            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.int32}');
-      }
-    } else if (type == TfLiteType.int16) {
-      if (o is int) {
-        var buffer = Uint8List(2).buffer;
-        var bdata = ByteData.view(buffer);
-        bdata.setInt16(0, o, Endian.little);
-        return buffer.asUint8List();
-      } else {
-        throw ArgumentError(
-            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.int32}');
-      }
-    } else if (type == TfLiteType.float16) {
-      if (o is double) {
-        var buffer = Uint8List(4).buffer;
-        var bdata = ByteData.view(buffer);
-        bdata.setFloat32(0, o, Endian.little);
-        return buffer.asUint8List().sublist(0, 2);
-      } else {
-        throw ArgumentError(
-            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.float32}');
-      }
-    } else if (type == TfLiteType.int8) {
-      if (o is int) {
-        var buffer = Uint8List(1).buffer;
-        var bdata = ByteData.view(buffer);
-        bdata.setInt8(0, o);
-        return buffer.asUint8List();
-      } else {
-        throw ArgumentError(
-            'The input element is ${o.runtimeType} while tensor data type is ${TfLiteType.float32}');
-      }
-    } else {
-      throw ArgumentError(
-          'The input data type ${o.runtimeType} is unsupported');
-    }
+    return ByteConversionUtils.convertObjectToBytes(o, type);
   }
 
   Object _convertBytesToObject(Uint8List bytes) {
-    // stores flattened data
-    List<dynamic> list = [];
-    if (type == TfLiteType.int32) {
-      for (var i = 0; i < bytes.length; i += 4) {
-        list.add(ByteData.view(bytes.buffer).getInt32(i, Endian.little));
-      }
-      return list.reshape<int>(shape);
-    } else if (type == TfLiteType.float32) {
-      for (var i = 0; i < bytes.length; i += 4) {
-        list.add(ByteData.view(bytes.buffer).getFloat32(i, Endian.little));
-      }
-      return list.reshape<double>(shape);
-    } else if (type == TfLiteType.int16) {
-      for (var i = 0; i < bytes.length; i += 2) {
-        list.add(ByteData.view(bytes.buffer).getInt16(i, Endian.little));
-      }
-      return list.reshape<int>(shape);
-    } else if (type == TfLiteType.float16) {
-      Uint8List list32 = Uint8List(bytes.length * 2);
-      for (var i = 0; i < bytes.length; i += 2) {
-        list32[i] = bytes[i];
-        list32[i + 1] = bytes[i + 1];
-      }
-      for (var i = 0; i < list32.length; i += 4) {
-        list.add(ByteData.view(list32.buffer).getFloat32(i, Endian.little));
-      }
-      return list.reshape<double>(shape);
-    } else if (type == TfLiteType.int8) {
-      for (var i = 0; i < bytes.length; i += 1) {
-        list.add(ByteData.view(bytes.buffer).getInt8(i));
-      }
-      return list.reshape<int>(shape);
-    } else if (type == TfLiteType.int64) {
-      for (var i = 0; i < bytes.length; i += 8) {
-        list.add(ByteData.view(bytes.buffer).getInt64(i));
-      }
-      return list.reshape<int>(shape);
-    }
-    throw UnsupportedError("$type is not Supported.");
+    return ByteConversionUtils.convertBytesToObject(bytes, type, shape);
   }
 
   void _duplicateList(List obj, List dst) {
