@@ -1,4 +1,3 @@
-// @dart=2.11
 import 'package:flutter/material.dart';
 import 'package:tflite_flutter_plugin_example/classifier.dart';
 
@@ -10,9 +9,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  TextEditingController _controller;
-  Classifier _classifier;
-  List<Widget> _children;
+  late TextEditingController _controller;
+  late Classifier _classifier;
+  late List<Widget> _children;
   @override
   void initState() {
     super.initState();
@@ -53,7 +52,7 @@ class _MyAppState extends State<MyApp> {
                       controller: _controller,
                     ),
                   ),
-                  FlatButton(
+                  TextButton(
                     child: const Text('Classify'),
                     onPressed: () {
                       final text = _controller.text;

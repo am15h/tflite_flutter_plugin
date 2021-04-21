@@ -1,30 +1,29 @@
-// @dart=2.11
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 
 /// Wraps a model interpreter.
-class TfLiteInterpreter extends Struct {}
+class TfLiteInterpreter extends Opaque {}
 
 /// Wraps customized interpreter configuration options.
-class TfLiteInterpreterOptions extends Struct {}
+class TfLiteInterpreterOptions extends Opaque {}
 
 /// Wraps a loaded TensorFlowLite model.
-class TfLiteModel extends Struct {}
+class TfLiteModel extends Opaque {}
 
 /// Wraps data associated with a graph tensor.
-class TfLiteTensor extends Struct {}
+class TfLiteTensor extends Opaque {}
 
 /// Wraps a TfLiteDelegate
-class TfLiteDelegate extends Struct {}
+class TfLiteDelegate extends Opaque {}
 
 /// Wraps Quantization Params
 class TfLiteQuantizationParams extends Struct {
   @Float()
-  double scale;
+  external double scale;
 
   @Int32()
-  int zeroPoint;
+  external int zeroPoint;
 
   @override
   String toString() {
@@ -36,10 +35,10 @@ class TfLiteQuantizationParams extends Struct {
 class TFLGpuDelegateOptions extends Struct {
   /// Allows to quantify tensors, downcast values, process in float16 etc.
   @Int32()
-  int allowPrecisionLoss;
+  external int allowPrecisionLoss;
 
   @Int32()
-  int waitType;
+  external int waitType;
 
   static Pointer<TFLGpuDelegateOptions> allocate(
       bool allowPrecisionLoss, TFLGpuDelegateWaitType waitType) {
@@ -59,11 +58,11 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   /// warranted.
   /// [OBSOLETE]: to be removed
   @Int32()
-  int isPrecisionLossAllowed;
+  external int isPrecisionLossAllowed;
 
   /// Preference is defined in TfLiteGpuInferenceUsage.
   @Int32()
-  int inferencePreference;
+  external int inferencePreference;
 
   // Ordered priorities provide better control over desired semantics,
   // where priority(n) is more important than priority(n+1), therefore,
@@ -84,11 +83,11 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   //            priority3 = MAX_PRECISION
   // Invalid priorities will result in error.
   @Int32()
-  int inferencePriority1;
+  external int inferencePriority1;
   @Int32()
-  int inferencePriority2;
+  external int inferencePriority2;
   @Int32()
-  int inferencePriority3;
+  external int inferencePriority3;
 
   static Pointer<TfLiteGpuDelegateOptionsV2> allocate(
       bool isPrecisionLossAllowed,

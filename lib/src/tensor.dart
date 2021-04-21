@@ -1,4 +1,3 @@
-// @dart=2.11
 import 'dart:ffi';
 import 'dart:typed_data';
 
@@ -19,7 +18,7 @@ class Tensor {
   final Pointer<TfLiteTensor> _tensor;
 
   Tensor(this._tensor) {
-    checkNotNull(_tensor);
+    ArgumentError.checkNotNull(_tensor);
   }
 
   /// Name of the tensor element.
@@ -35,19 +34,14 @@ class Tensor {
   /// Underlying data buffer as bytes.
   Uint8List get data {
     final data = cast<Uint8>(tfLiteTensorData(_tensor));
-//    checkState(isNotNull(data), message: 'Tensor data is null.');
     return UnmodifiableUint8ListView(
-        data?.asTypedList(tfLiteTensorByteSize(_tensor)));
+        data.asTypedList(tfLiteTensorByteSize(_tensor)));
   }
 
   /// Quantization Params associated with the model, [only Android]
   QuantizationParams get params {
-    if (_tensor != null) {
-      final ref = tfLiteTensorQuantizationParams(_tensor).ref;
-      return QuantizationParams(ref.scale, ref.zeroPoint);
-    } else {
-      return QuantizationParams(0.0, 0);
-    }
+    final ref = tfLiteTensorQuantizationParams(_tensor).ref;
+    return QuantizationParams(ref.scale, ref.zeroPoint);
   }
 
   /// Updates the underlying data buffer with new bytes.
@@ -95,18 +89,18 @@ class Tensor {
   }
 
   /// Returns the number of dimensions of a multi-dimensional array, otherwise 0.
-  static int computeNumDimensions(Object o) {
+  static int computeNumDimensions(Object? o) {
     if (o == null || !(o is List)) {
       return 0;
     }
-    if ((o as List).isEmpty) {
+    if (o.isEmpty) {
       throw ArgumentError('Array lengths cannot be 0.');
     }
-    return 1 + computeNumDimensions((o as List).elementAt(0));
+    return 1 + computeNumDimensions(o.elementAt(0));
   }
 
   /// Recursively populates the shape dimensions for a given (multi-dimensional) array)
-  static void fillShape(Object o, int dim, List<int> shape) {
+  static void fillShape(Object o, int dim, List<int>? shape) {
     if (shape == null || dim == shape.length) {
       return;
     }
@@ -118,14 +112,14 @@ class Tensor {
           'Mismatched lengths ${shape[dim]} and $len in dimension $dim');
     }
     for (var i = 0; i < len; ++i) {
-      fillShape((o as List).elementAt(0), dim + 1, shape);
+      fillShape(o.elementAt(0), dim + 1, shape);
     }
   }
 
   /// Returns data type of given object
   static TfLiteType dataTypeOf(Object o) {
     while (o is List) {
-      o = (o as List).elementAt(0);
+      o = o.elementAt(0);
     }
     var c = o;
     if (c is double) {
@@ -203,7 +197,6 @@ class Tensor {
   }
 
   Uint8List _convertElementToBytes(Object o) {
-    //TODO: add conversions for rest of the types
     if (type == TfLiteType.float32) {
       if (o is double) {
         var buffer = Uint8List(4).buffer;
@@ -270,10 +263,9 @@ class Tensor {
     }
   }
 
-  Object _convertBytesToObject(Uint8List bytes) {
+  Object? _convertBytesToObject(Uint8List bytes) {
     // stores flattened data
     var list = [];
-    //TODO: add conversions for the rest of the types
     if (type == TfLiteType.int32) {
       for (var i = 0; i < bytes.length; i += 4) {
         list.add(ByteData.view(bytes.buffer).getInt32(i, Endian.little));
@@ -336,7 +328,7 @@ class Tensor {
     }
   }
 
-  List<int> getInputShapeIfDifferent(Object input) {
+  List<int>? getInputShapeIfDifferent(Object? input) {
     if (input == null) {
       return null;
     }

@@ -1,4 +1,3 @@
-// @dart=2.11
 import 'dart:ffi';
 import 'dart:io';
 
@@ -9,5 +8,7 @@ DynamicLibrary tflitelib = () {
     return DynamicLibrary.open('libtensorflowlite_c.so');
   } else if (Platform.isIOS) {
     return DynamicLibrary.process();
+  } else {
+    throw UnsupportedError("Only Android and iOS platforms are supported.");
   }
 }();

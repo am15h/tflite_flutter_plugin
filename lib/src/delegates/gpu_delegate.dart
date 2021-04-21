@@ -1,4 +1,3 @@
-// @dart=2.11
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
@@ -19,12 +18,12 @@ class GpuDelegateV2 implements Delegate {
 
   GpuDelegateV2._(this._delegate);
 
-  factory GpuDelegateV2({GpuDelegateOptionsV2 options}) {
+  factory GpuDelegateV2({GpuDelegateOptionsV2? options}) {
     if (options == null) {
       return GpuDelegateV2._(tfLiteGpuDelegateV2Create(
           GpuDelegateOptionsV2.defaultOptions().base));
     }
-    return GpuDelegateV2._(tfLiteGpuDelegateV2Create(options?.base));
+    return GpuDelegateV2._(tfLiteGpuDelegateV2Create(options.base));
   }
   @override
   void delete() {
