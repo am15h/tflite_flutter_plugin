@@ -24,6 +24,7 @@ jobs:
           java-version: '8.x'
       - uses: subosito/flutter-action@v1
         with:
+          flutter-version: '2.2.0-11.0.pre.191'
           channel: 'master'
       - name: run tests
         timeout-minutes: 30
