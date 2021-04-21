@@ -19,6 +19,7 @@ export 'src/interpreter_options.dart';
 export 'src/quanitzation_params.dart';
 export 'src/tensor.dart';
 export 'src/util/list_shape_extension.dart';
+export 'src/util/byte_conversion_utils.dart';
 
 /// tflite version information.
 String get version => tfLiteVersion().toDartString();
