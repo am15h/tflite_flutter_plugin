@@ -73,7 +73,7 @@ class Tensor {
 
   /// Returns the number of elements in a flattened (1-D) view of the tensor's shape.
   static int computeNumElements(List<int> shape) {
-    var n = 1;
+    int n = 1;
     for (var i = 0; i < shape.length; i++) {
       n *= shape[i];
     }
@@ -82,8 +82,8 @@ class Tensor {
 
   /// Returns shape of an object as an int list
   static List<int> computeShapeOf(Object o) {
-    var size = computeNumDimensions(o);
-    var dimensions = List.filled(size, 0, growable: false);
+    int size = computeNumDimensions(o);
+    List<int> dimensions = List.filled(size, 0, growable: false);
     fillShape(o, 0, dimensions);
     return dimensions;
   }
@@ -121,7 +121,7 @@ class Tensor {
     while (o is List) {
       o = o.elementAt(0);
     }
-    var c = o;
+    Object c = o;
     if (c is double) {
       return TfLiteType.float32;
     } else if (c is int) {
@@ -136,8 +136,8 @@ class Tensor {
   }
 
   void setTo(Object src) {
-    var bytes = _convertObjectToBytes(src);
-    var size = bytes.length;
+    Uint8List bytes = _convertObjectToBytes(src);
+    int size = bytes.length;
     final ptr = calloc<Uint8>(size);
     checkState(isNotNull(ptr), message: 'unallocated');
     final externalTypedData = ptr.asTypedList(size);
@@ -148,7 +148,7 @@ class Tensor {
   }
 
   Object copyTo(Object dst) {
-    var size = tfLiteTensorByteSize(_tensor);
+    int size = tfLiteTensorByteSize(_tensor);
     final ptr = calloc<Uint8>(size);
     checkState(isNotNull(ptr), message: 'unallocated');
     final externalTypedData = ptr.asTypedList(size);
@@ -158,14 +158,15 @@ class Tensor {
     // volatile
     final bytes = externalTypedData.sublist(0);
     data = bytes;
-    var obj;
+    late Object obj;
     if (dst is Uint8List) {
       obj = bytes;
     } else if (dst is ByteBuffer) {
-      var bdata = dst.asByteData();
+      ByteData bdata = dst.asByteData();
       for (int i = 0; i < bdata.lengthInBytes; i++) {
         bdata.setUint8(i, bytes[i]);
       }
+      obj = bdata.buffer;
     } else {
       obj = _convertBytesToObject(bytes);
     }
@@ -185,7 +186,7 @@ class Tensor {
     if (o is ByteBuffer) {
       return o.asUint8List();
     }
-    var bytes = <int>[];
+    List<int> bytes = <int>[];
     if (o is List) {
       for (var e in o) {
         bytes.addAll(_convertObjectToBytes(e));
@@ -263,9 +264,9 @@ class Tensor {
     }
   }
 
-  Object? _convertBytesToObject(Uint8List bytes) {
+  Object _convertBytesToObject(Uint8List bytes) {
     // stores flattened data
-    var list = [];
+    List<dynamic> list = [];
     if (type == TfLiteType.int32) {
       for (var i = 0; i < bytes.length; i += 4) {
         list.add(ByteData.view(bytes.buffer).getInt32(i, Endian.little));
@@ -302,7 +303,7 @@ class Tensor {
       }
       return list.reshape<int>(shape);
     }
-    return null;
+    throw UnsupportedError("$type is not Supported.");
   }
 
   void _duplicateList(List obj, List dst) {
