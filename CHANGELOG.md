@@ -1,3 +1,7 @@
+## 0.8.0 (Apr 21, 2021)
+* Null-safety major bug fix in tensor.dart
+* Expose byte-object interconversion APIs
+
 ## 0.7.0 (Apr 21, 2021)
 * Stable null-safety support
 
