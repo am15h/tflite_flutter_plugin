@@ -1,22 +1,21 @@
-// @dart=2.11
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 
 /// Wraps a model interpreter.
-class TfLiteInterpreter extends Struct {}
+class TfLiteInterpreter extends Opaque {}
 
 /// Wraps customized interpreter configuration options.
-class TfLiteInterpreterOptions extends Struct {}
+class TfLiteInterpreterOptions extends Opaque {}
 
 /// Wraps a loaded TensorFlowLite model.
-class TfLiteModel extends Struct {}
+class TfLiteModel extends Opaque {}
 
 /// Wraps data associated with a graph tensor.
-class TfLiteTensor extends Struct {}
+class TfLiteTensor extends Opaque {}
 
 /// Wraps a TfLiteDelegate
-class TfLiteDelegate extends Struct {}
+class TfLiteDelegate extends Opaque {}
 
 /// Wraps Quantization Params
 class TfLiteQuantizationParams extends Struct {
