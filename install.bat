@@ -31,7 +31,7 @@ CALL :Download %X86_64% x86_64
 EXIT /B %ERRORLEVEL%
 
 :Download
-curl -L -o %~1 %URL%%TAG%/%~1
+curl -L -o %~1 %URL%%TAG%/%~1 --ssl-no-revoke
 mkdir %ANDROID_DIR%%~2\
 move /-Y %~1 %ANDROID_DIR%%~2\%ANDROID_LIB%
 EXIT /B 0
