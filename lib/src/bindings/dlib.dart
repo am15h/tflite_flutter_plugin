@@ -1,6 +1,30 @@
 import 'dart:ffi';
 import 'dart:io';
 
+const Set<String> _supported = {'linux', 'mac', 'win'};
+
+String get binaryName {
+  String os, ext;
+  if (Platform.isLinux) {
+    os = 'linux';
+    ext = 'so';
+  } else if (Platform.isMacOS) {
+    os = 'mac';
+    ext = 'so';
+  } else if (Platform.isWindows) {
+    os = 'win';
+    ext = 'dll';
+  } else {
+    throw Exception('Unsupported platform!');
+  }
+
+  if (!_supported.contains(result)) {
+    throw UnsupportedError('Unsupported platform: $result!');
+  }
+
+  return 'libtensorflowlite_c-$os.$ext';
+}
+
 /// TensorFlowLite C library.
 // ignore: missing_return
 DynamicLibrary tflitelib = () {
@@ -9,6 +33,9 @@ DynamicLibrary tflitelib = () {
   } else if (Platform.isIOS) {
     return DynamicLibrary.process();
   } else {
-    throw UnsupportedError("Only Android and iOS platforms are supported.");
+    final binaryPath = Platform.script.resolveUri(Uri.directory('.')).path +
+        'blobs/$binaryName';
+    final binaryFilePath = Uri(path: binaryPath).toFilePath();
+    return DynamicLibrary.open(binaryFilePath);
   }
 }();
