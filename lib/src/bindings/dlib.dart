@@ -18,8 +18,8 @@ String get binaryName {
     throw Exception('Unsupported platform!');
   }
 
-  if (!_supported.contains(result)) {
-    throw UnsupportedError('Unsupported platform: $result!');
+  if (!_supported.contains(os)) {
+    throw UnsupportedError('Unsupported platform: $os!');
   }
 
   return 'libtensorflowlite_c-$os.$ext';
