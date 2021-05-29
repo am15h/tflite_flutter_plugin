@@ -28,10 +28,7 @@ class Classifier {
 
   void _loadModel() async {
     // Creating the interpreter using Interpreter.fromAsset
-    _interpreter = await Interpreter.fromAsset(
-      _modelFile,
-      options: InterpreterOptions()..useNnApiForAndroid = true,
-    );
+    _interpreter = await Interpreter.fromAsset(_modelFile);
     print('Interpreter loaded successfully');
   }
 
