@@ -459,7 +459,6 @@ void main() {
           [1, 2]
         ]
       ];
-      //TODO: handle case when subLists of different sizes
       expect(list1D.shape, [4]);
       expect(list2D.shape, [2, 3]);
       expect(list3D.shape, [2, 2, 2]);
@@ -477,13 +476,7 @@ void main() {
 
   if (Platform.isAndroid) {
     group('gpu delegate android', () {
-      final gpuDelegate = tfl.GpuDelegateV2(
-          options: tfl.GpuDelegateOptionsV2(
-              false,
-              tfl.TfLiteGpuInferenceUsage.preferenceSustainSpeed,
-              tfl.TfLiteGpuInferencePriority.auto,
-              tfl.TfLiteGpuInferencePriority.auto,
-              tfl.TfLiteGpuInferencePriority.auto));
+      final gpuDelegate = tfl.GpuDelegateV2();
       test('create', () {
         expect(gpuDelegate, isNotNull);
       });

@@ -2,7 +2,7 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
-import '../bindings/delegate.dart';
+import '../bindings/metal_delegate.dart';
 import '../bindings/types.dart';
 import '../delegate.dart';
 
@@ -36,10 +36,17 @@ class GpuDelegateOptions {
 
   GpuDelegateOptions._(this._options);
 
-  factory GpuDelegateOptions(
-      bool allowPrecisionLoss, TFLGpuDelegateWaitType waitType) {
-    return GpuDelegateOptions._(
-        TFLGpuDelegateOptions.allocate(allowPrecisionLoss, waitType));
+  factory GpuDelegateOptions({
+    bool allowPrecisionLoss = false,
+    TFLGpuDelegateWaitType waitType = TFLGpuDelegateWaitType.passive,
+    bool enableQuantization = true,
+  }) {
+    var options = tFLGpuDelegateOptionsDefault();
+    options
+      ..allowPrecisionLoss = allowPrecisionLoss ? 1 : 0
+      ..waitType = waitType.index
+      ..enableQuantization = enableQuantization ? 1 : 0;
+    return GpuDelegateOptions._(options.pointer);
   }
 
   void delete() {
