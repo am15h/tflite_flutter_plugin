@@ -41,7 +41,7 @@ class Tensor {
 
   /// Quantization Params associated with the model, [only Android]
   QuantizationParams get params {
-    final ref = tfLiteTensorQuantizationParams(_tensor).ref;
+    final ref = tfLiteTensorQuantizationParams(_tensor);
     return QuantizationParams(ref.scale, ref.zeroPoint);
   }
 
