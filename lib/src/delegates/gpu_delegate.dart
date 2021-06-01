@@ -22,7 +22,7 @@ class GpuDelegateV2 implements Delegate {
   factory GpuDelegateV2({GpuDelegateOptionsV2? options}) {
     if (options == null) {
       return GpuDelegateV2._(
-        tfLiteGpuDelegateV2Create(GpuDelegateOptionsV2().base),
+        tfLiteGpuDelegateV2Create(nullptr),
       );
     }
     return GpuDelegateV2._(tfLiteGpuDelegateV2Create(options.base));
@@ -104,16 +104,15 @@ class GpuDelegateOptionsV2 {
     ],
     int maxDelegatePartitions = 1,
   }) {
-    var options = tfLiteGpuDelegateOptionsV2Default();
-    options
-      ..isPrecisionLossAllowed = isPrecisionLossAllowed ? 1 : 0
-      ..inferencePriority1 = inferencePriority1.index
-      ..inferencePriority2 = inferencePriority2.index
-      ..inferencePriority3 = inferencePriority3.index
-      ..experimentalFlags =
-          _TfLiteGpuExperimentalFlagsUtil.getBitmask(experimentalFlags)
-      ..maxDelegatedPartitions = maxDelegatePartitions;
-    return GpuDelegateOptionsV2._(options.pointer);
+    return GpuDelegateOptionsV2._(TfLiteGpuDelegateOptionsV2.allocate(
+      isPrecisionLossAllowed,
+      inferencePreference,
+      inferencePriority1,
+      inferencePriority2,
+      inferencePriority3,
+      _TfLiteGpuExperimentalFlagsUtil.getBitmask(experimentalFlags),
+      maxDelegatePartitions,
+    ));
   }
 
   void delete() {

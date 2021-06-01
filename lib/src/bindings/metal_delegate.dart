@@ -32,7 +32,7 @@ typedef _TFLGpuDelegateDelete_native_t = Void Function(
     Pointer<TfLiteDelegate> delegate);
 
 /// Default Options
-TFLGpuDelegateOptions Function() tFLGpuDelegateOptionsDefault = tflitelib
+TFLGpuDelegateOptions Function() tflGpuDelegateOptionsDefault = tflitelib
     .lookup<NativeFunction<_TFLGpuDelegateOptions_native_t>>(
         'TFLGpuDelegateOptionsDefault')
     .asFunction();

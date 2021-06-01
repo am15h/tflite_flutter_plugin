@@ -16,8 +16,14 @@ class GpuDelegate implements Delegate {
 
   GpuDelegate._(this._delegate);
 
-  factory GpuDelegate({GpuDelegateOptions? options}) =>
-      GpuDelegate._(tflGpuDelegateCreate(options?.base));
+  factory GpuDelegate({GpuDelegateOptions? options}) {
+    if (options == null) {
+      return GpuDelegate._(
+        tflGpuDelegateCreate(nullptr),
+      );
+    }
+    return GpuDelegate._(tflGpuDelegateCreate(options.base));
+  }
 
   @override
   void delete() {
@@ -41,12 +47,11 @@ class GpuDelegateOptions {
     TFLGpuDelegateWaitType waitType = TFLGpuDelegateWaitType.passive,
     bool enableQuantization = true,
   }) {
-    var options = tFLGpuDelegateOptionsDefault();
-    options
-      ..allowPrecisionLoss = allowPrecisionLoss ? 1 : 0
-      ..waitType = waitType.index
-      ..enableQuantization = enableQuantization ? 1 : 0;
-    return GpuDelegateOptions._(options.pointer);
+    return GpuDelegateOptions._(TFLGpuDelegateOptions.allocate(
+      allowPrecisionLoss,
+      waitType,
+      enableQuantization,
+    ));
   }
 
   void delete() {

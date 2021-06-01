@@ -44,12 +44,16 @@ class TFLGpuDelegateOptions extends Struct {
   @Int32()
   external int enableQuantization;
 
-  Pointer<TFLGpuDelegateOptions> get pointer {
+  static Pointer<TFLGpuDelegateOptions> allocate(
+    bool allowPrecisionLoss,
+    TFLGpuDelegateWaitType waitType,
+    bool enableQuantization,
+  ) {
     final result = calloc<TFLGpuDelegateOptions>();
     result.ref
-      ..allowPrecisionLoss = allowPrecisionLoss
-      ..waitType = waitType
-      ..enableQuantization = enableQuantization;
+      ..allowPrecisionLoss = allowPrecisionLoss ? 1 : 0
+      ..waitType = waitType.index
+      ..enableQuantization = enableQuantization ? 1 : 0;
     return result;
   }
 }
@@ -103,16 +107,23 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   @Int32()
   external int maxDelegatedPartitions;
 
-  Pointer<TfLiteGpuDelegateOptionsV2> get pointer {
+  static Pointer<TfLiteGpuDelegateOptionsV2> allocate(
+      bool isPrecisionLossAllowed,
+      TfLiteGpuInferenceUsage inferencePreference,
+      TfLiteGpuInferencePriority inferencePriority1,
+      TfLiteGpuInferencePriority inferencePriority2,
+      TfLiteGpuInferencePriority inferencePriority3,
+      int experimentalFlagsBitmask,
+      int maxDelegatePartitions) {
     final result = calloc<TfLiteGpuDelegateOptionsV2>();
     result.ref
-      ..isPrecisionLossAllowed = isPrecisionLossAllowed
-      ..inferencePreference = inferencePreference
-      ..inferencePriority1 = inferencePriority1
-      ..inferencePriority2 = inferencePriority2
-      ..inferencePriority3 = inferencePriority3
-      ..experimentalFlags = experimentalFlags
-      ..maxDelegatedPartitions = maxDelegatedPartitions;
+      ..isPrecisionLossAllowed = isPrecisionLossAllowed ? 1 : 0
+      ..inferencePreference = inferencePreference.index
+      ..inferencePriority1 = inferencePriority1.index
+      ..inferencePriority2 = inferencePriority2.index
+      ..inferencePriority3 = inferencePriority3.index
+      ..experimentalFlags = experimentalFlagsBitmask
+      ..maxDelegatedPartitions = maxDelegatePartitions;
     return result;
   }
 }
