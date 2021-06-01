@@ -40,12 +40,20 @@ class TFLGpuDelegateOptions extends Struct {
   @Int32()
   external int waitType;
 
+  // Allows execution of integer quantized models
+  @Int32()
+  external int enableQuantization;
+
   static Pointer<TFLGpuDelegateOptions> allocate(
-      bool allowPrecisionLoss, TFLGpuDelegateWaitType waitType) {
+    bool allowPrecisionLoss,
+    TFLGpuDelegateWaitType waitType,
+    bool enableQuantization,
+  ) {
     final result = calloc<TFLGpuDelegateOptions>();
     result.ref
       ..allowPrecisionLoss = allowPrecisionLoss ? 1 : 0
-      ..waitType = waitType.index;
+      ..waitType = waitType.index
+      ..enableQuantization = enableQuantization ? 1 : 0;
     return result;
   }
 }
@@ -89,19 +97,45 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   @Int32()
   external int inferencePriority3;
 
+  // Bitmask flags. See the comments in TfLiteGpuExperimentalFlags.
+  @Int64()
+  external int experimentalFlags;
+
+  // A graph could have multiple partitions that can be delegated to the GPU.
+  // This limits the maximum number of partitions to be delegated. By default,
+  // it's set to 1 in TfLiteGpuDelegateOptionsV2Default().
+  @Int32()
+  external int maxDelegatedPartitions;
+
   static Pointer<TfLiteGpuDelegateOptionsV2> allocate(
       bool isPrecisionLossAllowed,
       TfLiteGpuInferenceUsage inferencePreference,
       TfLiteGpuInferencePriority inferencePriority1,
       TfLiteGpuInferencePriority inferencePriority2,
-      TfLiteGpuInferencePriority inferencePriority3) {
+      TfLiteGpuInferencePriority inferencePriority3,
+      int experimentalFlagsBitmask,
+      int maxDelegatePartitions) {
     final result = calloc<TfLiteGpuDelegateOptionsV2>();
     result.ref
       ..isPrecisionLossAllowed = isPrecisionLossAllowed ? 1 : 0
       ..inferencePreference = inferencePreference.index
       ..inferencePriority1 = inferencePriority1.index
       ..inferencePriority2 = inferencePriority2.index
-      ..inferencePriority3 = inferencePriority3.index;
+      ..inferencePriority3 = inferencePriority3.index
+      ..experimentalFlags = experimentalFlagsBitmask
+      ..maxDelegatedPartitions = maxDelegatePartitions;
+    return result;
+  }
+}
+
+/// Wraps TfLiteXNNPackDelegateOptions
+class TfLiteXNNPackDelegateOptions extends Struct {
+  @Int32()
+  external int numThreads;
+
+  static Pointer<TfLiteXNNPackDelegateOptions> allocate(int numThreads) {
+    final result = calloc<TfLiteXNNPackDelegateOptions>();
+    result.ref..numThreads = numThreads;
     return result;
   }
 }
@@ -174,4 +208,23 @@ enum TfLiteGpuInferencePriority {
 
   /// TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE,
   minMemoryUsage,
+}
+
+/// Used to toggle experimental flags used in the delegate. Note that this is a
+/// bitmask, so the values should be 1, 2, 4, 8, ...etc.
+enum TfLiteGpuExperimentalFlags {
+  /// TFLITE_GPU_EXPERIMENTAL_FLAGS_NONE = 0,
+  none,
+
+  /// Enables inference on quantized models with the delegate.
+  /// NOTE: This is enabled in TfLiteGpuDelegateOptionsV2Default.
+  /// TFLITE_GPU_EXPERIMENTAL_FLAGS_ENABLE_QUANT = 1 << 0,
+  enableQuant,
+
+  /// Enforces execution with the provided backend.
+  // TFLITE_GPU_EXPERIMENTAL_FLAGS_CL_ONLY = 1 << 1,
+  clOnly,
+
+  /// TFLITE_GPU_EXPERIMENTAL_FLAGS_GL_ONLY = 1 << 2
+  glOnly,
 }

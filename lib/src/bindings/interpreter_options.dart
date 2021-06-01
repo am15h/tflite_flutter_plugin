@@ -83,4 +83,4 @@ void Function(Pointer<TfLiteInterpreterOptions> options, int enable)
         .asFunction();
 
 typedef _TfLiteInterpreterOptionsSetUseNNAPI_native_t = Void Function(
-    Pointer<TfLiteInterpreterOptions> options, Int32 enable);
+    Pointer<TfLiteInterpreterOptions> options, Int8 enable);

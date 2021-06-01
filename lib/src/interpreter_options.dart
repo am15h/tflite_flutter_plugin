@@ -36,7 +36,7 @@ class InterpreterOptions {
   /// Set true to use NnApi Delegate for Android
   set useNnApiForAndroid(bool useNnApi) {
     if (Platform.isAndroid) {
-      tfLiteInterpreterOptionsSetUseNNAPI(_options, 1);
+      tfLiteInterpreterOptionsSetUseNNAPI(_options, useNnApi ? 1 : 0);
     }
   }
 

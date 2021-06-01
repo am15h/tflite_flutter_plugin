@@ -365,9 +365,10 @@ void main() {
       });
       test('using NnApiDelegate', () async {
         tfl.Interpreter interpreter;
-        interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
-            options: tfl.InterpreterOptions()
-              ..addDelegate(tfl.NnApiDelegate()));
+        interpreter = await tfl.Interpreter.fromAsset(
+          'test/$addFileName',
+          options: tfl.InterpreterOptions()..useNnApiForAndroid = true,
+        );
         var o = [1.23, 6.54, 7.81];
         var two = [o, o, o, o, o, o, o, o];
         var three = [two, two, two, two, two, two, two, two];
@@ -396,9 +397,9 @@ void main() {
       });
 
       if (Platform.isIOS) {
-        test('using GpuDelegateV2 iOS', () async {
+        test('using GpuDelegate iOS', () async {
           tfl.Interpreter interpreter;
-          final gpuDelegate = tfl.GpuDelegateV2();
+          final gpuDelegate = tfl.GpuDelegate();
           var interpreterOptions = tfl.InterpreterOptions()
             ..addDelegate(gpuDelegate);
           interpreter = await tfl.Interpreter.fromAsset('test/$addFileName',
@@ -459,7 +460,6 @@ void main() {
           [1, 2]
         ]
       ];
-      //TODO: handle case when subLists of different sizes
       expect(list1D.shape, [4]);
       expect(list2D.shape, [2, 3]);
       expect(list3D.shape, [2, 2, 2]);
@@ -477,33 +477,18 @@ void main() {
 
   if (Platform.isAndroid) {
     group('gpu delegate android', () {
-      final gpuDelegate = tfl.GpuDelegateV2(
-          options: tfl.GpuDelegateOptionsV2(
-              false,
-              tfl.TfLiteGpuInferenceUsage.preferenceSustainSpeed,
-              tfl.TfLiteGpuInferencePriority.auto,
-              tfl.TfLiteGpuInferencePriority.auto,
-              tfl.TfLiteGpuInferencePriority.auto));
+      final gpuDelegate = tfl.GpuDelegateV2();
       test('create', () {
         expect(gpuDelegate, isNotNull);
       });
       test('delete', gpuDelegate.delete);
     });
-
-    group('nnapi delegate android', () {
-      final nnapiDelegate = tfl.NnApiDelegate();
-      test('create', () {
-        expect(nnapiDelegate, isNotNull);
-      });
-
-      test('delete', nnapiDelegate.delete);
-    });
   }
   if (Platform.isIOS) {
     group('gpu delegate ios', () {
       final gpuDelegate = tfl.GpuDelegate(
-          options:
-              tfl.GpuDelegateOptions(false, tfl.TFLGpuDelegateWaitType.active));
+        options: tfl.GpuDelegateOptions(),
+      );
       test('create', () {
         expect(gpuDelegate, isNotNull);
       });
