@@ -2,7 +2,7 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
-import '../bindings/gpu_delegate.dart';
+import '../bindings/delegates/gpu_delegate.dart';
 import '../bindings/types.dart';
 import '../delegate.dart';
 

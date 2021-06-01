@@ -60,36 +60,12 @@ class TFLGpuDelegateOptions extends Struct {
 
 /// Wraps TfLiteGpuDelegateOptionsV2 for android gpu delegate
 class TfLiteGpuDelegateOptionsV2 extends Struct {
-  /// When set to zero, computations are carried out in maximal possible
-  /// precision. Otherwise, the GPU may quantify tensors, downcast values,
-  /// process in FP16 to increase performance. For most models precision loss is
-  /// warranted.
-  /// [OBSOLETE]: to be removed
   @Int32()
   external int isPrecisionLossAllowed;
 
-  /// Preference is defined in TfLiteGpuInferenceUsage.
   @Int32()
   external int inferencePreference;
 
-  // Ordered priorities provide better control over desired semantics,
-  // where priority(n) is more important than priority(n+1), therefore,
-  // each time inference engine needs to make a decision, it uses
-  // ordered priorities to do so.
-  // For example:
-  //   MAX_PRECISION at priority1 would not allow to decrease presision,
-  //   but moving it to priority2 or priority3 would result in F16 calculation.
-  //
-  // Priority is defined in TfLiteGpuInferencePriority.
-  // AUTO priority can only be used when higher priorities are fully specified.
-  // For example:
-  //   VALID:   priority1 = MIN_LATENCY, priority2 = AUTO, priority3 = AUTO
-  //   VALID:   priority1 = MIN_LATENCY, priority2 = MAX_PRECISION,
-  //            priority3 = AUTO
-  //   INVALID: priority1 = AUTO, priority2 = MIN_LATENCY, priority3 = AUTO
-  //   INVALID: priority1 = MIN_LATENCY, priority2 = AUTO,
-  //            priority3 = MAX_PRECISION
-  // Invalid priorities will result in error.
   @Int32()
   external int inferencePriority1;
   @Int32()
@@ -97,13 +73,9 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   @Int32()
   external int inferencePriority3;
 
-  // Bitmask flags. See the comments in TfLiteGpuExperimentalFlags.
   @Int64()
   external int experimentalFlags;
 
-  // A graph could have multiple partitions that can be delegated to the GPU.
-  // This limits the maximum number of partitions to be delegated. By default,
-  // it's set to 1 in TfLiteGpuDelegateOptionsV2Default().
   @Int32()
   external int maxDelegatedPartitions;
 
@@ -136,6 +108,35 @@ class TfLiteXNNPackDelegateOptions extends Struct {
   static Pointer<TfLiteXNNPackDelegateOptions> allocate(int numThreads) {
     final result = calloc<TfLiteXNNPackDelegateOptions>();
     result.ref..numThreads = numThreads;
+    return result;
+  }
+}
+
+// Wraps TfLiteCoreMlDelegateOptions
+class TfLiteCoreMlDelegateOptions extends Struct {
+  @Int32()
+  external int enabledDevices;
+
+  @Int32()
+  external int coremlVersion;
+
+  @Int32()
+  external int maxDelegatedPartitions;
+
+  @Int32()
+  external int minNodesPerPartition;
+
+  static Pointer<TfLiteCoreMlDelegateOptions> allocate(
+      TfLiteCoreMlDelegateEnabledDevices enabledDevices,
+      int coremlVersion,
+      int maxDelegatedPartitions,
+      int minNodesPerPartition) {
+    final result = calloc<TfLiteCoreMlDelegateOptions>();
+    result.ref
+      ..enabledDevices = enabledDevices.index
+      ..coremlVersion = coremlVersion
+      ..maxDelegatedPartitions = maxDelegatedPartitions
+      ..minNodesPerPartition = minNodesPerPartition;
     return result;
   }
 }
@@ -227,4 +228,14 @@ enum TfLiteGpuExperimentalFlags {
 
   /// TFLITE_GPU_EXPERIMENTAL_FLAGS_GL_ONLY = 1 << 2
   glOnly,
+}
+
+enum TfLiteCoreMlDelegateEnabledDevices {
+  /// Create Core ML delegate only on devices with Apple Neural Engine.
+  ///
+  /// Returns nullptr otherwise.
+  TfLiteCoreMlDelegateDevicesWithNeuralEngine,
+
+  /// Always create Core ML delegate
+  TfLiteCoreMlDelegateAllDevices
 }
