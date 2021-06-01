@@ -2,9 +2,9 @@
 
 import 'dart:ffi';
 
-import 'dlib.dart';
+import '../dlib.dart';
 
-import 'types.dart';
+import '../types.dart';
 
 // iOS metal delegate bindings
 

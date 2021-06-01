@@ -2,7 +2,7 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 import 'package:quiver/check.dart';
-import '../bindings/metal_delegate.dart';
+import '../bindings/delegates/metal_delegate.dart';
 import '../bindings/types.dart';
 import '../delegate.dart';
 
