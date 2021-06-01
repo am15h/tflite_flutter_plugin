@@ -128,6 +128,18 @@ class TfLiteGpuDelegateOptionsV2 extends Struct {
   }
 }
 
+/// Wraps TfLiteXNNPackDelegateOptions
+class TfLiteXNNPackDelegateOptions extends Struct {
+  @Int32()
+  external int numThreads;
+
+  static Pointer<TfLiteXNNPackDelegateOptions> allocate(int numThreads) {
+    final result = calloc<TfLiteXNNPackDelegateOptions>();
+    result.ref..numThreads = numThreads;
+    return result;
+  }
+}
+
 /// Status of a TensorFlowLite function call.
 class TfLiteStatus {
   static const ok = 0;
