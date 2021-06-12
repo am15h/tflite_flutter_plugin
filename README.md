@@ -190,7 +190,7 @@ interpreter.close();
         options: interpreterOptions);
     ```
 
-Refer [Tests](https://github.com/am15h/tflite_flutter_plugin/blob/master/example/test/tflite_flutter_plugin_example_e2e.dart) to see more example code for each method.
+Refer [Tests](https://github.com/am15h/tflite_flutter_plugin/blob/master/example/integration_test/tflite_flutter_test.dart) to see more example code for each method.
 
 ## Credits
 
