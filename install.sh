@@ -2,8 +2,12 @@
 
 cd "$(dirname "$(readlink -f "$0")")"
 
+# Available versions
+# 2.5, 2.4.1
+
+TF_VERSION=2.5
 URL="https://github.com/am15h/tflite_flutter_plugin/releases/download/"
-TAG="v0.5.0"
+TAG="tf_$TF_VERSION"
 
 ANDROID_DIR="android/app/src/main/jniLibs/"
 ANDROID_LIB="libtensorflowlite_c.so"
@@ -12,8 +16,8 @@ ARM_DELEGATE="libtensorflowlite_c_arm_delegate.so"
 ARM_64_DELEGATE="libtensorflowlite_c_arm64_delegate.so"
 ARM="libtensorflowlite_c_arm.so"
 ARM_64="libtensorflowlite_c_arm64.so"
-X86="libtensorflowlite_c_x86.so"
-X86_64="libtensorflowlite_c_x86_64.so"
+X86="libtensorflowlite_c_x86_delegate.so"
+X86_64="libtensorflowlite_c_x86_64_delegate.so"
 
 delegate=0
 
