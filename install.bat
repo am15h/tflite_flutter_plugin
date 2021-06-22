@@ -14,8 +14,8 @@ set ARM_DELEGATE=libtensorflowlite_c_arm_delegate.so
 set ARM_64_DELEGATE=libtensorflowlite_c_arm64_delegate.so
 set ARM=libtensorflowlite_c_arm.so
 set ARM_64=libtensorflowlite_c_arm64.so
-set X86=libtensorflowlite_c_x86.so
-set X86_64=libtensorflowlite_c_x86_64.so
+set X86=libtensorflowlite_c_x86_delegate.so
+set X86_64=libtensorflowlite_c_x86_64_delegate.so
 
 SET /A d = 0
 
