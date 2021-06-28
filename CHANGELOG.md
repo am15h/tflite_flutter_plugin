@@ -1,3 +1,8 @@
+## 0.9.0 (Jun 28, 2021)
+* Support for Windows, Mac and Linux platforms.
+* Improved gpu delegate support and bug fixes.
+* Support for CoreML and XnnPack delegates.
+
 ## 0.8.0 (Apr 21, 2021)
 * Null-safety major bug fix in tensor.dart
 * Expose byte-object interconversion APIs
