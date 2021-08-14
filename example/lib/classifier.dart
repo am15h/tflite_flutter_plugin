@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 // Import tflite_flutter
 import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 class Classifier {
   // name of the model file
@@ -84,4 +88,26 @@ class Classifier {
     // returning List<List<double>> as our interpreter input tensor expects the shape, [1,256]
     return [vec];
   }
+
+  void classifyNL(String text) async {
+    final cpath = await getPathOnDevice(_modelFile);
+    final options = NLClassifierOptions();
+    final classifier = NLClassifier.create(cpath, options);
+    print(classifier.classify(text));
+  }
+}
+
+Future<File> getFile(String fileName) async {
+  final appDir = await getTemporaryDirectory();
+  final appPath = appDir.path;
+  final fileOnDevice = File('$appPath/$fileName');
+  final rawAssetFile = await rootBundle.load('assets/$fileName');
+  final rawBytes = rawAssetFile.buffer.asUint8List();
+  await fileOnDevice.writeAsBytes(rawBytes, flush: true);
+  return fileOnDevice;
+}
+
+Future<String> getPathOnDevice(String assetFileName) async {
+  final fileOnDevice = await getFile(assetFileName);
+  return fileOnDevice.path;
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tflite_flutter_plugin_example/classifier.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -57,6 +60,7 @@ class _MyAppState extends State<MyApp> {
                     onPressed: () {
                       final text = _controller.text;
                       final prediction = _classifier.classify(text);
+                      _classifier.classifyNL(text);
                       setState(() {
                         _children.add(Dismissible(
                           key: GlobalKey(),

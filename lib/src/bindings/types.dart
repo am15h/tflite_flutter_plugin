@@ -44,18 +44,18 @@ class TFLGpuDelegateOptions extends Struct {
   @Int32()
   external int enableQuantization;
 
-  static Pointer<TFLGpuDelegateOptions> allocate(
-    bool allowPrecisionLoss,
-    TFLGpuDelegateWaitType waitType,
-    bool enableQuantization,
-  ) {
-    final result = calloc<TFLGpuDelegateOptions>();
-    result.ref
-      ..allowPrecisionLoss = allowPrecisionLoss ? 1 : 0
-      ..waitType = waitType.index
-      ..enableQuantization = enableQuantization ? 1 : 0;
-    return result;
-  }
+    static Pointer<TFLGpuDelegateOptions> allocate(
+      bool allowPrecisionLoss,
+      TFLGpuDelegateWaitType waitType,
+      bool enableQuantization,
+    ) {
+      final result = calloc<TFLGpuDelegateOptions>();
+      result.ref
+        ..allowPrecisionLoss = allowPrecisionLoss ? 1 : 0
+        ..waitType = waitType.index
+        ..enableQuantization = enableQuantization ? 1 : 0;
+      return result;
+    }
 }
 
 /// Wraps TfLiteGpuDelegateOptionsV2 for android gpu delegate

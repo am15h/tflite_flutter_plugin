@@ -52,7 +52,7 @@ class Interpreter {
   /// Example:
   ///
   /// ```dart
-  /// final dataFile = await getFile('assets/your_model.tflite');
+    /// final dataFile = await getFile('assets/your_model.tflite');
   /// final interpreter = Interpreter.fromFile(dataFile);
   ///
   /// Future<File> getFile(String fileName) async {
