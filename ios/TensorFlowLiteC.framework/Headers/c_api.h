@@ -17,9 +17,8 @@ limitations under the License.
 
 #include <stdarg.h>
 #include <stdint.h>
-#include <stdlib.h>
 
-#include "c_api_types.h"  // IWYU pragma: export
+#include "common.h"
 
 // --------------------------------------------------------------------------
 /// C API for TensorFlow Lite.
@@ -66,42 +65,21 @@ limitations under the License.
 /// TfLiteInterpreterDelete(interpreter);
 /// TfLiteInterpreterOptionsDelete(options);
 /// TfLiteModelDelete(model);
-///
-/// </code></pre>
 
 #ifdef __cplusplus
 extern "C" {
 #endif  // __cplusplus
 
 // --------------------------------------------------------------------------
-// Opaque types used by the C API.
-
-// TfLiteModel wraps a loaded TensorFlow Lite model.
-typedef struct TfLiteModel TfLiteModel;
-
-// TfLiteInterpreterOptions allows customized interpreter configuration.
-typedef struct TfLiteInterpreterOptions TfLiteInterpreterOptions;
-
-// Allows delegation of nodes to alternative backends.
-typedef struct TfLiteDelegate TfLiteDelegate;
-
-// TfLiteInterpreter provides inference from a provided model.
-typedef struct TfLiteInterpreter TfLiteInterpreter;
-
-// A tensor in the interpreter system which is a wrapper around a buffer of
-// data including a dimensionality (or NULL if not currently defined).
-typedef struct TfLiteTensor TfLiteTensor;
-
-// --------------------------------------------------------------------------
 // TfLiteVersion returns a string describing version information of the
 // TensorFlow Lite library. TensorFlow Lite uses semantic versioning.
 TFL_CAPI_EXPORT extern const char* TfLiteVersion(void);
 
+// --------------------------------------------------------------------------
+// TfLiteModel wraps a loaded TensorFlow Lite model.
+typedef struct TfLiteModel TfLiteModel;
+
 // Returns a model from the provided buffer, or null on failure.
-//
-// NOTE: The caller retains ownership of the `model_data` and should ensure that
-// the lifetime of the `model_data` must be at least as long as the lifetime
-// of the `TfLiteModel`.
 TFL_CAPI_EXPORT extern TfLiteModel* TfLiteModelCreate(const void* model_data,
                                                       size_t model_size);
 
@@ -111,6 +89,10 @@ TFL_CAPI_EXPORT extern TfLiteModel* TfLiteModelCreateFromFile(
 
 // Destroys the model instance.
 TFL_CAPI_EXPORT extern void TfLiteModelDelete(TfLiteModel* model);
+
+// --------------------------------------------------------------------------
+// TfLiteInterpreterOptions allows customized interpreter configuration.
+typedef struct TfLiteInterpreterOptions TfLiteInterpreterOptions;
 
 // Returns a new interpreter options instances.
 TFL_CAPI_EXPORT extern TfLiteInterpreterOptions*
@@ -138,18 +120,23 @@ TFL_CAPI_EXPORT extern void TfLiteInterpreterOptionsAddDelegate(
 //
 // * `reporter` takes the provided `user_data` object, as well as a C-style
 //   format string and arg list (see also vprintf).
-// * `user_data` is optional. If non-null, it is owned by the client and must
+// * `user_data` is optional. If provided, it is owned by the client and must
 //   remain valid for the duration of the interpreter lifetime.
 TFL_CAPI_EXPORT extern void TfLiteInterpreterOptionsSetErrorReporter(
     TfLiteInterpreterOptions* options,
     void (*reporter)(void* user_data, const char* format, va_list args),
     void* user_data);
 
+// --------------------------------------------------------------------------
+// TfLiteInterpreter provides inference from a provided model.
+typedef struct TfLiteInterpreter TfLiteInterpreter;
+
 // Returns a new interpreter using the provided model and options, or null on
 // failure.
 //
 // * `model` must be a valid model instance. The caller retains ownership of the
-//   object, and the model must outlive the interpreter.
+//   object, and can destroy it immediately after creating the interpreter; the
+//   interpreter will maintain its own reference to the underlying model data.
 // * `optional_options` may be null. The caller retains ownership of the object,
 //   and can safely destroy it immediately after creating the interpreter.
 //
@@ -175,11 +162,7 @@ TFL_CAPI_EXPORT extern TfLiteTensor* TfLiteInterpreterGetInputTensor(
 //
 // NOTE: After a resize, the client *must* explicitly allocate tensors before
 // attempting to access the resized tensor data or invoke the interpreter.
-//
 // REQUIRES: 0 <= input_index < TfLiteInterpreterGetInputTensorCount(tensor)
-//
-// This function makes a copy of the input dimensions, so the client can safely
-// deallocate `input_dims` immediately after this function returns.
 TFL_CAPI_EXPORT extern TfLiteStatus TfLiteInterpreterResizeInputTensor(
     TfLiteInterpreter* interpreter, int32_t input_index, const int* input_dims,
     int32_t input_dims_size);
