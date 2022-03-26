@@ -1,3 +1,4 @@
-#import "c_api.h"
-#import "xnnpack_delegate.h"
-#import "common.h"
+#import <TensorFlowLiteC/c_api.h>
+#import <TensorFlowLiteC/common.h>
+#import <TensorFlowLiteC/xnnpack_delegate.h>
+#import <TensorFlowLiteC/c_api_types.h>
