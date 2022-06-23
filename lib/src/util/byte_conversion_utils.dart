@@ -122,6 +122,11 @@ class ByteConversionUtils {
         list.add(ByteData.view(bytes.buffer).getInt8(i));
       }
       return list.reshape<int>(shape);
+    } else if (tfliteType == TfLiteType.uint8) {
+      for (var i = 0; i < bytes.length; i += 1) {
+        list.add(ByteData.view(bytes.buffer).getUint8(i));
+      }
+      return list.reshape<int>(shape);
     } else if (tfliteType == TfLiteType.int64) {
       for (var i = 0; i < bytes.length; i += 8) {
         list.add(ByteData.view(bytes.buffer).getInt64(i));

@@ -36,6 +36,8 @@ flutter:
         pluginClass: TfliteFlutterPlugin
       ios:
         pluginClass: TfliteFlutterPlugin
+      linux:
+        pluginClass: TfliteFlutterPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
