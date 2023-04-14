@@ -22,6 +22,18 @@
 </a>
 </p>
 
+## Announcement
+
+Update: 2 April, 2023
+
+The TensorFlow team has taken official ownership of this plugin and will begin migrating to the TensorFlow org with a team managed repo. You can follow the package on pub.dev for updates as we make progress. Our goal is to have this moved over by mid-May, then we'll start work on updates and accepting community contributions.
+
+Feel free to reach out to me with questions until then.
+
+Thanks!
+
+- ptruiz@google.com
+
 ## Overview
 
 TensorFlow Lite Flutter plugin provides a flexible and fast solution for accessing TensorFlow Lite interpreter and performing inference. The API is similar to the TFLite Java and Swift APIs. It directly binds to TFLite C API making it efficient (low-latency). Offers acceleration support using NNAPI, GPU delegates on Android, Metal and CoreML delegates on iOS, and XNNPack delegate on Desktop platforms.

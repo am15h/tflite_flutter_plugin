@@ -132,7 +132,7 @@ extension ListShape on List {
     var list = this as dynamic;
     var shape = <int>[];
     while (list is List) {
-      shape.add((list as List).length);
+      shape.add((list).length);
       list = list.elementAt(0);
     }
     return shape;

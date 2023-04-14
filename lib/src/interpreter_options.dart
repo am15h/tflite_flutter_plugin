@@ -5,9 +5,6 @@ import 'package:quiver/check.dart';
 import '../tflite_flutter.dart';
 import 'bindings/interpreter_options.dart';
 
-import 'bindings/types.dart';
-import 'delegate.dart';
-
 /// TensorFlowLite interpreter options.
 class InterpreterOptions {
   final Pointer<TfLiteInterpreterOptions> _options;

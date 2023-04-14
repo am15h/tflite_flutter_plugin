@@ -15,26 +15,26 @@ import '../types.dart';
 /// .wait_type = kPassive,
 Pointer<TfLiteDelegate> Function(Pointer<TFLGpuDelegateOptions>? options)
     tflGpuDelegateCreate = tflitelib
-        .lookup<NativeFunction<_TFLGpuDelegateCreate_native_t>>(
+        .lookup<NativeFunction<_TFLGpuDelegateCreateNativeT>>(
             'TFLGpuDelegateCreate')
         .asFunction();
 
-typedef _TFLGpuDelegateCreate_native_t = Pointer<TfLiteDelegate> Function(
+typedef _TFLGpuDelegateCreateNativeT = Pointer<TfLiteDelegate> Function(
     Pointer<TFLGpuDelegateOptions>? options);
 
 /// Destroys a delegate created with `TFLGpuDelegateCreate` call.
 void Function(Pointer<TfLiteDelegate>) tflGpuDelegateDelete = tflitelib
-    .lookup<NativeFunction<_TFLGpuDelegateDelete_native_t>>(
+    .lookup<NativeFunction<_TFLGpuDelegateDeleteNativeT>>(
         'TFLGpuDelegateDelete')
     .asFunction();
 
-typedef _TFLGpuDelegateDelete_native_t = Void Function(
+typedef _TFLGpuDelegateDeleteNativeT = Void Function(
     Pointer<TfLiteDelegate> delegate);
 
 /// Default Options
 TFLGpuDelegateOptions Function() tflGpuDelegateOptionsDefault = tflitelib
-    .lookup<NativeFunction<_TFLGpuDelegateOptions_native_t>>(
+    .lookup<NativeFunction<_TFLGpuDelegateOptionsNativeT>>(
         'TFLGpuDelegateOptionsDefault')
     .asFunction();
 
-typedef _TFLGpuDelegateOptions_native_t = TFLGpuDelegateOptions Function();
+typedef _TFLGpuDelegateOptionsNativeT = TFLGpuDelegateOptions Function();

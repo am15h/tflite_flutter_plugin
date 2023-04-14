@@ -1,6 +1,5 @@
 import 'dart:ffi';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
@@ -123,7 +122,7 @@ class Interpreter {
   ///
   /// Typically used for passing interpreter between isolates.
   factory Interpreter.fromAddress(int address,
-      {bool allocated: false, bool deleted: false}) {
+      {bool allocated = false, bool deleted = false}) {
     final interpreter = Pointer<TfLiteInterpreter>.fromAddress(address);
     return Interpreter._(interpreter)
       .._deleted = deleted
@@ -312,5 +311,4 @@ class Interpreter {
 
   //TODO: (JAVA) void modifyGraphWithDelegate(Delegate delegate)
   //TODO: (JAVA) void resetVariableTensors()
-
 }

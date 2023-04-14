@@ -6,3 +6,4 @@
 pubspec.lock
 .metadata
 build/
+.vscode/

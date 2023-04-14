@@ -228,6 +228,6 @@ class Tensor {
 
   @override
   String toString() {
-    return 'Tensor{_tensor: $_tensor, name: $name, type: $type, shape: $shape, data:  ${data.length}';
+    return 'Tensor{_tensor: $_tensor, name: $name, type: $type, shape: $shape, data:  ${data.length}}';
   }
 }
