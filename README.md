@@ -24,9 +24,9 @@
 
 ## Announcement
 
-Update: 2 April, 2023
+Update: 25 April, 2023
 
-The TensorFlow team has taken official ownership of this plugin and will begin migrating to the TensorFlow org with a team managed repo. You can follow the package on pub.dev for updates as we make progress. Our goal is to have this moved over by mid-May, then we'll start work on updates and accepting community contributions.
+The TensorFlow team has gotten access to the pub.dev page for this plugin and is evaluating how we're going to move forward. PRs are welcome as we move forward with this process.
 
 Feel free to reach out to me with questions until then.
 
