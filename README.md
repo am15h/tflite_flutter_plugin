@@ -24,9 +24,11 @@
 
 ## Announcement
 
-Update: 25 April, 2023
+Update: 26 April, 2023
 
-The TensorFlow team has gotten access to the pub.dev page for this plugin and is evaluating how we're going to move forward. PRs are welcome as we move forward with this process.
+The TensorFlow team has officially migrated this project to a [new repository](https://github.com/tensorflow/flutter-tflite), deprecating this one. We will be focusing on getting the plugin to a stable and usable state to help our developers add robust machine learning features to their Flutter apps. PRs and contributions are more than welcome there, though please be mindful that this is a work in progress, so some things may be a bit broken for a bit :)
+
+We do want to say a *huge* thank you to Amish for working on this initial plugin, and we're excited to keep it progressing.
 
 Feel free to reach out to me with questions until then.
 
