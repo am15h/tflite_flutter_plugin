@@ -1,34 +1,33 @@
-group 'com.tfliteflutter.tflite_flutter_plugin'
-version '1.0'
+// Top-level build file for tflite_flutter plugin
 
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral() // Ganti jcenter() dengan mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
-    }
-}
-
-rootProject.allprojects {
-    repositories {
-        google()
-        jcenter()
+        classpath 'com.android.tools.build:gradle:8.0.2' // Versi AGP terbaru
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    namespace 'com.tfliteflutter.tflite_flutter_plugin' // Tambahkan namespace
+    compileSdkVersion 33 // Versi SDK terbaru
 
     defaultConfig {
         minSdkVersion 16
+        targetSdkVersion 33 // Target SDK terbaru
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     lintOptions {
         disable 'InvalidPackage'
     }
+}
+
+dependencies {
+    implementation 'org.tensorflow:tensorflow-lite:2.12.0' // Dependensi TensorFlow Lite terbaru
 }
