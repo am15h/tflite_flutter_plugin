@@ -2,6 +2,8 @@
 
 cd "$(dirname "$(readlink -f "$0")")"
 
+printf '%s\n' "Note: this example belongs to the deprecated am15h/tflite_flutter_plugin repository; use https://pub.dev/packages/tflite_flutter for current package setup." >&2
+
 URL="https://github.com/am15h/tflite_flutter_plugin/releases/download/"
 TAG="v0.2.0"
 

@@ -3,6 +3,8 @@ setlocal enableextensions
 
 cd %~dp0
 
+echo Note: am15h/tflite_flutter_plugin is deprecated; use https://pub.dev/packages/tflite_flutter and https://github.com/tensorflow/flutter-tflite for active support.
+
 set TF_VERSION=2.5
 set URL=https://github.com/am15h/tflite_flutter_plugin/releases/download/
 set TAG=tf_%TF_VERSION%

@@ -2,6 +2,8 @@
 
 cd "$(dirname "$(readlink -f "$0")")"
 
+printf '%s\n' "Note: am15h/tflite_flutter_plugin is deprecated; use https://pub.dev/packages/tflite_flutter and https://github.com/tensorflow/flutter-tflite for active support." >&2
+
 # Available versions
 # 2.5, 2.4.1
 

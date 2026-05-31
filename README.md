@@ -1,6 +1,6 @@
  <p align="center">
     <br>
-    <img src="https://github.com/am15h/tflite_flutter_plugin/raw/update_readme/docs/tflite_flutter_cover.png"/>
+    <img src="docs/tflite_flutter_cover.png"/>
     </br>
 </p>
 <p align="center">
@@ -21,6 +21,18 @@
 
 </a>
 </p>
+
+## Project Status
+
+Status refresh: May 2026
+
+This repository is deprecated and kept online for historical reference. Active package development, issue triage, and platform support for `tflite_flutter` now live in the TensorFlow-managed project:
+
+* Package: [pub.dev/packages/tflite_flutter](https://pub.dev/packages/tflite_flutter)
+* Repository: [tensorflow/flutter-tflite](https://github.com/tensorflow/flutter-tflite)
+* Issues: [tensorflow/flutter-tflite/issues](https://github.com/tensorflow/flutter-tflite/issues)
+
+Recent questions filed here, including iOS Swift Package Manager support and image preprocessing/helper APIs, should be tracked in the active TensorFlow repository so the maintainers of the current package see them. See [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for migration and support routing notes.
 
 ## Announcement
 
